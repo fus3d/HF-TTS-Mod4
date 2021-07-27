@@ -1,0 +1,234 @@
+--Do Not Use - Copy of Market Map until this is removed --
+--[[ Lua code. See documentation: https://api.tabletopsimulator.com/ --]]
+
+--High Frontier 4
+--Eskander scripts
+--Contract Board
+--LtFiend
+
+
+--Vars
+	--broadcast colorszo
+	sysMsg = {0.19,0.70,0.17}
+	
+		--broadcast colors
+	msgError = {1,0,0}
+	msgAction = {1, 1, 1}
+	msgComplete = {0, 0.6, 0}
+	msgInfo = {0.6, 0.4, 1}
+	msgPrompt = {1,0.4,0}
+	msgHeader = {1, 1, 0}
+	
+	matRad = 2
+	--cardOffsetC1 = {x = 0.45, y = 0.5, z = -4}
+	cardOffsetC1 = {x = 0.1, y = -0.1, z = 3}
+	cardOffsetMeat = {x = 0.1, y = -0.1, z = -3}
+	cardOffsetExodus = {x = 0.1, y = -0.1, z = -3}
+	frames = 45
+	inspirationGate = false
+	
+	cardsRef = {
+		meathead = {str = "meathead", label = "Meathead Queue", offset = cardOffsetMeat, deck = ""},
+		exodus = {str = "exodus", label = "Exodus Contract Deck", offset = cardOffsetExodus, deck = ""},
+		freedom = {str = "freedom", label = "Freedom / Individuality Contract Deck", offset = cardOffsetC1, deck = ""},
+		equality = {str = "equality", label = "Equality / Authority Contract Deck", offset = cardOffsetC1, deck = ""},
+		honor = {str = "honor", label = "Honor / Unity Contract Deck", offset = cardOffsetC1, deck = ""},
+	}
+
+--[[ The onLoad event is called after the game save finishes loading. --]]
+function onLoad()
+	updateDeckRefs()
+end
+
+function onCollisionEnter(collision_info)
+    -- print("collision triggered")
+	local obj = collision_info.collision_object
+	local desc = obj.getDescription()
+	local cPos = obj.getPosition()
+	if self.positionToLocal(cPos).x > 0.15 then
+		-- print('left of discard area')
+	else
+		if obj.tag == 'Card' then
+			desc = string.lower(desc)
+			for k,v in pairs(cardsRef) do
+				if string.find(desc,v.str) then
+					local result = ""
+					result = updateDeckRefs()
+					if v.deck ~= "" then
+						local selfPos = obj.getPosition()
+						local position = v.deck.getPosition()
+						obj.setPosition({selfPos.x, position.y -0.01, selfPos.z})
+						v.deck.setPosition({position.x, position.y + 0.1, position.z})
+						v.deck.setPositionSmooth({position.x, position.y + 1.5, position.z})
+						obj.putObject(v.deck)
+						--Wait.frames(function() delayDeckPlacement(v.deck, position) end, 60)
+					else
+						if result ~= "" then
+							if #result> 0 then
+								local found = false
+								local loneCard = {}
+								for j, l in pairs (result) do
+									if found == false then
+										if l == obj then
+										else
+											if string.match(string.lower(l.getDescription()), v.str) == v.str then
+												found = true
+												loneCard = l
+											end
+										end
+									end
+								end
+								if found == true then
+									local pos = loneCard.getPosition()
+									local rot = loneCard.getRotation()
+									local newDeck = group({obj, loneCard})
+									Wait.frames(function() newDeckFunc(newDeck, v.label, pos, rot) end, 30)
+									printToAll("Script has repaired a missing deck by combining the discard with a lone card.",msgComplete)
+								else
+									printToAll("Script cannot find parent deck for discard and was unable to repair any deck. Discard manually or check decks.",msgPrompt)
+								end
+							end
+						end
+					end
+					
+				end
+			end		
+		else
+		end
+	end
+end
+
+function delayDeckPlacement(deck, position)
+	deck.setPositionSmooth({position.x, position.y + 0.03, position.z})
+end
+
+function newDeckFunc(newDeck, str, pos, rot)
+	newDeck[1].setName(str)
+	newDeck[1].setPosition({x = pos.x, y = pos.y + 0.1, z = pos.z})
+	newDeck[1].setRotation(rot)
+end
+
+function updateDeckRefs()
+	for key,value in pairs(cardsRef) do	
+		value.deck = ""
+	end
+	local pos = self.getPosition()
+	local rot = self.getRotation()
+	local sca = self.getScale()
+	local params = {}
+	local hits = {}
+	params.direction = {0,-1,0}
+	params.size = {matRad*sca.x,0.5,matRad*sca.z}
+	params.type = 3
+	params.max_distance = 2
+	params.debug = false
+	params.origin = pos
+	hits = Physics.cast(params)
+	local name = {}
+	local unknowns = {}
+	local loneCards = {}
+	--print('trigger physics')
+	for index,hit in pairs(hits) do
+		if hit.hit_object.tag == 'Deck' then
+			name = hit.hit_object.getName()
+			if name == "" then
+				table.insert(unknowns, hit.hit_object)
+			else
+				name = string.lower(name)
+				--print(name)
+				for type, ref in pairs(cardsRef) do
+					if string.find(name,ref.str) then
+						--print('found')
+						--print(hit.hit_object)
+						cardsRef[type].deck = hit.hit_object
+					end
+				end
+			end
+		elseif hit.hit_object.tag == 'Card' then
+			table.insert(loneCards, hit.hit_object)
+		end
+	end
+	--attempt repair if any gaps + unknown decks
+	for k,v in pairs(cardsRef) do
+		if v.deck == "" and #unknowns > 0 then
+			local repaired = false
+			for j, l in pairs(unknowns) do
+				if repaired == false then
+					local matching = true
+					local objs = l.getObjects()
+					for q, e in pairs (objs) do
+						if matching == true then
+							if string.match(string.lower(e.description), v.str) == v.str then
+							else
+								matching = false
+							end
+						end
+					end
+					if matching == true then
+						cardsRef[k].deck = l
+						repaired = true
+						l.setName(v.label)
+						printToAll("Script repaired a missing deck that lacked a name.",msgComplete)
+					end
+				end
+			end
+		end
+	end
+	return loneCards
+end
+
+function doInspiration()
+	broadcastToAll("Executing inspiration event. Please wait.",msgPrompt)
+	updateDeckRefs()
+	if inspirationGate == false then
+		inspirationGate = true
+		startLuaCoroutine(self, "inspirationCoroutine")
+	end
+end
+
+function inspirationCoroutine()
+	local params = {}
+	local pos = {}
+	local rot = {}
+	local sca = {}
+	local offset = {}
+	params.top = true
+	params.smooth = false
+	for k,v in pairs(cardsRef) do
+		if v.deck.tag == 'Deck' then
+			pos = v.deck.getPosition()
+			rot = v.deck.getRotation()
+			sca = self.getScale()
+			offset = v.offset
+			params.position = {
+			--	x=pos.x+0.1,
+			--	y=pos.y-0.1,
+			--	z=pos.z+3
+			x=pos.x+v.offset.x,
+			y=pos.y+v.offset.y,
+			z=pos.z+v.offset.z
+			}
+			v.deck.takeObject(params)
+			for i=1,frames do
+				coroutine.yield(0)
+				i = i + 1
+			end
+		else
+		end
+	end
+	
+	broadcastToAll("Inspiration event is complete.",msgComplete)
+	inspirationGate = false
+
+	return 1
+end
+
+function shuffleAllDecks()
+	broadcastToAll("Decks: Shuffling decks. Please wait.",msgPrompt)
+	updateDeckRefs()
+	for k,v in pairs(cardsRef) do
+		if v.deck.tag == 'Deck' then
+			v.deck.shuffle()
+		end
+	end
+end

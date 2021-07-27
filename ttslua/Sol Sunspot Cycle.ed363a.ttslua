@@ -1,0 +1,274 @@
+--High Frontier 4
+--Eskander scripts
+--Sunspot Board
+
+--load
+function onLoad()
+	initVars()
+end
+
+--init Vars for maths
+function initVars()
+	
+	refOriginOffset = {x = 0.5788, y = 0, z = 0.1438}
+	--refOffsetRadius = 0.596396
+	refRadius = 0.537671
+	--deltaD = 30
+	--offsetD = 15
+	
+	--rfg
+	refOriginOffsetRfg = {x = -0.66, y = 0, z = -0.022}
+	--refOffsetRadiusRfg = 0.596396
+	refRadiusRfg = 0.5
+	--deltaDRfg = 30
+	--offsetDRfg = 15
+	
+
+	absOrigin = {}
+	tracker = {}
+	absSpotTable = {}
+	spot = 1
+	
+	autoSol = true
+	local table = Global.getTable("toolConfig")
+	if table then
+		autoSol = table.turn.turnAutoSol
+	end
+	
+	--sounds
+	local table = Global.getTable("objRefs")
+	soundGUID = ""
+	if table then
+		soundGUID = table.tools.sound
+	end
+
+	--broadcast colors
+	msgError = {1,0,0}
+	msgAction = {1, 1, 1}
+	msgComplete = {0, 0.6, 0}
+	msgInfo = {0.6, 0.4, 1}
+	msgPrompt = {1,0.4,0}
+	msgHeader = {1, 1, 0}
+	msgEvent = {0.2, 0.6, 1}
+	
+end
+
+--called from global if board is found
+function objNextYear(param)
+
+	--determine core or rfg
+	local rfg = false
+	local rot = self.getRotation()
+	if rot.z > 90 and rot.z < 270 then
+		rfg = true
+	end
+	if rfg == true then 
+		sitrepTrackerRfg()
+	else
+		--assess current situation
+		sitrepTracker()
+	end
+end
+
+--find tracker, determine year
+function sitrepTracker()
+	local pos = self.getPosition()
+	local rot = self.getRotation()
+	local sca = self.getScale()
+	absOrigin = {x=pos.x+(refOriginOffset.x*sca.x*math.cos(math.rad(rot.y)))-(-1*refOriginOffset.z*sca.z*math.sin(math.rad(rot.y))),y=pos.y+1,z=pos.z+(refOriginOffset.z*sca.z*math.cos(math.rad(rot.y)))-(refOriginOffset.x*sca.x*math.sin(math.rad(rot.y)))}
+	
+	
+	--raycasts to find tracker
+	local params = {}
+	params.direction = {0,-1,0}
+	params.size = {0.2*sca.x,0.2,0.2*sca.z}
+	params.type = 2
+	params.max_distance = 2
+	params.debug = false
+	local spotTable = {}
+	local i = 1
+	local hits = {}
+	local targets = 0
+		
+		
+		
+	for i=1, 12 do
+		spotTable[i] = {x=math.sin(math.rad(30*i-195))*(refRadius*sca.x),y = 0.2,z=math.cos(math.rad(30*i-195))*(refRadius*sca.z)}
+		absSpotTable[i] = {x=absOrigin.x+(spotTable[i].x*math.cos(math.rad(rot.y)))-(-1*spotTable[i].z*math.sin(math.rad(rot.y))),y=absOrigin.y,z=absOrigin.z+(spotTable[i].z*math.cos(math.rad(rot.y)))-(spotTable[i].x*math.sin(math.rad(rot.y)))}
+		params.origin = absSpotTable[i]
+		hits = Physics.cast(params)
+		
+		for k,v in pairs(hits) do
+			--print(k, v.hit_object.getName())
+			if v.hit_object.getName() == "Factory/Delegate" then
+				tracker = v.hit_object
+				targets = targets + 1
+				spot = i
+			end
+		end
+	end
+	
+	if targets < 1 then
+		broadcastToAll("Error: No valid sunspot tracker found. Perform manually.", msgError)
+	elseif targets > 1 then
+		broadcastToAll("Error: Too many valid sunspot trackers found. Perform manually.", msgError)
+	elseif targets == 1 then
+		--print("Sunpsot tracker found in spot " .. spot)
+		advanceTrack()
+	end	
+end
+	
+--advance tracker to next spot
+function advanceTrack()
+	local season = {}
+	if spot == 12 then
+		spot = 1
+	else
+		spot = spot+1
+	end
+	
+	--move tracker
+	tracker.setPositionSmooth({absSpotTable[spot].x,absSpotTable[spot].y+1,absSpotTable[spot].z}, false, false)
+	printToAll("=================YEAR END =================",msgHeader)
+	broadcastToAll("A year has passed.",msgComplete)
+	
+	--trigger event
+	if spot == 2 or spot == 12 then
+		season = "blue"
+		doEvent(season)
+	elseif spot == 4 or spot == 6 then
+		season = "yellow"
+		doEvent(season)
+	elseif spot == 8 or spot == 10 then
+		season = "red"
+		doEvent(season)
+	elseif spot == 1 then
+		broadcastToAll("A full solar cycle has passed. Remove a seniority disk.",msgPrompt)
+		local soundAsset = getObjectFromGUID(soundGUID)
+		if  soundAsset then
+			soundAsset.AssetBundle.playTriggerEffect(0)
+		end
+	end
+end
+	
+--resolve event roll
+function doEvent(season)
+	if autoSol == true then
+		local soundAsset = getObjectFromGUID(soundGUID)
+		if  soundAsset then
+			soundAsset.AssetBundle.playTriggerEffect(0)
+		end
+		local roll = math.random(6)
+		local str = "Event Roll |   "
+		if roll == 1 or roll == 2 then
+			broadcastToAll(str .. roll .. "   | Inspiration", msgEvent)
+			printToAll("The top card of each patent or queue deck is moved to the bottom of the deck.",msgPrompt)
+			runInspiration()
+		elseif roll == 3 then
+				broadcastToAll(str .. roll .. "   | Glitch!", msgEvent)
+				printToAll("Each player places a glitch on their stack with the most cards that lacks a glitch or colocated human.", msgPrompt)
+		elseif roll == 4 then
+				broadcastToAll(str .. roll .. "   | Pad Explosion/Space Debris!", msgEvent)
+				printToAll("Each player decommissions the card in LEO with the highest mass. Crew, Purple sided, Colonists, and Bernals are immune.", msgPrompt)
+		elseif roll == 5 or roll == 6 then
+			if season == 'blue' then
+				broadcastToAll(str .. roll .. "   | Anarchy!", msgEvent)
+				printToAll("Faction abilities are disabled.  All players can commit felonies until end of season blue.", msgPrompt)
+				--Wait.frames(runAnarchy, 120)
+				runAnarchy()
+			elseif season == 'yellow' then
+				broadcastToAll(str .. roll .. "   | Budget Cuts", msgEvent)
+				printToAll("Each player discards a card of choice from Hand to the bottom of relevant patent deck.", msgPrompt)
+			elseif season == 'red' then
+				broadcastToAll(str .. roll .. "   | Solar Flare!", msgEvent)
+				--Wait.frames(runSolarFlare, 120)
+				runSolarFlare()
+			end
+		end
+	else
+	end
+end	
+
+function runInspiration()
+	Global.call("runInspiration")
+end
+
+function runSolarFlare()
+	local roll = math.random(6)
+	broadcastToAll("Solar Flare CME Roll |   " .. roll .. "   |",msgEvent)
+	printToAll("For all unshielded cards, check CME Roll + Heliocentric Zone modifier.  Decommission if rad-hardness is less than result. Shielded = LEO/Cycler; non-Sol radiation belt; on site.", msgPrompt)
+end
+
+
+function runAnarchy()
+	local roll = math.random(6)
+	broadcastToAll("Anarchy Roll |   " .. roll .. "   |",msgEvent)
+	printToAll("If using Module 0: Politics, discard 1 delegate of each color in the idealogy corresponding to the Anarchy roll.", msgPrompt)
+end
+
+
+------------------COPIED OVER TO HANDLE RFG
+--find tracker, determine year RFG VARIANT
+function sitrepTrackerRfg()
+	local pos = self.getPosition()
+	local rot = self.getRotation()
+	local sca = self.getScale()
+	absOrigin = {x=pos.x+(refOriginOffsetRfg.x*sca.x*math.cos(math.rad(rot.y)))-(-1*refOriginOffsetRfg.z*sca.z*math.sin(math.rad(rot.y))),y=pos.y+1,z=pos.z+(refOriginOffsetRfg.z*sca.z*math.cos(math.rad(rot.y)))-(refOriginOffsetRfg.x*sca.x*math.sin(math.rad(rot.y)))}
+
+	--raycasts to find tracker
+	local params = {}
+	params.direction = {0,-1,0}
+	params.size = {0.2*sca.x,0.2,0.2*sca.z}
+	params.type = 2
+	params.max_distance = 2
+	params.debug = false
+	local spotTable = {}
+	local i = 1
+	local hits = {}
+	local targets = 0
+
+	for i=1, 12 do
+		spotTable[i] = {x=math.sin(math.rad(30*i-195))*(refRadiusRfg*sca.x),y = 0.2,z=math.cos(math.rad(30*i-195))*(refRadiusRfg*sca.z)}
+		absSpotTable[i] = {x=absOrigin.x+(spotTable[i].x*math.cos(math.rad(rot.y)))-(-1*spotTable[i].z*math.sin(math.rad(rot.y))),y=absOrigin.y,z=absOrigin.z+(spotTable[i].z*math.cos(math.rad(rot.y)))-(spotTable[i].x*math.sin(math.rad(rot.y)))}
+		params.origin = absSpotTable[i]
+		hits = Physics.cast(params)
+		
+		for k,v in pairs(hits) do
+			--print(k, v.hit_object.getName())
+			if v.hit_object.getName() == "Factory/Delegate" then
+				tracker = v.hit_object
+				targets = targets + 1
+				spot = i
+			end
+		end
+	end
+	
+	if targets < 1 then
+		broadcastToAll("Error: No valid sunspot tracker found. Perform manually.", msgError)
+	elseif targets > 1 then
+		broadcastToAll("Error: Too many valid sunspot trackers found. Perform manually.", msgError)
+	elseif targets == 1 then
+		--print("Sunpsot tracker found in spot " .. spot)
+		advanceTrackRfg()
+	end	
+end
+
+
+function advanceTrackRfg()
+	local season = {}
+	if spot == 12 then
+		spot = 1
+	else
+		spot = spot+1
+	end
+	
+	--move tracker
+	tracker.setPositionSmooth({absSpotTable[spot].x,absSpotTable[spot].y+1,absSpotTable[spot].z}, false, false)
+	broadcastToAll("A year has passed.",msgComplete)
+	
+	
+	--notice to remove seniority
+	if spot == 1 then
+		broadcastToAll("A full solar cycle has passed. Remove a seniority disk.",msgPrompt)
+	end
+end

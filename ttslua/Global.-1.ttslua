@@ -1,0 +1,6174 @@
+--[[ Lua code. See documentation: https://api.tabletopsimulator.com/ --]]
+
+--High Frontier 4
+--Eskander scripts
+--Global
+
+--------TOC
+--VARS
+--EVENTS
+--UTIL FCNS
+--UI UPDATES
+--ROLLER TOOL
+--BURN TOOL
+--TURN TOOL
+--BID TOOL
+--FT TOOL
+--VP Tracker
+--SETUP FCNS
+--DEV TOOLS
+
+---===========================================================================VARS/REFS
+------------------------------------------------unsaved vars
+--persistent guid refs
+objRefs = {
+	tables = {sideTable='a40b61', flexTableControl = 'bd69bd'},
+	boxes = {core = '7ded2c', rfg = '71aa5d', sdBox = '4558b9', sdBag = '922341', mod1 = 'ef6087', mod2 = '6ad6a4', mod3 = 'eeb5e7', mod4 = 'd33379', seniorityDisks = '606c5f', bribeDisks = '992aba', isotopeFTs = 'c2de0b', spaceElevators='73679a', stackMats ='2933bc', pYellow = '2eb409', pPurple ='19fb5d', pRed = '2db96c', pGreen = 'c188da', pWhite = 'c379a6', pBlue = '7a17fd', vGeoffIntro = '271795'},
+	maps = {standard = '01fd8b', big = '248bc4'},
+	mats = {sunspotBoard = 'ed363a', marketBoard = '9eaea1', polBoard = '749864', polBoard3 = '8bb142', contractBoard = '247743'},
+	tools = {setupSaver = 'cef825', sound = 'be6906'},
+	zones = {zoneSeniority = 'fa294b'}
+}
+
+staticObjsRef = {'9eaea1','01fd8b','a40b61','248bc4','218e4a','247743'}
+-- staticObjsRef = {'9eaea1','01fd8b','a40b61','248bc4','218e4a'}
+-- staticObjsRef = {}
+
+mapRefs = {
+	standard = {guid = objRefs.maps.standard, pos = {x=0, y=0.96, z=0}, rot= {x=0,y=180,z=0}}, 
+	big = {guid = objRefs.maps.big, pos = {x=-9, y=0.96, z=0}, rot= {x=0,y=180,z=0}}
+}
+
+
+--broadcast colors
+msgError = {1,0,0}
+msgAction = {1, 1, 1}
+msgComplete = {0, 0.6, 0}
+msgInfo = {0.6, 0.4, 1}
+msgPrompt = {1,0.4,0}
+msgHeader = {1, 1, 0}
+
+--music
+playingMusic = {}
+
+--distance between each card spread in inches when triggered by hotkey
+spreadDistance = 0.9
+
+------------------------------------------------------hard saved global vars
+--setup vars
+setupConfig = {
+	general = {max=true, step="0", colorSwap = false},
+	pConfig= {seats=6},
+	map={ver="normal", lutetia=false, pangea=false, ishtar=false},
+	mods={base="core", mod0=false, mod1=false, mod2=false, mod3=false, mod4=false, sdSail=true, sdRocket=false},
+	other={rocketMats=false, tutorial = false, mod0Solo = false, vGeoffIntro = false, vSplitMarket = false, timer=false},
+	values = {seniority = 4}
+}
+
+seatSetupTable = {
+	{color = "White", zoneGUID = '', status = 'notSetup'},
+	{color = "Purple", zoneGUID = '', status = 'notSetup'},
+	{color = "Red", zoneGUID = '', status = 'notSetup'},
+	{color = "Blue", zoneGUID = '', status = 'notSetup'},
+	{color = "Green", zoneGUID = '', status = 'notSetup'},
+	{color = "Yellow", zoneGUID = '', status = 'notSetup'},
+}
+
+--perm vars
+seatTable = {"Yellow", "Green", "Blue", "White", "Purple", "Red"}
+
+--data/config tables
+configTable = {
+	interactableBoards = false, 
+	toolDiceRoller = false,
+	toolTurnTracker = false,
+	toolFTTracker = false,
+	toolContractBidTool = false,
+	toolBidTool = false,
+	toolBurnTool = false,
+	toolBurnToolBernal = false,
+	toolTimer = false,
+}
+
+toolConfig = {
+	turn = { scale = 1, mod1 = false, mobile = false, mod2 = false, colonist = false, profit = false, autoProfit = false, mod3 = false, soloMode = false, turnAutoSol = true, firstPlayer = "Yellow", ttsTurns = false, turnSound = true},
+	bid = {scale = 1, auto = true, marketeer = true},
+	ft = {scale = 1, mod1 = false, mod2 = false},
+	timer = {scale = 1, pause = false, pausebutton = false, doSave = false, countauctions = false}
+}
+
+------------------------------------------------------hard save tool values
+turnYear = 1
+
+turnTrackerTable = {
+		White = {trn = 0, Op = 0,Rkt = 0, Frt = 0, MFc=0, BK = 0, BS = 0, Cln = 0, HBP = 0, DS = 0, max=true},
+		Red = {trn = 0, Op = 0,Rkt = 0, Frt = 0, MFc=0, BK = 0, BS = 0, Cln = 0, HBP = 0, DS = 0, max=true},
+		Yellow = {trn = 0, Op = 0,Rkt = 0, Frt = 0, MFc=0, BK = 0, BS = 0, Cln = 0, HBP = 0, DS = 0, max=true},
+		Green = {trn = 0, Op = 0,Rkt = 0, Frt = 0, MFc=0, BK = 0, BS = 0, Cln = 0, HBP = 0, DS = 0, max=true},
+		Blue = {trn = 0, Op = 0,Rkt = 0, Frt = 0, MFc=0, BK = 0, BS = 0, Cln = 0, HBP = 0, DS = 0, max=true},
+		Purple = {trn = 0, Op = 0,Rkt = 0, Frt = 0, MFc=0, BK = 0, BS = 0, Cln = 0, HBP = 0, DS = 0, max=true},
+}
+
+bidTable = {
+		last = {amount = 0, bidder = {}, special = "", initiator = {}, tied = false, ties = {}},
+		pass = {White = false, Red = false, Yellow = false, Green = false, Blue = false, Purple = false},
+		ongoing = false,
+		visibility = {White = true, Red = true, Yellow = true, Green = true, Blue = true, Purple = true}
+}
+
+contractBidTable = {
+		last = {amount = 10, bidder = {}, special = "", initiator = {}, tied = false, ties = {}},
+		pass = {White = false, Red = false, Yellow = false, Green = false, Blue = false, Purple = false},
+		ongoing = false,
+		visibility = {White = true, Red = true, Yellow = true, Green = true, Blue = true, Purple = true}
+}
+
+ftTrackerTable = {
+		White = {LEOA = 0,OP1A = 0, OP2A = 0, FA = 0, B1A = 0, B2A = 0, ISOA = 0,LEOI = 0,OP1I = 0, OP2I = 0, FI = 0, B1I = 0, B2I = 0, ISOI = 0, max=true, bank = 'LEO'},
+		Red = {LEOA = 0,OP1A = 0, OP2A = 0, FA = 0, B1A = 0, B2A = 0, ISOA = 0,LEOI = 0,OP1I = 0, OP2I = 0, FI = 0, B1I = 0, B2I = 0, ISOI = 0, max=true, bank = 'LEO'},
+		Yellow = {LEOA = 0,OP1A = 0, OP2A = 0, FA = 0, B1A = 0, B2A = 0, ISOA = 0,LEOI = 0,OP1I = 0, OP2I = 0, FI = 0, B1I = 0, B2I = 0, ISOI = 0, max=true, bank = 'LEO'},
+		Green = {LEOA = 0,OP1A = 0, OP2A = 0, FA = 0, B1A = 0, B2A = 0, ISOA = 0,LEOI = 0,OP1I = 0, OP2I = 0, FI = 0, B1I = 0, B2I = 0, ISOI = 0, max=true, bank = 'LEO'},
+		Blue = {LEOA = 0,OP1A = 0, OP2A = 0, FA = 0, B1A = 0, B2A = 0, ISOA = 0,LEOI = 0,OP1I = 0, OP2I = 0, FI = 0, B1I = 0, B2I = 0, ISOI = 0, max=true, bank = 'LEO'},
+		Purple = {LEOA = 0,OP1A = 0, OP2A = 0, FA = 0, B1A = 0, B2A = 0, ISOA = 0,LEOI = 0,OP1I = 0, OP2I = 0, FI = 0, B1I = 0, B2I = 0, ISOI = 0, max=true, bank = 'LEO'},
+}
+
+burnTable = {White = true, Red = true, Yellow = true, Green = true, Blue = true, Purple = true}
+
+vpTrackerTable = {
+	White = {Tkn = 0,Fct = 0, Col = 0, Glr = 0, Drt = 0, Fut = 0,Pol = 0,Brn = 0, Brb = 0,Con = 0,Exo = 0,max=false},
+	Red = {Tkn = 0,Fct = 0, Col = 0, Glr = 0, Drt = 0, Fut = 0,Pol = 0,Brn = 0, Brb = 0,Con = 0,Exo = 0,max=false},
+	Yellow = {Tkn = 0,Fct = 0, Col = 0, Glr = 0, Drt = 0, Fut = 0,Pol = 0,Brn = 0, Brb = 0,Con = 0,Exo = 0,max=false},
+	Green = {Tkn = 0,Fct = 0, Col = 0, Glr = 0, Drt = 0, Fut = 0,Pol = 0,Brn = 0, Brb = 0,Con = 0,Exo = 0,max=false},
+	Blue = {Tkn = 0,Fct = 0, Col = 0, Glr = 0, Drt = 0, Fut = 0,Pol = 0,Brn = 0, Brb = 0,Con = 0,Exo = 0,max=false},
+	Purple = {Tkn = 0,Fct = 0, Col = 0, Glr = 0, Drt = 0, Fut = 0,Pol = 0,Brn = 0, Brb = 0,Con = 0,Exo = 0,max=false},
+	Black = {max = false},
+	Grey = {max = false}
+}
+
+timerTable = {
+	active = {'Pause'},
+	prevplayer = {},
+	auction = true,
+	last = 0,
+	White = {time = 0.0},
+	Red = {time = 0.0},
+	Yellow = {time = 0.0},
+	Green = {time = 0.0},
+	Blue = {time = 0.0},
+	Purple = {time = 0.0},
+	Pause = {time = 0.0},
+	visibility = {White = true, Red = true, Yellow = true, Green = true, Blue = true, Purple = true}
+}
+
+exodusDeckTable = {{ name = "", guid = "", flip = false},
+				   { name = "", guid = "", flip = false},
+			   	   { name = "", guid = "", flip = false},
+			   	   { name = "", guid = "", flip = false},
+			   	   { name = "", guid = "", flip = false},
+			   	   { name = "", guid = "", flip = false}}
+
+updatetime = 0
+
+--===================================================================================EVENT FCNS
+------------------init on load
+function onLoad(saved_data)
+    --[[ print('onLoad!') --]]
+		
+	--set random seed
+	math.randomseed(os.time())
+	
+	--checkGUID Refs for components
+	checkGUIDs()
+	
+	--[[
+	--enable/disable sound
+	soundCheck = false
+	if refFound.tools.sound = true then
+		soundCheck = true
+	else
+		printToAll('Sound asset bundle not found. Disabling sound alerts.',msgError)
+	end
+	--]]
+	
+	-----------------debug loads
+	local devMode = false
+	if devMode == true then
+		devModeFcn()
+	end
+	
+	
+	---------------------load saves, if specific table needs to be cleared, place -- in front of relevant load fcn
+	local loadData = true
+	if loadData == true then
+		printToAll("Loading saved data for UI tools.",msgAction)
+		loadGlobalData()
+		loadTurnData()
+		loadBidData()
+		loadContractBidData()
+		loadFTData()
+		loadBurnData()
+		loadVPData()
+		loadTimerData()
+		loadExodusData()
+		timerTable.last = Time.time
+	end
+	
+	print("Pausing Timer after load")
+	timerTable.auction = true
+	
+	--add hotkeys
+	addHotkey( "Spread Deck",  spreadByHotkey,  false)
+		
+	--load setup UI as needed
+	if setupConfig.step ~= "done" then
+		updateSetupUI()
+	end
+	
+	--attempt at bugfix for loading ui with 13.0.4 hotfix
+	Wait.frames(updateUI,1)
+	--updateUI()
+	updateInteractive()
+	--add context menu to existing decks
+	loadDeckContext()
+	
+	
+	--welcome messages
+	printToAll('====================================================',"White")
+	printToAll('High Frontier 4 All by Phil Eklund',"Yellow")
+	printToAll('Game published by Sierra Madre Games/Ion Game Design',"Yellow")
+	printToAll('Unofficial TTS Mod Version with Scripted UI by Eskander',"Blue")
+	printToAll("Forked from 'High Frontier 4 All Official' TTS mod by visceralamoeba and Samuelw","White")
+	printToAll('====================================================',"White")
+	printToAll('>>README: This version includes many scripts and tools.  View readme in notebook for instructions.',msgInfo)
+	printToAll(">>Music: Holst's 'the Planets' is loaded.  Use play/pause buttons at top left.",msgInfo)
+	printToAll('>>Splay: Right click context menu on decks to splay cards to right.',msgInfo)
+	printToAll('>>If you intend to use Scripted Setup, do not interact/move pieces until scripted setup steps are complete.',msgPrompt)	
+end
+
+function onUpdate()
+	if configTable.toolTimer then
+		if updatetime >= 60 then
+			timerAddShort()
+			updatetime = 0
+		else
+			updatetime = updatetime + 1
+		end
+	end
+end
+
+---init functions
+--------shows ui and dev tools
+function devModeFcn()
+	UI.setAttribute("devSaveCoords", "active", true)
+	UI.setAttribute("devSaveRandCoords", "active", true)
+	UI.setAttribute("devSavePFigCoords", "active", true)
+	UI.setAttribute("devInspirationTest", "active", true)
+	UI.setAttribute("DiceRollerParent", "active", true)
+	UI.setAttribute("TurnTrackerParent", "active", true)
+	UI.setAttribute("BidToolParent", "active", true)
+	UI.setAttribute("FTTrackerParent", "active", true)
+end
+
+
+------loads global data
+function loadGlobalData()
+	local ind = {}
+	local bodyText = ""
+	local found = false
+	local notebooks = Notes.getNotebookTabs()
+	for k,v in pairs(notebooks) do
+		if v.title == "HardSaveData" then
+			ind = v.index
+			bodyText = v.body
+			found = true
+		end
+	end
+	if found == false then
+		Notes.addNotebookTab({title = "HardSaveData", body = "", color = "Black"})
+	else
+		local data_to_load = JSON.decode(bodyText)
+		if data_to_load == nil then
+			--print("No previous hard save data.")
+		else
+			setupConfig = data_to_load[1]
+			seatSetupTable = data_to_load[2]
+			seatTable = data_to_load[3]
+			configTable = data_to_load[4]
+			toolConfig = data_to_load[5]
+			--print("Hard save data loaded")
+		end
+	end
+end
+
+function loadTurnData()
+	local ind = {}
+	local bodyText = ""
+	local found = false
+	local notebooks = Notes.getNotebookTabs()
+	for k,v in pairs(notebooks) do
+		if v.title == "DataTurn" then
+			ind = v.index
+			bodyText = v.body
+			found = true
+		end
+	end
+	if found == false then
+		Notes.addNotebookTab({title = "DataTurn", body = "", color = "Black"})
+	else
+		local data_to_load = JSON.decode(bodyText)
+		if data_to_load == nil then
+			--print("No previous hard save data.")
+		else
+			turnYear = data_to_load[1]
+			turnTrackerTable = data_to_load[2]
+		end
+	end
+end
+
+function loadBidData()
+	local ind = {}
+	local bodyText = ""
+	local found = false
+	local notebooks = Notes.getNotebookTabs()
+	for k,v in pairs(notebooks) do
+		if v.title == "DataBid" then
+			ind = v.index
+			bodyText = v.body
+			found = true
+		end
+	end
+	if found == false then
+		Notes.addNotebookTab({title = "DataBid", body = "", color = "Black"})
+	else
+		local data_to_load = JSON.decode(bodyText)
+		if data_to_load == nil then
+			--print("No previous hard save data.")
+		else
+			bidTable = data_to_load[1]
+		end
+	end
+end
+
+function loadContractBidData()
+	local ind = {}
+	local bodyText = ""
+	local found = false
+	local notebooks = Notes.getNotebookTabs()
+	for k,v in pairs(notebooks) do
+		if v.title == "DataContractBid" then
+			ind = v.index
+			bodyText = v.body
+			found = true
+		end
+	end
+	if found == false then
+		Notes.addNotebookTab({title = "DataContractBid", body = "", color = "Black"})
+	else
+		local data_to_load = JSON.decode(bodyText)
+		if data_to_load == nil then
+			--print("No previous hard save data.")
+		else
+			contractBidTable = data_to_load[1]
+		end
+	end
+end
+
+function loadFTData()
+	local ind = {}
+	local bodyText = ""
+	local found = false
+	local notebooks = Notes.getNotebookTabs()
+	for k,v in pairs(notebooks) do
+		if v.title == "DataFT" then
+			ind = v.index
+			bodyText = v.body
+			found = true
+		end
+	end
+	if found == false then
+		Notes.addNotebookTab({title = "DataFT", body = "", color = "Black"})
+	else
+		local data_to_load = JSON.decode(bodyText)
+		if data_to_load == nil then
+			--print("No previous hard save data.")
+		else
+			ftTrackerTable = data_to_load[1]
+		end
+	end
+end
+
+function loadBurnData()
+	local ind = {}
+	local bodyText = ""
+	local found = false
+	local notebooks = Notes.getNotebookTabs()
+	for k,v in pairs(notebooks) do
+		if v.title == "DataBurn" then
+			ind = v.index
+			bodyText = v.body
+			found = true
+		end
+	end
+	if found == false then
+		Notes.addNotebookTab({title = "DataBurn", body = "", color = "Black"})
+	else
+		local data_to_load = JSON.decode(bodyText)
+		if data_to_load == nil then
+			--print("No previous hard save data.")
+		else
+			burnTable = data_to_load[1]
+		end
+	end
+end
+
+function loadVPData()
+	local ind = {}
+	local bodyText = ""
+	local found = false
+	local notebooks = Notes.getNotebookTabs()
+	for k,v in pairs(notebooks) do
+		if v.title == "DataVP" then
+			ind = v.index
+			bodyText = v.body
+			found = true
+		end
+	end
+	if found == false then
+		Notes.addNotebookTab({title = "DataVP", body = "", color = "Black"})
+	else
+		local data_to_load = JSON.decode(bodyText)
+		if data_to_load == nil then
+			--print("No previous hard save data.")
+		else
+			vpTrackerTable = data_to_load[1]
+		end
+	end
+end
+
+function loadDeckContext()
+	local objs = getAllObjects()
+	for k,v in pairs(objs) do
+		if v.tag == "Deck" then
+			v.addContextMenuItem("Splay Stack to Right", function() splayDeckRight(v) end)
+		end
+	end
+end
+
+function loadTimerData()
+	local ind = {}
+	local bodyText = ""
+	local found = false
+	local notebooks = Notes.getNotebookTabs()
+	for k,v in pairs(notebooks) do
+		if v.title == "DataTimer" then
+			ind = v.index
+			bodyText = v.body
+			found = true
+		end
+	end
+	if found == false then
+		Notes.addNotebookTab({title = "DataTimer", body = "", color = "Black"})
+	else
+		local data_to_load = JSON.decode(bodyText)
+		if data_to_load == nil then
+			--print("No previous hard save data.")
+		else
+			timerTable = data_to_load[1]
+		end
+	end
+end
+
+function loadExodusData()
+	local ind = {}
+	local bodyText = ""
+	local found = false
+	local notebooks = Notes.getNotebookTabs()
+	for k,v in pairs(notebooks) do
+		if v.title == "DataExodus" then
+			ind = v.index
+			bodyText = v.body
+			found = true
+		end
+	end
+	if found == false then
+		Notes.addNotebookTab({title = "DataExodus", body = "", color = "Black"})
+	else
+		local data_to_load = JSON.decode(bodyText)
+		if data_to_load == nil then
+			--print("No previous hard save data.")
+		else
+			timerTable = data_to_load[1]
+		end
+	end
+end
+
+---------------saves
+--frequent autosave fcn
+function onSave()
+    --[[ print('onSave!') --]]
+end
+
+---custom hard save fcns
+--hard save global
+function hardSave()
+	local data_to_save = {
+		setupConfig,
+		seatSetupTable,
+		seatTable,
+		configTable,
+		toolConfig
+	}
+
+	saved_data = JSON.encode(data_to_save)
+	--to remove hard saved data, delete contents of notebook, "HardSaveData"
+	
+	local i = {}
+	local notebooks = Notes.getNotebookTabs()
+	for k,v in pairs(notebooks) do
+		if v.title == "HardSaveData" then
+			i = v.index
+		end
+	end
+	Notes.editNotebookTab({index = i, body = saved_data})
+end
+
+--hard save turn
+function hardSaveTurn()
+	local data_to_save = {
+		turnYear,
+		turnTrackerTable
+	}
+
+	saved_data = JSON.encode(data_to_save)
+	--to remove hard saved data, delete contents of notebook, "DataTurn"
+	
+	local i = {}
+	local notebooks = Notes.getNotebookTabs()
+	for k,v in pairs(notebooks) do
+		if v.title == "DataTurn" then
+			i = v.index
+		end
+	end
+	Notes.editNotebookTab({index = i, body = saved_data})
+end
+
+--hard save bid
+function hardSaveBid()
+	local data_to_save = {
+		bidTable
+	}
+
+	saved_data = JSON.encode(data_to_save)
+	--to remove hard saved data, delete contents of notebook, "DataBid"
+	
+	local i = {}
+	local notebooks = Notes.getNotebookTabs()
+	for k,v in pairs(notebooks) do
+		if v.title == "DataBid" then
+			i = v.index
+		end
+	end
+	Notes.editNotebookTab({index = i, body = saved_data})
+end
+
+function hardSaveContractBid()
+	local data_to_save = {
+		contractBidTable
+	}
+
+	saved_data = JSON.encode(data_to_save)
+	--to remove hard saved data, delete contents of notebook, "DataBid"
+	
+	local i = {}
+	local notebooks = Notes.getNotebookTabs()
+	for k,v in pairs(notebooks) do
+		if v.title == "DataContractBid" then
+			i = v.index
+		end
+	end
+	Notes.editNotebookTab({index = i, body = saved_data})
+end
+
+--hard save FT
+function hardSaveFT()
+	local data_to_save = {
+		ftTrackerTable
+	}
+
+	saved_data = JSON.encode(data_to_save)
+	--to remove hard saved data, delete contents of notebook, "DataFT"
+	
+	local i = {}
+	local notebooks = Notes.getNotebookTabs()
+	for k,v in pairs(notebooks) do
+		if v.title == "DataFT" then
+			i = v.index
+		end
+	end
+	Notes.editNotebookTab({index = i, body = saved_data})
+end
+
+--hard save Burn
+function hardSaveBurn()
+	local data_to_save = {
+		burnTable
+	}
+
+	saved_data = JSON.encode(data_to_save)
+	--to remove hard saved data, delete contents of notebook, "DataBurn"
+	
+	local i = {}
+	local notebooks = Notes.getNotebookTabs()
+	for k,v in pairs(notebooks) do
+		if v.title == "DataBurn" then
+			i = v.index
+		end
+	end
+	Notes.editNotebookTab({index = i, body = saved_data})
+end
+
+--hard save VP
+function hardSaveVP()
+	local data_to_save = {
+		vpTrackerTable
+	}
+
+	saved_data = JSON.encode(data_to_save)
+	--to remove hard saved data, delete contents of notebook, "DataVP"
+	
+	local i = {}
+	local notebooks = Notes.getNotebookTabs()
+	for k,v in pairs(notebooks) do
+		if v.title == "DataVP" then
+			i = v.index
+		end
+	end
+	Notes.editNotebookTab({index = i, body = saved_data})
+end
+
+function hardSaveTimer()
+	local data_to_save = {
+		timerTable
+	}
+
+	saved_data = JSON.encode(data_to_save)
+	--to remove hard saved data, delete contents of notebook, "DataBid"
+	
+	local i = {}
+	local notebooks = Notes.getNotebookTabs()
+	for k,v in pairs(notebooks) do
+		if v.title == "DataTimer" then
+			i = v.index
+		end
+	end
+	Notes.editNotebookTab({index = i, body = saved_data})
+end
+
+function hardSaveExodus()
+	local data_to_save = {
+		exodusDeckTable
+	}
+
+	saved_data = JSON.encode(data_to_save)
+	--to remove hard saved data, delete contents of notebook, "DataBid"
+	
+	local ind = {}
+	local bodyText = ""
+	local found = false
+	local notebooks = Notes.getNotebookTabs()
+	for k,v in pairs(notebooks) do
+		if v.title == "DataExodus" then
+			ind = v.index
+			bodyText = v.body
+			found = true
+		end
+	end
+	if found == false then
+		Notes.addNotebookTab({title = "DataExodus", body = "", color = "Black"})
+	else
+
+		local i = {}
+		local notebooks = Notes.getNotebookTabs()
+		for k,v in pairs(notebooks) do
+			if v.title == "DataExodus" then
+				i = v.index
+			end
+		end
+		Notes.editNotebookTab({index = i, body = saved_data})
+	end
+end
+
+
+--============================================================trigger events
+
+--1) sets red disk to seniority type / 2) if crew  to hand, changes faction color during setup period (disables after setup)
+function onObjectEnterScriptingZone(zone,  enter_object)
+	--print(zone)
+	--print(enter_object)
+	--change red disk to snap
+	if zone.guid == objRefs.zones.zoneSeniority then
+		if enter_object.getName() == "Red Translucent Disk" then
+			enter_object.use_snap_points = true
+			enter_object.tooltip = true
+			enter_object.setName("Seniority Disk")
+		elseif enter_object.getName() == "Factory/Delegate" then
+			enter_object.use_snap_points = true
+		end
+	end
+	--change pcolor for crew
+	if setupConfig.general.colorSwap == true then
+		local objName = enter_object.getName()
+		if enter_object.tag == "Card" and string.match(objName,"Crew") then
+			local newColor = string.sub(objName,6)
+			--local newColorStr = newColor
+			if newColor == "Black" then
+				newColor = "Blue"
+			end
+			local checkColorTable = {}
+			local index = 0
+			for k,v in pairs(seatSetupTable) do
+				index = v.color
+				checkColorTable[index] = {}
+				checkColorTable[index] = v.status
+				--print(index .. "     " .. v.status)
+			end
+			local oldColor = ""
+			local i = 1
+			if checkColorTable[newColor] == "chosen" then
+				if Player[newColor].seated == true then
+					printToAll(newColor .. " faction has already been assigned to " .. Player[newColor].steam_name .. ".",msgError)
+				else
+					printToAll(newColor .. " faction has already been assigned to a seat.", msgError)
+				end
+			else
+				local done = false
+				for k,v in pairs(seatSetupTable) do
+					if done == false then
+						oldColor = v.color
+						if zone.guid == v.zoneGUID and v.status == "chosen" then
+							if Player[oldColor].seated == true then
+								printToAll(Player[oldColor].steam_name .. " has already drawn/chosen a faction.",msgError)
+							else
+								printToAll(oldColor .. " seat has already been assigned/dealt a faction.", msgError)
+							end
+							done = true
+						elseif zone.guid == v.zoneGUID and oldColor == newColor then
+							if Player[oldColor].seated == true then
+								if Player[oldColor].steam_name then
+									printToAll(Player[oldColor].steam_name .. " has drawn/chosen faction color " .. newColor .. ".",newColor)
+								else
+									printToAll(oldColor .. " seat has drawn/chosen faction color " .. newColor .. ".",newColor)
+								end
+							else
+								printToAll(oldColor .. " seat has drawn/chosen faction color " .. newColor .. ".",newColor)
+							end
+							local desc = enter_object.getDescription()
+							enter_object.setDescription(desc .. ", Seated")
+							v.status = "chosen"
+							done = true
+							zone.destruct()
+							hardSave()
+						elseif zone.guid == v.zoneGUID then
+							local gainingSeatNum = k
+							local losingSeatNum = ""
+							for j, l in pairs(seatSetupTable) do
+								if l.color == newColor then
+									losingSeatNum = j
+								end
+							end
+							local desc = enter_object.getDescription()
+							enter_object.setDescription(desc .. ", Seated")
+							seatSetupTable[k].status = "chosen"
+								
+							--shift player losing color, out of his seat to black
+							if Player[newColor].seated == true then
+								if Player["Black"].seated == true then
+									Player["Black"].changeColor("Grey")
+								end
+								Player[newColor].changeColor("Black")
+							end
+							
+							--[[ --attempted fix for hand switching bug with names
+							local handsTable = Hands.getHands()
+							local oldHandObj = {}
+							local newHandObj = {}
+							for j, l in pairs(handsTable) do
+								if l.getValue() == oldColor then
+									oldHandObj = l
+								elseif l.getValue() == newColor then
+									newHandObj = l
+								end	
+							end
+							if oldHandObj then
+								oldHandObj.setValue("Black")
+								Wait.frames(function() delayedHandValue(oldHandObj, newColor) end, 1)
+							end
+							if newHandObj then
+								newHandObj.setValue("Black")
+								Wait.frames(function() delayedHandValue(newHandObj, oldColor) end, 1)
+							end
+							--]]
+							
+							
+							local handsTable = Hands.getHands()
+							for j, l in pairs(handsTable) do
+								if l.getValue() == oldColor then
+									l.setValue(newColor)
+								elseif l.getValue() == newColor then
+									l.setValue(oldColor)
+								end
+							end
+		
+	
+							--[[ --old method of color swap
+							--swap hand locations
+							local oldHandData = Player[oldColor].getHandTransform()
+							local newHandData = Player[newColor].getHandTransform()
+							local params = {}
+							params.position = oldHandData.position
+							params.rotation = oldHandData.rotation
+							params.scale = oldHandData.scale
+							Player[newColor].setHandTransform(params)
+							params = {}
+							params.position = newHandData.position
+							params.rotation = newHandData.rotation
+							params.scale = newHandData.scale
+							Player[oldColor].setHandTransform(params)	
+							--]]
+							
+							seatSetupTable[gainingSeatNum].color = newColor
+							if losingSeatNum ~= "" then
+								seatSetupTable[losingSeatNum].color = oldColor
+							end
+							
+														
+							if Player[oldColor].seated == true then
+								if Player[oldColor].steam_name then
+									printToAll(Player[oldColor].steam_name .. " has drawn/chosen faction color " .. newColor .. ". Player color has been swapped.",newColor)
+								else
+									printToAll("The seat that previously was " .. oldColor .. " has drawn/chosen faction color " .. newColor .. ". The seat color has been swapped.",newColor)
+								end
+								Wait.frames(function() delayedSeatSwap(oldColor, seatSetupTable[gainingSeatNum].color) end, 2)
+								--Player[oldColor].changeColor(seatSetupTable[gainingSeatNum].color)
+								--fix until setValue updates name locations
+								Wait.frames(function() delayedSeatReset(seatSetupTable[gainingSeatNum].color) end, 4)
+							else
+								printToAll("The seat that previously was " .. oldColor .. " has drawn/chosen faction color " .. newColor .. ". The seat color has been swapped.",newColor)
+							end		
+							
+							if losingSeatNum ~= "" then
+								Wait.frames(function() delayedSeatSwap("Black", seatSetupTable[losingSeatNum].color) end, 3)
+								--fix until setValue updates name locations
+								Wait.frames(function() delayedSeatReset(seatSetupTable[losingSeatNum].color) end, 4)
+							else
+								Wait.frames(function() delayedSeatSwap("Black", "Grey") end, 3)
+							end
+							
+							
+							
+
+							done = true
+							
+							zone.destruct()
+							hardSave()
+						end
+					end
+				end
+			end
+		end
+	end
+end
+
+
+--possible fix for hand switching bug with names
+function delayedHandValue(obj, col)
+	if obj then
+		obj.setValue(col)
+	end
+end
+
+function delayedSeatSwap(current, swapTo)
+	if Player[current].seated == true then
+		Player[current].changeColor(swapTo)
+	end
+end
+
+--fix for hand switching bug with names
+function delayedSeatReset(col)
+	--print('trying to translate ' .. col)
+	local params = {}
+	local handTransData = Player[col].getHandTransform()
+	if handTransData then
+		params.position = {handTransData.position.x, handTransData.position.y + 0.1, handTransData.position.z}
+		params.rotation = handTransData.rotation
+		params.scale = handTransData.scale
+		Player[col].setHandTransform(params)
+	end
+end
+
+function onObjectLeaveScriptingZone(zone,  leave_object)
+	if zone.guid == objRefs.zones.zoneSeniority then
+		if leave_object.getName() == "Factory/Delegate" then
+			leave_object.use_snap_points = false
+		end
+	end
+end
+
+--============================================================Custom Utility fcns
+
+-----------lock interactables
+function toggleInteractable(_p, bool, _id)
+	if bool == "True" then
+		configTable.interactableBoards = true
+		
+	else
+		configTable.interactableBoards = false
+	end
+	updateInteractive()
+	hardSave()
+end
+
+function updateInteractive()
+	for k,v in pairs(staticObjsRef) do
+		local obj = getObjectFromGUID(v)
+		if obj then
+			obj.interactable = configTable.interactableBoards
+		end
+	end
+end
+
+-------------context menu for splaying
+function onObjectSpawn(spawned)
+	--print(spawned.tag)
+	if spawned.tag == "Deck" then
+		spawned.addContextMenuItem("Splay Stack to Right", function() splayDeckRight(spawned) end)
+	end
+end
+
+function splayDeckRight(deck)
+	local minY = 0.92
+	local dx = -0.91
+	local dy = 0.07
+	local cardCount = deck.getQuantity() 
+	local pos = deck.getPosition()
+	local rot = deck.getRotation()
+	local params = {}
+	for i=1, cardCount do
+		if i ~= cardCount then
+			params.top = true
+			params.rotation = rot
+			params.position = {x=dx*(cardCount-i),y=0,z=0}
+			params.position = deck.positionToWorld(params.position)
+			params.position = {x= params.position.x, y= params.position.y + (dy*(cardCount-i)), z = params.position.z}
+			deck.takeObject(params)
+		else
+		end
+		params = {}
+	end
+end
+
+--uses default spread fcn, spread to right, as triggered by hotkey; mirrors default game behavior with shuffle/group/other: if player has selected multiple objects, will still group instead of spread; will spread a deck if single deck selected; will spread a deck that is moused over if nothing is selected
+function spreadByHotkey(_p, _obj, _pos, _k)
+	local objs = Player[_p].getSelectedObjects()
+	if #objs > 0 then
+		if #objs == 1 then
+			if objs[1].type == "Deck" then
+				objs[1].spread(spreadDistance)
+			end
+		end
+	elseif _obj then
+		if _obj.type == "Deck" then
+			_obj.spread(spreadDistance)
+		end
+	end
+end
+
+--Plays currently loaded audioclip when everyone has loaded the audioclip. coroutine
+function playMusic()
+	--Wait for everyone to load the audioclip.
+	while MusicPlayer.loaded == false do
+		coroutine.yield(0)
+	end
+
+	--Play audioclip.
+	MusicPlayer.play()
+	playingMusic = true
+	return 1
+end
+
+
+--guid ref table checker
+function checkGUIDs()
+	refFound = {}
+	--check guidRefs
+	for k,v in pairs(objRefs) do
+		for j,l in pairs(v) do
+			local obj = {}
+			obj = getObjectFromGUID(l)
+			if obj then
+				if refFound[k] then
+					refFound[k][j] = true
+				else
+					refFound[k] = {}
+					refFound[k][j] = true
+				end
+			else
+				if refFound[k] then
+					refFound[k][j] = false
+				else
+					refFound[k] = {}
+					refFound[k][j] = false
+				end
+				if j == "polBoard" or j =="standard" and setupConfig.general.step == "done" then
+				elseif j == "polBoard3" or j == "isotopeFTs" or j == "bribeDisks" or j == "spaceElevators" or j =="setupSaver" then
+				else
+					printToAll("Object reference to " .. tostring(j) .. " not found. This may impact scripted actions.",msgError)
+				end
+			end
+		end
+	end
+end
+
+function findPMat(params)
+	local matName = params[1]
+	local color = params[2]
+	local possibleMat = ""
+	local handsTable = Hands.getHands()
+	local handData = ""
+	for k,v in pairs(handsTable) do
+		if v.getValue() == color then
+			handData = Player[color].getHandTransform()
+		end
+	end
+	if handData == "" then
+		return possibleMat
+	end
+	local reversed = false
+	if handData.rotation.y >= 90 and handData.rotation.y <= 270 then
+		reversed = true
+	end
+	local castParams = {}
+	local possibleMat = ""
+	local dX1 = {}
+	local dX2 = {}
+	castParams.origin = handData.position
+	castParams.direction = {0,-1,0}
+	castParams.max_distance = 10
+	castParams.type = 3
+	castParams.size = {x=22, y=1,z=30}
+	castParams.debug = false
+	local hitTable = Physics.cast(castParams)
+	for k,v in pairs(hitTable) do
+		if string.match(v.hit_object.getName(), matName) then
+			if possibleMat == "" then
+				possibleMat = v.hit_object
+			else
+				dX1 = math.abs(handData.position.x - possibleMat.getPosition().x)
+				dX2 = math.abs(handData.position.x - v.hit_object.getPosition().x)
+				if dX1 > dX2 then
+					possibleMat = v.hit_object
+				end
+			end
+		end
+	end
+	return possibleMat
+end
+
+-----------------fcns for locking components after moving/initializing
+function lockMe(objsToLock)
+	for k,v in pairs(objsToLock) do
+		local obj = getObjectFromGUID(v)
+		if obj then
+			obj.setLock(true)
+		end
+	end
+end
+
+function lockMeCallback(object_spawned)
+	object_spawned.setLock(true)
+end
+
+-----------dealing fcns
+function shuffleAndDealToAll(deck, count, seated)
+	if deck then
+		deck.shuffle()
+	end
+	broadcastToAll("Shuffling and dealing cards. Please wait.",msgPrompt)
+	Wait.frames(function() customDealToAll(deck, count, seated) end, 120)
+end
+
+function customDealToAll(deck, count, seated)
+	local crewCheck = deck.getName()
+	if seated == true then
+		deck.deal(count)
+		printToAll(count .. " cards have been dealt to all seated players.",msgComplete)
+	else
+		local i=1
+		for i=1, #seatSetupTable do
+			deck.deal(count, seatSetupTable[i].color)
+		end
+		
+		printToAll(count .. " cards have been dealt to all seats.",msgComplete)
+	end
+	if crewCheck == "Crew Deck" then
+		UI.setAttribute("BtnC2Next", "active", "True")
+	end
+end
+
+--===============================================================================UI Utility fcns
+
+-----------------------------update visibility/windows/values
+
+function updateSetupUI()
+	local step = setupConfig.general.step
+	
+	--show relevant setup window
+	if step ~= "done" then
+		UI.setAttribute("WindowSetup" .. step, "active", true)
+		if setupConfig.general.max==false and setupConfig.general.max ~= 0 then
+			UI.setAttribute("SetupContent" .. step, "active", false)
+		elseif setupConfig.general.max ~= 0 then
+			UI.setAttribute("SetupContent" .. step, "active", "true")
+		end
+	end
+	
+	--adjust first player options
+	if step == "3" then
+		local str = "Setup3FPOpt"
+		local colors = {Yellow, Purple, White, Green, Blue, Red}
+		for k,v in pairs(colors) do
+			UI.setAttribute(str .. v.color, "active", "False")
+		end
+		for k,v in pairs(seatSetupTable) do
+			UI.setAttribute(str .. v.color, "active", "True")
+		end
+	end
+end
+
+
+function updateUI()
+	-----------enable/disable tools
+	updateToolsEnabled()
+	if setupConfig.general.step == "done" then
+		UI.setAttribute("ConfigMenu", "active", "True")
+		UI.setAttribute("VPMenu", "active", "True")
+	end
+	
+	-----------min/max tools by player
+	updateMinMax()
+
+	---------update tool scales
+	updateToolScale()
+	
+	updateTurnUI()
+	
+	updateTTSTurns()
+	
+	updateBidUI()
+
+	updateContractBidUI()
+	
+	updateFTUI()
+	
+	updateFTUIMods()
+	
+	updateVPUI()
+	
+	updateInteractive()
+end
+
+function updateToolsEnabled()
+	UI.setAttribute("DiceRollerParent", "active", configTable.toolDiceRoller )
+	UI.setAttribute("toggleUIToolDiceRoller", "isOn", configTable.toolDiceRoller )
+
+	UI.setAttribute("FTTrackerParent", "active", configTable.toolFTTracker )
+	UI.setAttribute("toggleUIToolFTTracker", "isOn", configTable.toolFTTracker )
+
+	UI.setAttribute("BidToolParent", "active", configTable.toolBidTool )
+	UI.setAttribute("toggleUIToolBidTool", "isOn", configTable.toolBidTool )
+
+	UI.setAttribute("TurnTrackerParent", "active", configTable.toolTurnTracker )
+	UI.setAttribute("toggleUIToolTurnTracker", "isOn", configTable.toolTurnTracker )
+	
+	UI.setAttribute("BurnParentWhite", "active", configTable.toolBurnTool)
+	UI.setAttribute("BurnParentYellow", "active", configTable.toolBurnTool)
+	UI.setAttribute("BurnParentBlue", "active", configTable.toolBurnTool)
+	UI.setAttribute("BurnParentGreen", "active", configTable.toolBurnTool)
+	UI.setAttribute("BurnParentPurple", "active", configTable.toolBurnTool)
+	UI.setAttribute("BurnParentRed", "active", configTable.toolBurnTool)
+	UI.setAttribute("toggleUIToolBurnTool", "isOn", configTable.toolBurnTool )
+	
+	UI.setAttribute("BurnParentBernalWhite", "active", configTable.toolBurnToolBernal)
+	UI.setAttribute("BurnParentBernalYellow", "active", configTable.toolBurnToolBernal)
+	UI.setAttribute("BurnParentBernalBlue", "active", configTable.toolBurnToolBernal)
+	UI.setAttribute("BurnParentBernalGreen", "active", configTable.toolBurnToolBernal)
+	UI.setAttribute("BurnParentBernalPurple", "active", configTable.toolBurnToolBernal)
+	UI.setAttribute("BurnParentBernalRed", "active", configTable.toolBurnToolBernal)
+	UI.setAttribute("toggleUIToolBurnToolBernal", "isOn", configTable.toolBurnToolBernal )
+
+	UI.setAttribute("ContractBidToolParent", "active", configTable.toolContractBidTool )
+
+	updateTimerUI()
+	UI.setAttribute("TimerToolParent", "active", configTable.toolTimer )
+	UI.setAttribute("toggleTimerPause", "isOn", toolConfig.timer.pause )
+	UI.setAttribute("toggleTimerPauseButton", "isOn", toolConfig.timer.pausebutton )
+
+end
+
+function updateMinMax()
+	--min/max of FTtracker
+	local colorsVis = "Black|Grey"
+	for k,v in pairs(ftTrackerTable) do
+		if v.max == true then
+			colorsVis = colorsVis .. "|" .. k
+		end
+	end
+	UI.setAttribute("FTTrackerChild", "visibility", colorsVis)
+	
+	--min/max of bid tool
+	colorsVis = "Black|Grey"
+	for k,v in pairs(bidTable.visibility) do
+		if v == true then
+			colorsVis = colorsVis .. "|" .. k
+		end
+	end
+	UI.setAttribute("BidToolChild", "visibility", colorsVis)
+	
+	--min/max of timer tool
+	colorsVis = "Black|Grey"
+	for k,v in pairs(timerTable.visibility) do
+		if v == true then
+			colorsVis = colorsVis .. "|" .. k
+		end
+	end
+	UI.setAttribute("TimerToolChild", "visibility", colorsVis)
+	
+	--min/max of contract bid tool
+	colorsVis = "Black|Grey"
+	for k,v in pairs(contractBidTable.visibility) do
+		if v == true then
+			colorsVis = colorsVis .. "|" .. k
+		end
+	end
+	UI.setAttribute("ContractBidToolChild", "visibility", colorsVis)
+	
+	--min/max of turn tracker
+	colorsVis = "Black|Grey"
+	for k,v in pairs(turnTrackerTable) do
+		if v.max == true then
+			colorsVis = colorsVis .. "|" .. k
+		end
+	end
+	UI.setAttribute("TurnTrackerChild", "visibility", colorsVis)
+	
+	--min/max of Burn tool
+	for k,v in pairs(burnTable) do
+		UI.setAttribute("BurnToolChild" .. k, "active", v)
+	end
+	
+	--min/max of Burn tool
+	for k,v in pairs(burnTable) do
+		UI.setAttribute("BurnToolChildBernal" .. k, "active", v)
+	end
+	
+	
+	--min/max of VP
+	colorsVis = ""
+	for k,v in pairs(vpTrackerTable) do
+		if v.max == true then
+			if colorsVis == "" then
+				colorsVis = k
+			else
+				colorsVis = colorsVis .. "|" .. k
+			end
+			
+		end
+	end	
+	if colorsVis == "" then
+		UI.setAttribute("VPTrackerParent", "active", false)
+	else
+		UI.setAttribute("VPTrackerParent", "active", true)
+		UI.setAttribute("VPTrackerParent", "visibility", colorsVis)
+	end
+end
+
+
+function updateToolScale()
+	UI.setAttribute("FTTrackerParent","scale",toolConfig.ft.scale)
+	UI.setValue("textScaleFT", toolConfig.ft.scale)
+	UI.setAttribute("BidToolParent","scale",toolConfig.bid.scale)
+	UI.setValue("textScaleBid", toolConfig.bid.scale)
+	UI.setAttribute("ContractBidToolParent","scale",toolConfig.bid.scale)
+	UI.setValue("textScaleContractBid", toolConfig.bid.scale)
+	UI.setAttribute("TurnTrackerParent","scale",toolConfig.turn.scale)
+	UI.setValue("textScaleTurn", toolConfig.turn.scale)
+	UI.setAttribute("TimerToolParent","scale",toolConfig.timer.scale)
+	UI.setValue("textScaleTimer", toolConfig.timer.scale)
+end
+
+function updateTurnUI()
+	--update dependencies
+	if toolConfig.turn.mod1 == false then
+		toolConfig.turn.mobile = false
+	end
+	if toolConfig.turn.mod2 == false then
+		toolConfig.turn.colonist = false
+		toolConfig.turn.profit = false
+		toolConfig.turn.autoProfit = false
+	end
+	
+	--update config
+	UI.setAttribute("toggleTurnMod1", "isOn", toolConfig.turn.mod1)
+	UI.setAttribute("toggleTurnMod2", "isOn", toolConfig.turn.mod2)
+	UI.setAttribute("toggleTurnMobile", "isOn", toolConfig.turn.mobile)
+	UI.setAttribute("toggleTurnColonist", "isOn", toolConfig.turn.colonist)
+	UI.setAttribute("toggleTurnProfit", "isOn", toolConfig.turn.profit)
+	UI.setAttribute("toggleTurnAutoProfit", "isOn", toolConfig.turn.autoProfit)
+	UI.setAttribute("toggleTurnMod3", "isOn", toolConfig.turn.mod3)
+	UI.setAttribute("toggleTurnMod4", "isOn", toolConfig.turn.mod4)
+	UI.setAttribute("toggleTurnSolo", "isOn", toolConfig.turn.soloMode)
+	UI.setAttribute("toggleTurnAutoSol", "isOn", toolConfig.turn.turnAutoSol)
+	UI.setAttribute("toggleTurnTTS", "isOn", toolConfig.turn.ttsTurns)
+	UI.setAttribute("toggleTurnSound", "isOn", toolConfig.turn.turnSound)
+	
+	
+	--turn tracker/seats; show fp options based on current seats
+	local seatCol = {}
+	local str = "Turn1FPOpt"
+	UI.setAttribute("Turn1FPOptYellow", "active", "False")
+	UI.setAttribute("Turn1FPOptPurple", "active", "False")
+	UI.setAttribute("Turn1FPOptWhite", "active", "False")
+	UI.setAttribute("Turn1FPOptGreen", "active", "False")
+	UI.setAttribute("Turn1FPOptBlue", "active", "False")
+	UI.setAttribute("Turn1FPOptRed", "active", "False")
+	for k,v in pairs(seatTable) do
+		UI.setAttribute(str .. v, "active", "True")
+		if v == toolConfig.turn.firstPlayer then
+			UI.setAttribute(str .. v, "isOn", "True")
+		end
+	end
+	
+	--turntracker; show colors and turn order
+	str = "turnCellP"
+	local num = {}
+	for i=1, 6 do
+		UI.setAttribute(str .. i, "active", "False")
+	end
+	for k,v in pairs(seatTable) do
+		UI.setAttribute(str .. k, "active", "True")
+		UI.setAttribute(str .. k, "color", v)
+	end
+	
+	--update solomode function
+	local solo = toolConfig.turn.soloMode
+	str = "turnButtonP"
+	for i=1, 6 do
+		UI.setAttribute(str .. i, "active", solo)
+	end
+	
+	--update tooltips
+	str="turnCellP"
+	if toolConfig.turn.soloMode == false then
+		for k,v in pairs(seatTable) do
+			if Player[v].seated == true then
+				UI.setAttribute(str .. k, "tooltip", Player[v].steam_name)
+			else
+				UI.setAttribute(str .. k, "tooltip", v)
+			end
+		end
+	else
+		for k,v in pairs(seatTable) do
+			UI.setAttribute(str .. k, "tooltip", "")
+		end
+	end
+	
+	--turntracker; update turn status
+	str="turnTextP"
+	local str2 = "TurnToggle"
+	num = {}
+	for k,v in pairs(seatTable) do
+		for j, l in pairs(turnTrackerTable) do
+			if v == j then
+				if l.trn == 0 then
+					UI.setValue(str .. k, "")
+					
+					
+				elseif l.trn == 1 then
+					UI.setValue(str .. k, "▼")
+					UI.setAttribute("rowActionGrid", "visibility", v)
+					UI.setAttribute("TurnToolNextRow", "visibility", v)
+					
+					for action, val in pairs(l) do
+						if val == 0 then
+							UI.setAttribute(v .. str2 .. action, "isOn", "False")
+						elseif val == 1 then
+							UI.setAttribute(v .. str2 .. action, "isOn", "True")
+						end
+						UI.setAttribute(v .. str2 .. action, "textColor", "White")
+					end
+				elseif l.trn == 2 then
+					UI.setAttribute(str .. k, "text", "X")
+					
+					
+				end
+			end
+		end
+	end
+	
+	--update year
+	UI.setAttribute("InputCurrentYear", "text", tonumber(turnYear))
+	
+	--update row height
+	local boxes = 2
+	if toolConfig.turn.mod1 == true then
+		boxes = boxes + 1
+	end
+	if toolConfig.turn.mobile == true then
+		boxes = boxes + 1
+	end
+	if toolConfig.turn.mod2 == true then
+		boxes = boxes + 1
+	end
+	if toolConfig.turn.colonist == true then
+		boxes = boxes + 1
+	end
+	if toolConfig.turn.profit == true then
+		boxes = boxes + 1
+	end
+	if toolConfig.turn.mod3 == true then
+		boxes = boxes + 1
+	end
+	if boxes > 6 then
+		UI.setAttribute("rowActionGrid", "preferredHeight","180")
+	elseif boxes > 4 then
+		UI.setAttribute("rowActionGrid", "preferredHeight","135")
+	elseif boxes > 2 then
+		UI.setAttribute("rowActionGrid", "preferredHeight","90")
+	else
+		UI.setAttribute("rowActionGrid", "preferredHeight","45")
+	end
+	
+	--update visible actions
+	local colors = {"Yellow", "Purple", "White", "Green", "Blue", "Red"}
+	for k,v in pairs(colors) do
+		UI.setAttribute(v .. "TurnToggleFrt","active", toolConfig.turn.mod1)
+		UI.setAttribute(v .. "TurnToggleFrt","textColor", "White")
+		UI.setAttribute(v .. "TurnToggleMFc","active", toolConfig.turn.mobile)
+		UI.setAttribute(v .. "TurnToggleMFc","textColor", "White")
+				
+		UI.setAttribute(v .. "TurnToggleBK","active", toolConfig.turn.mod2)
+		UI.setAttribute(v .. "TurnToggleCln","active", toolConfig.turn.colonist)
+		UI.setAttribute(v .. "TurnToggleHBP","active", toolConfig.turn.profit)
+		UI.setAttribute(v .. "TurnToggleBK","textColor", "White")
+		UI.setAttribute(v .. "TurnToggleCln","textColor", "White")
+		UI.setAttribute(v .. "TurnToggleHBP","textColor", "White")
+		
+		UI.setAttribute(v .. "TurnToggleDS","active", toolConfig.turn.mod3)
+		UI.setAttribute(v .. "TurnToggleDS","textColor", "White")
+
+		UI.setAttribute(v .. "TurnToggleCon","active", toolConfig.turn.mod4)
+		UI.setAttribute(v .. "TurnToggleCon","textColor", "White")
+		
+	end
+	
+	--update next year button
+	local inverse = {}
+	if toolConfig.turn.turnAutoSol == true then
+		inverse = false
+	elseif toolConfig.turn.turnAutoSol == false then
+		inverse = true
+	end
+	UI.setAttribute("BtnNextYear", "active", inverse)
+	UI.setAttribute("BtnNextYear", "textColor", "White")
+	
+	--refresh window size
+	if configTable.toolTurnTracker == true then
+		UI.setAttribute("TurnTrackerParent", "active","false")
+		UI.setAttribute("TurnTrackerParent", "active","true")
+	end
+	
+	--update sunspot board
+	if refFound.mats.sunspotBoard == true then
+		getObjectFromGUID(objRefs.mats.sunspotBoard).setVar("autoSol",toolConfig.turn.turnAutoSol)
+	end
+end
+
+--turn order update
+function reorderPlayerSeats()
+	local fPFound = false
+	local n=1
+	local tempTable = {}
+			--[[  redundent??
+			if setupConfig.general.step == "done" then
+			elseif setupConfig.general.step == "3" then
+			else
+				--print('triggering the thing')
+				seatRearrange()
+			end
+			--]]
+	tempTable = seatTable
+	seatTable = {}
+	for i=1, #tempTable do
+		local entry = {}
+		entry = tempTable[tonumber(i)]
+		if entry == toolConfig.turn.firstPlayer then
+			fPFound = true
+			table.insert(seatTable, entry)
+		elseif fPFound == true then
+			table.insert(seatTable, entry)
+		end
+		
+	end
+	local remainder = #tempTable - #seatTable
+	for i=1, remainder do
+		local entry = {}
+		entry = tempTable[tonumber(i)]
+		table.insert(seatTable, entry)
+	end
+	if setupConfig.general.step == "0" then
+	else
+		printToAll("Player turn order has changed.",msgComplete)
+		for k,v in pairs(seatTable) do
+			printToAll(k .. "  |  " .. v,v)
+		end
+	end
+	
+	--clear turn tracker
+	for k,v in pairs(seatTable) do
+		clearTurnTracker(v)
+		--print('turn tracker from reorder ' .. k, v)
+		if k == 1 then
+			turnTrackerTable[v].trn = 1
+		else
+			turnTrackerTable[v].trn = 0
+		end
+	end
+	
+	--update playercount for bid tool
+	setPlayersBidTool()
+	
+	updateUI()
+end
+
+--update bid tool
+function updateBidUI()
+	--match config
+	UI.setAttribute("toggleBidAuto", "isOn", toolConfig.bid.auto)
+	UI.setAttribute("toggleBidMarketeer", "isOn", toolConfig.bid.marketeer)
+	
+	--only visible to active players
+	local colorsVis = "Black"
+	for k,v in pairs(bidTable.pass) do
+		colorsVis = colorsVis .. "|" .. k
+	end
+	UI.setAttribute("BidToolParent", "visibility", colorsVis)
+	
+	--start bid button
+	local str = ""
+	if bidTable.ongoing == true then
+		timerTable.active = {}
+		UI.setAttribute("bidStart", "active", "False")
+
+		--edit with bid colors; show colors and turn order
+		str = "bidCellP"
+		local num = {}
+		for i=1, 6 do
+			UI.setAttribute(str .. i, "active", "False")
+		end
+		for k,v in pairs(seatTable) do
+			UI.setAttribute(str .. k, "active", "True")
+			UI.setAttribute(str .. k, "color", v)
+		end
+	
+		--update bid status in gumball chart
+		str="bidTextP"
+		if toolConfig.bid.auto == true then
+
+			for k,v in pairs(seatTable) do
+				--passed players
+				if bidTable.pass[v] == true then
+					UI.setAttribute(str .. k, "text", "X")
+				else
+					UI.setAttribute(str .. k, "text", "")
+					if toolConfig.timer.countauctions == true then table.insert(timerTable.active, v)
+					else timerTable.active = {"Pause"}
+					end
+				end
+				
+				--winning players
+				if bidTable.last.tied == true then
+					for j, l in pairs(bidTable.last.ties) do
+						if l == v then
+							UI.setValue(str .. k, tostring(bidTable.last.amount))
+						end
+					end
+				elseif bidTable.last.bidder ~= "" then
+					if bidTable.last.bidder == v then
+						UI.setValue(str .. k, tostring(bidTable.last.amount))
+					end					
+				end
+			end
+			UI.setAttribute("bidText", "text", tostring(bidTable.last.amount))
+			UI.setAttribute("bidText", "color", "White")
+		end
+	else
+		str="bidTextP"
+		for k,v in pairs(seatTable) do
+			UI.setAttribute(str .. k, "text", "")
+			print("Color - " .. v)
+		end
+		UI.setAttribute("bidText", "text", "")
+		UI.setAttribute("bidStart", "active", "True")
+		UI.setAttribute("bidStart", "textColor", "White")
+	end
+	
+	--update tooltips
+	str="bidTextP"
+	for k,v in pairs(seatTable) do
+		if Player[v].seated == true then
+			UI.setAttribute(str .. k, "tooltip", Player[v].steam_name)
+		else
+			UI.setAttribute(str .. k, "tooltip", v)
+		end
+	end
+end
+
+--update contract bid tool
+function updateContractBidUI()
+	--match config
+	UI.setAttribute("toggleBidAuto", "isOn", toolConfig.bid.auto)
+	UI.setAttribute("toggleBidMarketeer", "isOn", toolConfig.bid.marketeer)
+	
+	--only visible to active players
+	local colorsVis = "Black"
+	for k,v in pairs(contractBidTable.pass) do
+		colorsVis = colorsVis .. "|" .. k
+	end
+	UI.setAttribute("ContractBidToolParent", "visibility", colorsVis)
+	
+	--start bid button
+	local str = ""
+	if contractBidTable.ongoing == true then
+		timerTable.active = {}
+		UI.setAttribute("contractBidStart", "active", "False")
+
+		--edit with bid colors; show colors and turn order
+		str = "contractBidCellP"
+		local num = {}
+		for i=1, 6 do
+			UI.setAttribute(str .. i, "active", "False")
+		end
+		for k,v in pairs(seatTable) do
+			UI.setAttribute(str .. k, "active", "True")
+			UI.setAttribute(str .. k, "color", v)
+		end
+	
+		--update bid status in gumball chart
+		str="contractBidTextP"
+		if toolConfig.bid.auto == true then
+			for k,v in pairs(seatTable) do
+				--passed players
+				if contractBidTable.pass[v] == true then
+					UI.setAttribute(str .. k, "text", "X")
+				else
+					UI.setAttribute(str .. k, "text", "")
+					if toolConfig.timer.countauctions == true then table.insert(timerTable.active, v)
+					else timerTable.active = {"Pause"}
+					end
+				end
+				
+				--winning players
+				if contractBidTable.last.tied == true then
+					for j, l in pairs(contractBidTable.last.ties) do
+						if l == v then
+							UI.setValue(str .. k, tostring(contractBidTable.last.amount))
+						end
+					end
+				elseif contractBidTable.last.bidder ~= "" then
+					if contractBidTable.last.bidder == v then
+						UI.setValue(str .. k, tostring(contractBidTable.last.amount))
+					end					
+				end
+			end
+			UI.setAttribute("contractBidText", "text", tostring(contractBidTable.last.amount))
+			UI.setAttribute("contractBidText", "color", "White")
+		end
+	else
+		str="contractBidTextP"
+		for k,v in pairs(seatTable) do
+			UI.setAttribute(str .. k, "text", "")
+		end
+		UI.setAttribute("contractBidText", "text", "")
+		UI.setAttribute("contractBidStart", "active", "True")
+		UI.setAttribute("contractBidStart", "textColor", "White")
+	end
+	
+	--update tooltips
+	str="contractBidTextP"
+	for k,v in pairs(seatTable) do
+		if Player[v].seated == true then
+			UI.setAttribute(str .. k, "tooltip", Player[v].steam_name)
+		else
+			UI.setAttribute(str .. k, "tooltip", v)
+		end
+	end
+end
+
+--update FT Tracker
+function updateFTUI()
+	--match config
+	UI.setAttribute("toggleFTMod1", "isOn", toolConfig.ft.mod1)
+	UI.setAttribute("toggleFTMod2", "isOn", toolConfig.ft.mod2)
+	
+	--update for players; values
+	UI.setAttribute("p1FTTrackerRow", "active", "False")
+	UI.setAttribute("p2FTTrackerRow", "active", "False")
+	UI.setAttribute("p3FTTrackerRow", "active", "False")
+	UI.setAttribute("p4FTTrackerRow", "active", "False")
+	UI.setAttribute("p5FTTrackerRow", "active", "False")
+	UI.setAttribute("p6FTTrackerRow", "active", "False")
+	
+	for k,v in pairs(seatTable) do
+		--active colors
+		UI.setAttribute("p" .. k .. "FTTrackerRow", "active", "True")
+		
+		--hide report row from self
+		local visStr = "Black|White|Green|Yellow|Blue|Purple|Red|Grey"
+		visStr = string.gsub(visStr, "|" .. v, "")
+		UI.setAttribute("p" .. k .. "FTTrackerRow", "visibility", visStr)
+		
+		--change name of labels
+		local pName = ""
+		if Player[v].seated == true then
+			pName = Player[v].steam_name
+		else
+			pName = v
+		end
+		UI.setValue("p" .. k .. "FTTrackerLabel", pName)
+		UI.setAttribute("p" .. k .. "FTTrackerLabel", "color", v)
+		
+		--update values in report rows
+		for j, l in pairs(ftTrackerTable[v]) do
+			if l ~= "true" or l~= "false" or l~= "LEO" or l~= "BK" or l~= "BS" then
+				UI.setValue("p" .. k .. j .. "txt", l)
+				UI.setAttribute(v .. j, "text", l)
+				if string.match(j, "A") == "A" then
+					UI.setAttribute("p" .. k .. j .. "txt", "color", "Blue")
+				else
+					UI.setAttribute("p" .. k .. j .. "txt", "color", "Yellow")
+				end
+			end
+		end
+
+		--update formatting for bank
+		if toolConfig.ft.mod2 == true then
+			UI.setAttribute(v .. "LEOA", "fontSize", "30")
+			UI.setAttribute(v .. "LEOA", "resizeTextMaxSize", "30")
+			UI.setAttribute(v .. "LEOA", "textColor", "Black")
+			--UI.setAttribute(v .. "LEOA", "color", "Blue")
+			
+			UI.setAttribute(v .. "B1A", "fontSize", "30")
+			UI.setAttribute(v .. "B1A", "resizeTextMaxSize", "30")
+			UI.setAttribute(v .. "B1A", "textColor", "Black")
+			--UI.setAttribute(v .. "B1A", "color", "Blue")
+			
+			UI.setAttribute(v .. "B2A", "fontSize", "30")
+			UI.setAttribute(v .. "B2A", "resizeTextMaxSize", "30")
+			UI.setAttribute(v .. "B2A", "textColor", "Black")
+			--UI.setAttribute(v .. "B2A", "color", "Blue")
+
+			
+			UI.setAttribute("p" .. k .. "LEOAtxt", "resizeTextMaxSize", "22")
+			UI.setAttribute("p" .. k .. "LEOAtxt", "fontSize", "22")
+			UI.setAttribute("p" .. k .. "LEOAtxt", "fontStyle", "Normal")
+			UI.setAttribute("p" .. k .. "LEOAtxt", "color", "Blue")
+			
+			UI.setAttribute("p" .. k .. "LEOCell", "dontUseTableCellBackground", "False")
+			--UI.setAttribute("p" .. k .. "LEOCell", "cellBackgroundColor", "Grey")
+			UI.setAttribute("p" .. k .. "LEOCell", "color", "Grey")
+			
+			UI.setAttribute("p" .. k .. "B1Atxt", "resizeTextMaxSize", "22")
+			UI.setAttribute("p" .. k .. "B1Atxt", "fontSize", "22")
+			UI.setAttribute("p" .. k .. "B1Atxt", "fontStyle", "Normal")
+			UI.setAttribute("p" .. k .. "B1Atxt", "color", "Blue")
+			
+			--UI.setAttribute("p" .. k .. "B1Cell", "dontUseTableCellBackground", "False")
+			--UI.setAttribute("p" .. k .. "B1Cell", "cellBackgroundColor", "Grey")
+			--UI.setAttribute("p" .. k .. "B1Cell", "color", "Grey")
+			
+			UI.setAttribute("p" .. k .. "B2Atxt", "resizeTextMaxSize", "22")
+			UI.setAttribute("p" .. k .. "B2Atxt", "fontSize", "22")
+			UI.setAttribute("p" .. k .. "B2Atxt", "fontStyle", "Normal")
+			UI.setAttribute("p" .. k .. "B2Atxt", "color", "Blue")
+			
+			--UI.setAttribute("p" .. k .. "B2Cell", "dontUseTableCellBackground", "False")
+			--UI.setAttribute("p" .. k .. "B2Cell", "cellBackgroundColor", "Grey")
+			--UI.setAttribute("p" .. k .. "B2Cell", "color", "Grey")
+		
+		
+			if ftTrackerTable[v].bank == "LEO" or toolConfig.ft.mod2 == false then
+				UI.setAttribute(v .. "LEOA", "fontSize", "40")
+				UI.setAttribute(v .. "LEOA", "resizeTextMaxSize", "40")
+				UI.setAttribute(v .. "LEOA", "textColor", "White")
+				--UI.setAttribute(v .. "LEOA", "color", "Teal")
+				
+				UI.setAttribute("p" .. k .. "LEOAtxt", "resizeTextMaxSize", "30")
+				UI.setAttribute("p" .. k .. "LEOAtxt", "fontSize", "30")
+				UI.setAttribute("p" .. k .. "LEOAtxt", "fontStyle", "Bold")
+				UI.setAttribute("p" .. k .. "LEOAtxt", "color", "White")
+				--UI.setAttribute("p" .. k .. "LEOCell", "dontUseTableCellBackground", "True")
+				--UI.setAttribute("p" .. k .. "LEOCell", "color", "Green")
+				--UI.setAttribute("p" .. k .. "LEOCell", "cellBackgroundColor", "White")
+
+			elseif ftTrackerTable[v].bank == "BK" then
+				UI.setAttribute(v .. "B1A", "fontSize", "40")
+				UI.setAttribute(v .. "B1A", "resizeTextMaxSize", "40")
+				UI.setAttribute(v .. "B1A", "textColor", "White")
+				--UI.setAttribute(v .. "B1A", "color", "Teal")
+				
+				UI.setAttribute("p" .. k .. "B1Atxt", "resizeTextMaxSize", "30")
+				UI.setAttribute("p" .. k .. "B1Atxt", "fontSize", "30")
+				UI.setAttribute("p" .. k .. "B1Atxt", "fontStyle", "Bold")
+				UI.setAttribute("p" .. k .. "B1Atxt", "color", "White")
+				--UI.setAttribute("p" .. k .. "B1Cell", "dontUseTableCellBackground", "True")
+				--UI.setAttribute("p" .. k .. "B1Cell", "color", "Green")
+				--UI.setAttribute("p" .. k .. "B1Cell", "cellBackgroundColor", "White")
+				
+			elseif ftTrackerTable[v].bank == "BS" then
+				UI.setAttribute(v .. "B2A", "fontSize", "40")
+				UI.setAttribute(v .. "B2A", "resizeTextMaxSize", "40")
+				UI.setAttribute(v .. "B2A", "textColor", "White")
+				--UI.setAttribute(v .. "B2A", "color", "Teal")
+				
+				UI.setAttribute("p" .. k .. "B2Atxt", "resizeTextMaxSize", "30")
+				UI.setAttribute("p" .. k .. "B2Atxt", "fontSize", "30")
+				UI.setAttribute("p" .. k .. "B2Atxt", "fontStyle", "Bold")
+				UI.setAttribute("p" .. k .. "B2Atxt", "color", "White")
+				--UI.setAttribute("p" .. k .. "B2Cell", "dontUseTableCellBackground", "True")
+				--UI.setAttribute("p" .. k .. "B2Cell", "color", "Green")
+				--UI.setAttribute("p" .. k .. "B2Cell", "cellBackgroundColor", "White")
+				
+			end
+		else
+			UI.setAttribute(v .. "LEOA", "fontSize", "40")
+			UI.setAttribute(v .. "LEOA", "resizeTextMaxSize", "40")
+			UI.setAttribute(v .. "LEOA", "textColor", "White")
+			--UI.setAttribute(v .. "LEOA", "color", "Blue")
+				
+			UI.setAttribute("p" .. k .. "LEOAtxt", "resizeTextMaxSize", "30")
+			UI.setAttribute("p" .. k .. "LEOAtxt", "fontSize", "30")
+			UI.setAttribute("p" .. k .. "LEOAtxt", "fontStyle", "Bold")
+			UI.setAttribute("p" .. k .. "LEOAtxt", "color", "White")
+			
+		end
+	end
+end
+
+function updateFTUIMods()
+	--update for mods
+	local p = {'p1', 'p2', 'p3', 'p4', 'p5', 'p6'}
+	local t = {'LEO', 'OP1', 'OP2', 'F', 'B1', 'B2'}
+	local b = {'B1', 'B2'}
+	local f = {'A', 'I'}
+	local c = {'White', 'Purple', 'Yellow', 'Red', 'Blue', 'Green'}
+	local hideID = ""
+	local colWidth = "550"
+	
+	--mod1
+	--show/hide isotopes values
+	for k,v in pairs(p) do
+		for i, j in pairs(t) do
+			hideID = v ..  j .. 'Itxt'
+			if hideID ~= "" then
+				UI.setAttribute(hideID, "active", toolConfig.ft.mod1)
+				hideID = ""
+			end
+		end
+	end
+	--show/hide isotope row
+	for k,v in pairs(c) do
+		hideID = v .. "IRow"
+		if hideID ~= "" then
+			UI.setAttribute(hideID, "active", toolConfig.ft.mod1)
+			hideID = ""
+		end
+	end
+	--show/hide freighter column
+	--color row
+	for k,v in pairs(c) do
+		hideID = v .. "FACell"
+		if hideID ~= "" then
+			UI.setAttribute(hideID, "active", toolConfig.ft.mod1)
+			hideID = ""
+		end
+	end
+	--other rows
+	for k,v in pairs(p) do
+		hideID = v .. "FCell"
+		if hideID ~= "" then
+			UI.setAttribute(hideID, "active", toolConfig.ft.mod1)
+			hideID = ""
+		end
+	end
+	--header
+	UI.setAttribute("headerFCell", "active", toolConfig.ft.mod1)
+	
+	--mod2
+	--show/hide bernal columns
+	--color row
+	for k,v in pairs(c) do
+		for i, j in pairs(b) do
+			for q, s in pairs(f) do
+				hideID = v .. j .. s .. 'Cell'
+				if hideID ~= "" then
+					UI.setAttribute(hideID, "active", toolConfig.ft.mod2)
+					hideID = ""
+				end
+			end
+		end
+	end
+	--other rows
+	for k,v in pairs(p) do
+		for i, j in pairs(b) do
+			hideID = v .. j .. 'Cell'
+			if hideID ~= "" then
+				UI.setAttribute(hideID, "active", toolConfig.ft.mod2)
+				hideID = ""
+			end
+		end
+	end
+	--header
+	UI.setAttribute("headerB1Cell", "active", toolConfig.ft.mod2)
+	UI.setAttribute("headerB2Cell", "active", toolConfig.ft.mod2)
+	UI.setAttribute("BtnBankLEO", "active", toolConfig.ft.mod2)
+	UI.setAttribute("BtnBankLEO", "textColor", "White")
+	
+
+
+	if toolConfig.ft.mod1 == false and toolConfig.ft.mod2 == false then
+		colWidth = "330"
+	elseif toolConfig.ft.mod1 == false then
+		colWidth = "477"
+	elseif toolConfig.ft.mod2 == false then
+		colWidth = "403"
+	end
+	UI.setAttribute("FTTrackerChild3","width", colWidth)
+	UI.setAttribute("FTTrackerChild2","width", colWidth)
+	UI.setAttribute("FTTrackerChild","width", colWidth)
+	UI.setAttribute("FTTrackerParent","width", colWidth)
+
+end	
+
+function updateVPUI()
+	--update score tooltip for names
+	for k,v in pairs(seatTable) do
+		if Player[v].seated == true then
+			UI.setAttribute(v .. "ScoreHeader", "tooltip", Player[v].steam_name)
+		else
+			if v == "Blue" then
+				UI.setAttribute(v .. "ScoreHeader", "tooltip", "Blue (Grey)")
+			else
+				UI.setAttribute(v .. "ScoreHeader", "tooltip", v)
+			end
+		end
+	end
+
+	for k,v in pairs(vpTrackerTable) do
+		if k ~= "Black" or k ~= "Grey" then
+			local total = 0
+			for j, l in pairs(v) do
+				if j ~= "max" then
+					total = total + l
+					UI.setAttribute(k .. j, "text", l)
+					UI.setAttribute(k .. j, "textColor", k)
+				end
+			end
+			UI.setValue(k .. "Ttl", total)
+			UI.setAttribute(k .. "Ttl", "color", k)
+		end
+	end		
+end
+
+
+----------------------------------------------UI config tool
+
+function uiConfigOpen()
+	UI.setAttribute("UIConfig","active", "True")
+end
+
+function uiConfigClose()
+	UI.setAttribute("UIConfig","active","False")
+end
+
+function toggleTools(_p, bool, btnID)
+	local str = "toggleUITool"
+	local tool = string.sub(btnID, string.len(str) + 1)
+	local toolStr = "tool" .. tool
+	if bool == "False" then
+		configTable[toolStr] = false
+		printToAll("UI: Disabling tool: " .. tool, msgAction)
+	elseif bool == "True" then
+		configTable[toolStr] = true
+		printToAll("UI: Enabling tool: " .. tool, msgAction)
+	end
+	updateToolsEnabled()
+end
+
+
+---------------------------------------min/max/config windows
+
+------setup min/max
+function minSetup(player, clickType, btnID)
+	setupConfig.general.max = false
+	updateSetupUI()
+end
+
+function maxSetup(player, clickType, btnID)
+	setupConfig.general.max  = true
+	updateSetupUI()
+end
+
+------turn tracker
+function minimizeTurnTracker(player, btnID)
+	turnTrackerTable[player.color].max = false
+	updateMinMax()
+end
+
+function maximizeTurnTracker(player, btnID)
+	turnTrackerTable[player.color].max = true
+	updateMinMax()
+end
+
+function turnConfig(player, val, btnID)
+	if btnID == "turnTrackerConfigClose" then
+		UI.setAttribute("TurnTrackerConfig", "active", "false")
+	elseif btnID == "turnTrackerConfigOpen" then
+		UI.setAttribute("TurnTrackerConfig", "active", "true")
+	end
+end
+
+
+
+-----------bid tool
+function minimizeBidTool(player, btnID)
+	bidTable.visibility[player.color] = false
+	updateMinMax()
+end
+
+function maximizeBidTool(player, btnID)
+	bidTable.visibility[player.color] = true
+	updateMinMax()
+end
+
+-----------bid tool
+function minimizeTimerTool(player, btnID)
+	timerTable.visibility[player.color] = false
+	updateMinMax()
+end
+
+function maximizeTimerTool(player, btnID)
+	timerTable.visibility[player.color] = true
+	updateMinMax()
+end
+
+----------- contract bid tool
+function minimizeContractBidTool(player, btnID)
+	contractBidTable.visibility[player.color] = false
+	updateMinMax()
+end
+
+function maximizeContractBidTool(player, btnID)
+	contractBidTable.visibility[player.color] = true
+	updateMinMax()
+end
+
+function bidConfig(player, val, btnID)
+	if btnID == "bidConfigClose" then
+		UI.setAttribute("BidToolConfig", "active", "false")
+	elseif btnID == "bidConfigOpen" then
+		UI.setAttribute("BidToolConfig", "active", "true")
+	end
+end
+
+function timerConfig(player, val, btnID)
+	if btnID == "timerConfigClose" then
+		UI.setAttribute("TimerToolConfig", "active", "false")
+	elseif btnID == "timerConfigOpen" then
+		UI.setAttribute("TimerToolConfig", "active", "true")
+	end
+end
+
+--------FT tracker
+function minimizeFTTracker(player, btnID)
+	ftTrackerTable[player.color].max = false
+	updateMinMax()
+end
+
+function maximizeFTTracker(player, btnID)
+	ftTrackerTable[player.color].max = true
+	updateMinMax()
+end
+
+function ftConfig(player, val, btnID)
+	if btnID == "ftConfigClose" then
+		UI.setAttribute("ftToolConfig", "active", "false")
+	elseif btnID == "ftConfigOpen" then
+		UI.setAttribute("ftToolConfig", "active", "true")
+	end
+end
+
+function minimizeBurnTool(player, btnID)
+	burnTable[player.color] = false
+	updateMinMax()
+end
+
+function maximizeBurnTool(player, btnID)
+	burnTable[player.color] = true
+	updateMinMax()
+end
+
+function minimizeBernalBurnTool(player, btnID)
+	burnTable[player.color] = false
+	updateMinMax()
+end
+
+function maximizeBernalBurnTool(player, btnID)
+	burnTable[player.color] = true
+	updateMinMax()
+end
+
+function maximizeVPTracker(player, val, btnID)
+	if vpTrackerTable[player.color].max == true then
+		vpTrackerTable[player.color].max = false
+	else
+		vpTrackerTable[player.color].max = true
+	end
+	updateMinMax()
+end
+
+function closeVPTracker(player, val, btnID)
+	vpTrackerTable[player.color].max = false
+	updateMinMax()
+end
+
+
+--===================================================================================TOOLS
+
+--=======================================================================DICE ROLLER
+
+------------dice roller
+--rolls d6 from players
+function rollD6(player, clickType, idValue)
+    local roll = math.random(6)
+	local results = roll
+	local roll2 = {}
+	local roll3 = {}
+	if clickType == "-2" or clickType == "-3" then
+		roll2 = math.random(6)
+		results = results .. "    |    " .. roll2
+		if clickType == "-3" then
+			roll3 = math.random(6)
+			results = results .. "    |    " .. roll3
+		end
+	end
+    local str = player.steam_name .. " has rolled |    " .. results .. "    |"
+	local strColor = player.color
+    broadcastToAll(str, strColor)
+	local soundAsset = getObjectFromGUID(objRefs.tools.sound)
+	if  soundAsset then
+		soundAsset.AssetBundle.playTriggerEffect(6)
+	end
+end
+
+
+--=======================================================================BURN TOOL
+
+
+
+------------update fuel rate
+function changeFuelRate(player, clickType, idValue)
+	local params = {"Core Playmat", player.color}
+    local pMat = findPMat(params)
+	local params = {player, clickType, idValue}
+	if pMat ~= "" then
+		--print('found pmat for ' .. player.color)
+		pMat.call("updateFuelRate", params)
+	end
+end
+
+-----------conduct burn
+function burn(player, _, idValue)
+    local params = {"Core Playmat", player.color}
+    local pMat = findPMat(params)
+	local params = {player, clickType, nil}
+	if pMat ~= "" then
+		pMat.call("burn", params)
+	end
+end
+
+------------------bernal version
+
+------------update fuel rate
+function changeBernalFuelRate(player, clickType, idValue)
+	local params = {"Module 2 Playmat", player.color}
+    local pMat = findPMat(params)
+	local params = {player, clickType, idValue}
+	if pMat ~= "" then
+		--print('found pmat for ' .. player.color)
+		pMat.call("updateFuelRate", params)
+	end
+end
+
+-----------conduct burn
+function burnBernal(player, _, idValue)
+    local params = {"Module 2 Playmat", player.color}
+    local pMat = findPMat(params)
+	local params = {player, clickType, nil}
+	if pMat ~= "" then
+		pMat.call("burn", params)
+	end
+end
+
+
+--=======================================================================MUSIC PLAYER
+
+------------music
+--play/pause
+function musicPlayPause(_p, _c, _b)
+	if playingMusic == true then
+		MusicPlayer.pause()
+		playingMusic = false
+	else
+		startLuaCoroutine(Global, "playMusic")
+	end
+end
+
+function musicNext(_p, _c, _b)
+	MusicPlayer.skipForward()
+end
+
+function musicPrevious(_p, _c, _b)
+	MusicPlayer.skipBack()
+end
+
+
+--=======================================================================TURN TRACKER
+
+----------config options
+
+function changeScaleTurn(_p, value)
+	toolConfig.turn.scale = value
+	updateToolScale()
+	hardSave()
+end
+
+function toggleTurnMods(_p, bool, BtnID)
+	local str = "toggleTurnMod"
+	local mod = string.sub(BtnID, string.len(str) + 1)
+	if bool == "True" then
+		toolConfig.turn["mod" .. mod] = true
+	elseif bool == "False" then
+		toolConfig.turn["mod" .. mod] = false
+	end
+	updateTurnUI()
+	hardSave()
+end
+
+function toggleTurnMobile(_p, bool, BtnID)
+	if bool == "True" then
+		toolConfig.turn.mobile = true
+	elseif bool == "False" then
+		toolConfig.turn.mobile = false
+	end
+	updateTurnUI()
+	hardSave()
+end
+
+function toggleTurnColonist(_p, bool, BtnID)
+	if bool == "True" then
+		toolConfig.turn.colonist = true
+	elseif bool == "False" then
+		toolConfig.turn.colonist = false
+	end
+	updateTurnUI()
+	hardSave()
+end
+
+function toggleTurnProfit(_p, bool, BtnID)
+	if bool == "True" then
+		toolConfig.turn.profit = true
+		toolConfig.turn.autoProfit = false
+	elseif bool == "False" then
+		toolConfig.turn.profit = false
+	end
+	updateTurnUI()
+	hardSave()
+end
+
+function toggleTurnAutoProfit(_p, bool, BtnID)
+	if bool == "True" then
+		toolConfig.turn.autoProfit = true
+		toolConfig.turn.profit = false
+	elseif bool == "False" then
+		toolConfig.turn.autoProfit = false
+	end
+	updateTurnUI()
+	hardSave()
+end
+
+function toggleTurnSolo(_p, bool, BtnID)
+	if bool == "True" then
+		toolConfig.turn.soloMode = true
+	else
+		toolConfig.turn.soloMode = false
+	end
+	
+	updateTTSTurns()
+	updateTurnUI()
+	hardSave()
+end
+
+function toggleTurnAutoSol(_p, bool, BtnID)
+	if bool == "True" then
+		toolConfig.turn.turnAutoSol = true
+	else
+		toolConfig.turn.turnAutoSol = false
+	end
+	
+	updateTurnUI()
+	hardSave()
+end
+
+function toggleTurnTTS(_p, bool, BtnID)
+	if bool == "True" then
+		toolConfig.turn.ttsTurns = true
+	else
+		toolConfig.turn.ttsTurns = false
+	end
+	
+	updateTTSTurns()
+	updateTurnUI()
+	hardSave()
+end
+
+function toggleTurnSound(_p, bool, BtnID)
+	if bool == "True" then
+		toolConfig.turn.turnSound = true
+	else
+		toolConfig.turn.turnSound = false
+	end
+	
+	updateTurnUI()
+	hardSave()
+end
+
+function toggleTurnFirstPlayer(_p, bool, BtnID)
+	local str = "Turn1FPOpt"
+	if bool == "True" then
+		local col = string.sub(BtnID, #str + 1)
+		if seatTable[tonumber(1)] ~= col then
+			toolConfig.turn.firstPlayer = col
+			timerTable.active = {col}
+			timerTable.last = Time.time
+			if configTable.toolTimer then timerAdd() end
+			reorderPlayerSeats()
+		end
+	end
+	updateTTSTurns()
+	hardSave()
+end
+
+function changeTurnOrderInput(_p, val, btnID)
+	local str = "turnOptCfg"
+	local n = string.sub(btnID, string.len(str) + 1)
+	n = tonumber(n)
+	if tempChangeOrderTable then
+		for i=1, 6 do
+			if tempChangeOrderTable[tonumber(i)] then
+			else
+				tempChangeOrderTable[tonumber(i)]="Unseated"
+			end
+		end
+	else
+		tempChangeOrderTable = {}
+		for i=1, 6 do
+			tempChangeOrderTable[tonumber(i)] = "Unseated"
+		end
+	end
+	tempChangeOrderTable[tonumber(n)] = val
+end
+
+function changeTurnOrderCommit(_p, val, btnID)
+	if tempChangeOrderTable then
+	else
+		tempChangeOrderTable = {}
+		for i=1, 6 do
+			tempChangeOrderTable[tonumber(i)] = "Unseated"
+		end
+	end
+	local validDupe = true
+	local validSort = true
+	local valid1P = true
+	for k,v in pairs(tempChangeOrderTable) do
+		for j, l in pairs(tempChangeOrderTable) do
+			if l~= "Unseated" then
+				if v == l and k~= j then
+					validDupe = false
+				end
+			end
+		end
+	end
+	for i=1, #tempChangeOrderTable do
+		if i==1 then
+			if tempChangeOrderTable[tonumber(i)] =="Unseated" then
+				valid1P=false
+			end
+		else
+			if tempChangeOrderTable[tonumber(i)] ~= "Unseated" then
+				local count = i-1
+				if tempChangeOrderTable[tonumber(count)] == "Unseated" then
+					validSort = false
+				end
+			end
+		end
+	end
+	if valid1P == false then
+		printToAll("Error: Cannot change turn order. No First Player selected.",msgError)
+	elseif validSort == false then
+		printToAll("Error: Cannot change turn order. Unseated colors can not precede a valid color.",msgError)
+	elseif validDupe == false then
+		printToAll("Error: Cannot change turn order. A color is duplicated in order.",msgError)
+	else
+		seatTable = {}
+		for i=1, #tempChangeOrderTable do
+			if tempChangeOrderTable[tonumber(i)] ~= "Unseated" then
+				local var = tempChangeOrderTable[tonumber(i)]
+				table.insert(seatTable, var)
+			end
+		end
+		printToAll("Turn order has been manually changed.",msgComplete)
+		for k,v in pairs(seatTable) do
+			printToAll(k .. "  |  " .. v,v)
+		end
+		
+	end
+	
+	--reset actions/trn for all colors
+	local allCol = {"Red", "Yellow", "White", "Blue", "Green", "Purple"}
+	for k,v in pairs(allCol) do
+		clearTurnTracker(v)
+		turnTrackerTable[v].trn = 0
+		--print(turnTrackerTable[v].trn)
+	end
+	turnTrackerTable[seatTable[1]].trn = 1
+	updateTTSTurns()
+	
+	--update pcount for bid tool
+	setPlayersBidTool()
+	
+	updateTurnUI()
+	hardSave()
+end
+
+----------update
+
+------------------------TTS turn tool mess
+
+----updates for TTS tool
+function updateTTSTurns()
+	Turns.order = seatTable
+	for k,v in pairs(turnTrackerTable) do
+		if v.trn == 1 then
+			Turns.turn_color = k
+		end
+	end
+	Turns.enable = false
+end
+
+
+-- Unused?
+function onPlayerTurn(person)
+	Turns.enable = false
+    -- TIMER CHECK	
+end
+
+
+
+------------------------------------------
+
+
+
+function clearTurnTracker(col)
+	for k,v in pairs(turnTrackerTable) do
+		if k == col then
+			for j, l in pairs(v) do
+				if j=="max" or j=="trn" then
+				else
+					turnTrackerTable[k][j] = 0
+					UI.setAttribute(col .. "TurnToggle" .. j,"isOn", "False")
+					UI.setAttribute(col .. "TurnToggle" .. j, "textColor", "White")
+				end
+			end
+		end
+	end
+	hardSaveTurn()
+end
+
+--------input
+
+function turnSwapToColor(_p, click, btnID)
+	local str = "turnButtonP"
+	local num = string.sub(btnID, string.len(str) + 1)
+	num = tonumber(num)
+	local col = seatTable[num]
+	Player[_p.color].changeColor(col)
+end
+
+--change current year
+function enterYear(_p, yr, _b)
+	turnYear = yr
+	hardSaveTurn()
+end
+
+---------functions
+
+function runInspiration()
+	local objs = getAllObjects()
+	local found = false
+	for k,v in pairs(objs) do
+		if v.tag == "Tile" then
+			if v.getName() == "Market Mat (Unofficial)" then
+				v.call("doInspiration")
+				found = true
+			end
+			if v.getName() == "Contracts Mat (Unofficial)" then
+				v.call("doInspiration")
+				found = true
+			end
+		end
+	end
+	if found == false then
+		printToAll("Script cannot find market board for inspiration.  Manually perform inspiration event.", msgPrompt)
+	end
+	
+	--[[  changed to dynamic method for siren scenario; old method for reference
+	if refFound.mats.marketBoard == true then
+		getObjectFromGUID(objRefs.mats.marketBoard).call("doInspiration")
+	else
+		printToAll("Script cannot find market board for inspiration.  Manually perform inspiration event.", msgPrompt)
+	end
+	--]]
+end
+
+
+--toggle turn action
+function toggleTurnAction(_p, bool, btnID)
+	local str = "TurnToggle"
+	local col = ""
+	for k,v in pairs(seatTable) do
+		if string.match(btnID, v) == v then
+			col = v
+		end
+	end
+	local action = string.sub(btnID, string.len(col)+string.len(str)+1)
+
+	if turnTrackerTable[_p.color].trn == 1 then
+		local sName = ""
+		if _p.steam_name then
+			sName = _p.steam_name
+		else
+			sName = col
+		end
+		local action = string.sub(btnID, string.len(col)+string.len(str)+1)
+		local msg = ""
+		if action == "Op" then
+			msg = "an operation."
+		elseif action == "HBP" then
+			msg = "profits from Home Bernal."
+		elseif action == "Rkt" then
+			msg = "a rocket."
+		elseif action == "Frt" then
+			msg = "a freighter."
+		elseif action == "MFc" then
+			msg = "mobile factories."
+		elseif action == "BK" then
+			msg = "a bernal."
+		elseif action == "Cln" then
+			msg = "operations with colonists' specialties."
+		elseif action == "DS" then
+			msg = "a dropstone."
+		elseif action == "Con" then
+			msg = "a contract operation."
+		end
+		
+		if turnTrackerTable[col][action] == 1 then
+			turnTrackerTable[col][action] = 0
+			if action == "Cln" or action == "Op" or action == "HBP" or action == "Con" then
+				printToAll(sName .. " undid " ..  msg,msgError)
+			else
+				printToAll(sName .. " undid the movement(s) of  " ..  msg,msgError)
+			end
+		else
+			turnTrackerTable[col][action] = 1
+			if action == "Cln" or action == "Op" or action == "Con" then
+				printToAll(sName .. " conducted " ..  msg,col)
+			elseif action == "HBP" then
+				printToAll(sName .. " earned " .. msg, col)
+			else
+				printToAll(sName .. " moved " ..  msg,col)
+			end
+		end
+	else
+		clearTurnTracker(_p.color)
+		--printToColor("It is not your turn.",col,msgError)
+	end
+	updateTurnUI()
+	hardSaveTurn()
+end
+
+function nextTurn(_p, click, btnID)
+	local str = "TurnToggle"
+	if turnTrackerTable[_p.color].trn == 1 then
+		clearTurnTracker(_p.color)
+		turnTrackerTable[_p.color].trn = 2
+		printToAll(_p.steam_name .. " has completed a turn.", _p.color)
+		printToAll("---------------------------------------", _p.color)
+		if configTable.toolTimer then timerAdd() end
+		turnToNextP(_p)
+		updateTurnUI()
+	else
+		printToColor("It is not your turn.",_p.color,msgError)
+	end
+	hardSaveTurn()
+end
+
+
+function turnToNextP(pPrevious)
+	local pNextColor = {}
+	local pLastColor = seatTable[#seatTable]
+	local pFirstColor = seatTable[1]
+	local roundEnd = false
+	local n = 0
+	if pLastColor == pPrevious.color then
+		pNextColor = pFirstColor
+		roundEnd = true
+	else
+		for i=1, #seatTable do
+			n=i
+			if seatTable[i] == pPrevious.color then
+				n = i+1
+				pNextColor = seatTable[n]
+			end
+		end
+	end
+ 
+	timerTable.active = {pNextColor}
+	
+	turnTrackerTable[pNextColor].trn = 1
+
+	
+	if roundEnd == true then
+		endRoundCleanup()
+		if toolConfig.turn.turnAutoSol == true then
+			nextYear(Player[pPrevious.color], nil, nil)
+		end
+	end
+	
+	
+	if toolConfig.turn.soloMode == true then
+		Player[pPrevious.color].changeColor(pNextColor)
+	end
+	
+	printToAll("---------------------------------------", pNextColor)
+	if Player[pNextColor].steam_name then
+		printToAll(Player[pNextColor].steam_name .. " has started a turn.", pNextColor)
+	else
+		printToAll(pNextColor .. " has started a turn.", pNextColor)
+	end
+	if toolConfig.turn.ttsTurns == true and toolConfig.turn.soloMode == false then
+		Turns.turn_color = pNextColor
+		if Player[pNextColor].seated == true then
+			Turns.enable = true
+		end
+	end
+	if toolConfig.turn.turnSound == true then
+		Wait.frames(delayedTurnSound, 60)
+	end
+	if Player[pNextColor].seated then
+		broadcastToColor("It is now your turn.",pNextColor,msgPrompt)
+	end
+	
+	if toolConfig.turn.autoProfit == true and configTable.toolFTTracker == true then
+		if ftTrackerTable[pNextColor].bank ~= "LEO" then
+			local pName = ""
+			if Player[pNextColor].steam_name then
+				pName = Player[pNextColor].steam_name
+			else
+				pName = pNextColor
+			end
+			local dest = ""
+			if ftTrackerTable[pNextColor].bank == "BK" then
+				dest = "B1A"
+			elseif ftTrackerTable[pNextColor].bank == "BS" then
+				dest = "B2A"
+			end
+			addFT(pNextColor,dest)
+			printToAll("Home Bernal Profits (Auto): " .. pName .. " has earned +1 aqua in their Home Bernal.",pNextColor)
+		end
+	end
+
+	-- TIMER
+	if configTable.toolTimer == true then
+		timerTable.active = {pNextColor}
+		timerTable.prevplayer = timerTable.active
+		timerAdd()
+		timerUnpause()
+	end
+end
+
+function delayedTurnSound()
+	local soundAsset = getObjectFromGUID(objRefs.tools.sound)
+	if  soundAsset then
+		soundAsset.AssetBundle.playTriggerEffect(1)
+	end
+end
+
+function endRoundCleanup()
+	for k,v in pairs(turnTrackerTable) do
+		if v.trn == 2 then
+			v.trn = 0
+		end
+	end
+	
+	updateTurnUI()
+end
+
+
+--advances sol track and rolls event
+function nextYear(player, _, idValue)
+	turnYear = turnYear + 1
+	updateTurnUI()
+	
+	--proceed or not
+	--checkGUIDs()
+	if refFound.mats.sunspotBoard == true then
+		--report action
+		printToAll(player.steam_name .. " is advancing the sunspot cycle.", player.color)
+		--start fcns on obj
+		getObjectFromGUID(objRefs.mats.sunspotBoard).call("objNextYear", nil)
+	else
+		printToAll('Next Year function is disabled due to script being unable to find Sunspot board', msgError)
+	end
+	
+	printToAll("=================YEAR " .. turnYear .. "=================",msgHeader)
+	
+end
+
+-------------- TIMER TOOL
+--
+function timerAdd()
+	-- local c = timerTable.active
+	local last = timerTable.last
+	local now = Time.time
+	local a = now-last
+	-- Avoid problems when loading a save from a previous day
+	if a > 600 then 
+		a = 1
+	end
+	if timerTable.last == 0 then
+		xyz=0
+	-- elseif timerTable.auction == true then
+	--	timerTable["Pause"].time = timerTable["Pause"].time + a
+	else
+		for k,v in ipairs(timerTable.active) do
+		  if timerTable[v] then timerTable[v].time = timerTable[v].time + a end
+		end
+	end
+	timerTable.last = Time.time
+	updateTimerUI()
+	hardSaveTimer() 
+	toolConfig["timer"].doSave = true
+end
+
+function timerAddShort()
+	-- when running in onUpdate we need to optimize for speed.  This reduces some of the actions and only focuses on the current row
+	-- local c = timerTable.active
+	local last = timerTable.last
+	local now = Time.time
+	local a = now-last
+	-- If the time is greater than 10 min assume it is from loading a save and dump the time
+	if a > 600 then a = 1 end
+	if timerTable.last == 0 then
+	-- elseif timerTable.auction == true then
+ 	--	timerTable["Pause"].time = timerTable["Pause"].time + a
+	else
+		for k,v in ipairs(timerTable.active) do
+		  if timerTable[v] then timerTable[v].time = timerTable[v].time + a end
+		end
+		-- timerTable[c].time = timerTable[c].time + a
+	end
+	timerTable.last = Time.time
+	updateTimerUIShort()
+end
+
+function updateTimerUI()
+	UI.setAttribute("p1TimerRow", "active", "False")
+	UI.setAttribute("p2TimerRow", "active", "False")
+	UI.setAttribute("p3TimerRow", "active", "False")
+	UI.setAttribute("p4TimerRow", "active", "False")
+	UI.setAttribute("p5TimerRow", "active", "False")
+	UI.setAttribute("p6TimerRow", "active", "False")
+	
+	for k,v in pairs(seatTable) do
+		--active colors
+		UI.setAttribute("p" .. k .. "TimerRow", "active", "True")
+		
+		--change name of labels
+		local pName = ""
+		if Player[v].seated == true then
+			pName = Player[v].steam_name
+		else
+			pName = v
+		end
+
+		UI.setValue("p" .. k .. "TimerLabel", pName)
+		UI.setAttribute("p" .. k .. "TimerLabel", "color", v)
+		UI.setAttribute("p" .. k .. "TimerText", "color", v)
+	end
+	for k,v in pairs(seatTable) do
+		local timeint = math.floor(timerTable[v].time)
+		local timestring = timerMath(timeint)
+		UI.setValue("p" .. k .. "TimerText", timestring)
+	end
+		local timeint = math.floor(timerTable["Pause"].time)
+		local timestring = timerMath(timeint)
+		UI.setValue("PauseTimerText", timestring)
+end
+
+function timerMath(timeint)
+		local hours = math.floor(timeint/3600)
+		local temp = timeint%3600
+		local minutes = math.floor(temp/60)
+		local seconds = math.floor(temp%60)
+		local timestring = string.format("%02d:%02d:%02d", hours, minutes, seconds)
+		return timestring
+end
+
+function updateTimerUIShort()
+	-- Just update the time.   Can be quicker if we send the active color over
+	if timerTable.active[1] == "Pause" then 
+		local timeint = math.floor(timerTable["Pause"].time)
+		local timestring = timerMath(timeint)
+		UI.setValue("PauseTimerText", timestring)
+	else
+		for k,v in pairs(seatTable) do
+			for k2, v2 in ipairs(timerTable.active) do
+				if v == v2 then
+					local timeint = math.floor(timerTable[v].time)
+					local timestring = timerMath(timeint)
+					UI.setValue("p" .. k .. "TimerText", timestring)
+				end
+			end
+		end
+	end
+end
+
+function timerPauseForAuction()
+	-- during an auction stop the timer
+	-- timerTable.auction = true
+	timerTable.prevplayer = timerTable.active
+	timerTable.active = {"Pause"}
+	timerAdd()
+	UI.setAttribute("PauseButton", "active", "False")
+	UI.setAttribute("UnpauseButton", "active", "True")
+	updateTimerUI()
+end 
+
+function timerUnpause()
+	-- during an auction stop the timer
+	timerAdd()
+	timerTable.last = Time.time
+	timerTable.active = timerTable.prevplayer
+	-- timerTable.auction = false
+	UI.setAttribute("PauseButton", "active", "True")
+	UI.setAttribute("UnpauseButton", "active", "False")
+	updateTimerUI()
+end 
+
+function timerToggleShowPause(player, val, btnID);
+	if val == "True" then 
+		toolConfig.timer.pause = "true"
+		UI.setAttribute("PauseTimerRow", "active", "true")
+	elseif val == "False" then
+		toolConfig.timer.pause = "false"
+		UI.setAttribute("PauseTimerRow", "active", "false")
+	end
+end
+
+function timerToggleShowPauseButton(player, val, btnID);
+	if val == "True" then 
+		toolConfig.timer.pausebutton = "true"
+		UI.setAttribute("PauseButtonRow", "active", "true")
+		if timerTable.auction then 
+			UI.setAttribute("PauseButton", "active", "False")
+			UI.setAttribute("UnpauseButton", "active", "True")
+		else
+			UI.setAttribute("PauseButton", "active", "True")
+			UI.setAttribute("UnpauseButton", "active", "False")
+		end
+	elseif val == "False" then
+		toolConfig.timer.pausebutton = "false"
+		UI.setAttribute("PauseButtonRow", "active", "false")
+	end
+end
+
+function timerToggleCountAuctions(player, val, btnID);
+	if val == "True" then 
+		toolConfig.timer.countauctions = true
+	elseif val == "False" then 
+		toolConfig.timer.countauctions = false
+	end
+end
+--=======================================================================BID TOOLS
+
+--------------------config options
+function changeBidScale(_p, val, btnID)
+	toolConfig.bid.scale = val
+	updateToolScale()
+	hardSave()
+end;
+
+function changeTimerScale(_p, val, btnID)
+	toolConfig.timer.scale = val
+	updateToolScale()
+	hardSave()
+end;
+
+
+
+function toggleMarketeer(player, val, btnID)
+	if val == "True" then
+		if bidTable.ongoing == true then
+			printToAll("Cannot make changes to bidding tool while current bid is in progress. Close/reset bid.",msgError)
+		else
+			toolConfig.bid.marketeer = true
+			printToAll("Blue player has Marketeer faction ability for bidding process.",msgComplete)
+		end
+	elseif val == "False" then
+		if bidTable.ongoing == true then
+			printToAll("Cannot make changes to bidding tool while current bid is in progress. Close/reset bid.",msgError)
+		else
+			toolConfig.bid.marketeer = false
+			printToAll("Blue player does not have Marketeer faction ability for bidding process.",msgComplete)
+		end
+	end
+	updateBidUI()
+	hardSave()
+end
+
+function toggleAutoBid(player, val, btnID)
+	--print(val)
+	if val == "True" then
+		if bidTable.ongoing == true then
+			printToAll("Cannot make changes to bidding tool while current bid is in progress. Close/reset bid.",msgError)
+		else
+			toolConfig.bid.auto = true
+			printToAll("Automated bidding process is now active.",msgComplete)
+		end
+	elseif val == "False" then
+		if bidTable.ongoing == true then
+			printToAll("Cannot make changes to bidding tool while current bid is in progress. Close/reset bid.",msgError)
+		else
+			toolConfig.bid.auto = false
+			printToAll("Automated bidding process is now disabled.",msgComplete)
+		end
+	end
+	updateBidUI()
+	hardSave()
+end
+
+---------------------bid update
+
+function setPlayersBidTool()
+	if bidTable.ongoing == true then
+		bidTable.last.amount = 0
+		bidTable.last.bidder = ""
+		bidTable.last.special = ""
+		bidTable.last.initiator = {}
+		bidTable.ongoing = false
+		printToAll("Current bidding process has been reset due to player count changing.",msgComplete)
+	end
+
+	bidTable.pass = {}
+	for k,v in pairs (seatTable) do
+		bidTable.pass[v] = false
+	end
+	
+	updateBidUI()
+	hardSaveBid()
+end
+
+function setPlayersContractBidTool()
+	if contractBidTable.ongoing == true then
+		contractBidTable.last.amount = 10
+		contractBidTable.last.bidder = ""
+		contractBidTable.last.special = ""
+		contractBidTable.last.initiator = {}
+		contractBidTable.ongoing = false
+		printToAll("Current bidding process has been reset due to player count changing.",msgComplete)
+	end
+
+	contractBidTable.pass = {}
+	for k,v in pairs (seatTable) do
+		contractBidTable.pass[v] = false
+	end
+	updateContractBidUI()
+	hardSaveContractBid()
+end
+
+function updateBid(player, bid)
+	if bid > bidTable.last.amount then
+		local specialStr = "  |."
+		if bidTable.last.tied == true then
+			for k,v in pairs(bidTable.last.ties) do
+				bidTable.pass[v] = false
+			end
+		else
+			if bidTable.last.bidder ~= "" then
+				bidTable.pass[bidTable.last.bidder] = false
+			end
+		end
+		bidTable.last.amount = bid
+		bidTable.last.bidder = player.color
+		if player.color == "Blue" and toolConfig.bid.marketeer == true then
+			bidTable.last.special = "marketeer"
+			specialStr = "  | as marketeer."
+		elseif player.color == bidTable.last.initiator then
+			bidTable.last.special = "initiator"
+			specialStr = "  | as initiator."
+		else
+			bidTable.last.special = ""
+		end
+		bidTable.pass[player.color] = true
+		bidTable.last.ties = {}
+		bidTable.last.tied = false
+		broadcastToAll(player.steam_name .. " raises bid to |  " .. bid .. specialStr,player.color)
+	elseif bid == bidTable.last.amount and player.color == "Blue" and toolConfig.bid.marketeer == true then	
+		if bidTable.last.tied == true then
+			for k,v in pairs(bidTable.last.ties) do
+				bidTable.pass[v] = false
+			end
+		else
+			if bidTable.last.bidder ~= "" then
+				bidTable.pass[bidTable.last.bidder] = false
+			end
+		end
+		bidTable.last.amount = bid
+		bidTable.last.bidder = player.color
+		bidTable.last.special = "marketeer"
+		bidTable.pass[player.color] = true
+		bidTable.last.ties = {}
+		bidTable.last.tied = false
+		broadcastToAll(player.steam_name .. " matches bid of |  " .. bid .. "  | as marketeer.",player.color)
+	elseif bid == bidTable.last.amount and player.color == bidTable.last.initiator and bidTable.last.special ~= "marketeer" then
+		if bidTable.last.tied == true then
+			for k,v in pairs(bidTable.last.ties) do
+				bidTable.pass[v] = false
+			end
+		else
+			if bidTable.last.bidder ~= "" then
+				bidTable.pass[bidTable.last.bidder] = false
+			end
+		end
+		bidTable.last.amount = bid
+		bidTable.last.bidder = player.color
+		bidTable.last.special = "initiator"
+		bidTable.pass[player.color] = true
+		bidTable.last.ties = {}
+		bidTable.last.tied = false
+		broadcastToAll(player.steam_name .. " matches bid of |  " .. bid .. "  | as initiator.",player.color)
+	elseif bid == bidTable.last.amount and bidTable.last.special ~= "marketeer" and bidTable.last.special ~= "initiator" then
+		if bidTable.last.tied == true then
+			for k,v in pairs(bidTable.last.ties) do
+				bidTable.pass[v] = false
+			end
+		else
+			if bidTable.last.bidder ~= "" then
+				bidTable.pass[bidTable.last.bidder] = false
+				table.insert(bidTable.last.ties, bidTable.last.bidder)
+			end
+		end
+		bidTable.last.amount = bid
+		bidTable.last.bidder = ""
+		bidTable.last.special = ""
+		local tempTable = bidTable.last.ties
+		table.insert(tempTable, player.color)
+		bidTable.last.ties = tempTable
+		bidTable.last.tied = true
+		bidTable.pass[player.color] = true
+		broadcastToAll(player.steam_name .. " matches bid of |  " .. bid .. "  | in a tie.",player.color)
+	else
+		broadcastToColor("Your bid was not accepted as it is lower than current bid.", player.color, msgError)
+	end
+	updateBidStatus()
+end
+
+function updateContractBid(player, bid)
+	if bid < contractBidTable.last.amount then
+		local specialStr = "  |."
+		if contractBidTable.last.tied == true then
+			for k,v in pairs(contractBidTable.last.ties) do
+				contractBidTable.pass[v] = false
+			end
+		else
+			if contractBidTable.last.bidder ~= "" then
+				contractBidTable.pass[contractBidTable.last.bidder] = false
+			end
+		end
+		contractBidTable.last.amount = bid
+		contractBidTable.last.bidder = player.color
+		if player.color == "Blue" and toolConfig.bid.marketeer == true then
+			contractBidTable.last.special = "marketeer"
+			specialStr = "  | as marketeer."
+		elseif player.color == contractBidTable.last.initiator then
+			contractBidTable.last.special = "initiator"
+			specialStr = "  | as initiator."
+		else
+			contractBidTable.last.special = ""
+		end
+		contractBidTable.pass[player.color] = true
+		contractBidTable.last.ties = {}
+		contractBidTable.last.tied = false
+		broadcastToAll(player.steam_name .. " can complete by turn  |  " .. bid .. specialStr,player.color)
+	elseif bid == contractBidTable.last.amount and player.color == "Blue" and toolConfig.bid.marketeer == true then	
+		if contractBidTable.last.tied == true then
+			for k,v in pairs(contractBidTable.last.ties) do
+				contractBidTable.pass[v] = false
+			end
+		else
+			if contractBidTable.last.bidder ~= "" then
+				contractBidTable.pass[contractBidTable.last.bidder] = false
+			end
+		end
+		contractBidTable.last.amount = bid
+		contractBidTable.last.bidder = player.color
+		contractBidTable.last.special = "marketeer"
+		contractBidTable.pass[player.color] = true
+		contractBidTable.last.ties = {}
+		contractBidTable.last.tied = false
+		broadcastToAll(player.steam_name .. " matches bid of |  " .. bid .. "  | as marketeer.",player.color)
+	elseif bid == contractBidTable.last.amount and player.color == contractBidTable.last.initiator and contractBidTable.last.special ~= "marketeer" then
+		if contractBidTable.last.tied == true then
+			for k,v in pairs(contractBidTable.last.ties) do
+				contractBidTable.pass[v] = false
+			end
+		else
+			if contractBidTable.last.bidder ~= "" then
+				contractBidTable.pass[contractBidTable.last.bidder] = false
+			end
+		end
+		contractBidTable.last.amount = bid
+		contractBidTable.last.bidder = player.color
+		contractBidTable.last.special = "initiator"
+		contractBidTable.pass[player.color] = true
+		contractBidTable.last.ties = {}
+		contractBidTable.last.tied = false
+		broadcastToAll(player.steam_name .. " matches bid of |  " .. bid .. "  | as initiator.",player.color)
+	elseif bid == contractBidTable.last.amount and contractBidTable.last.special ~= "marketeer" and contractBidTable.last.special ~= "initiator" then
+		if contractBidTable.last.tied == true then
+			for k,v in pairs(contractBidTable.last.ties) do
+				contractBidTable.pass[v] = false
+			end
+		else
+			if contractBidTable.last.bidder ~= "" then
+				contractBidTable.pass[contractBidTable.last.bidder] = false
+				table.insert(contractBidTable.last.ties, contractBidTable.last.bidder)
+			end
+		end
+		contractBidTable.last.amount = bid
+		contractBidTable.last.bidder = ""
+		contractBidTable.last.special = ""
+		local tempTable = contractBidTable.last.ties
+		table.insert(tempTable, player.color)
+		contractBidTable.last.ties = tempTable
+		contractBidTable.last.tied = true
+		contractBidTable.pass[player.color] = true
+		broadcastToAll(player.steam_name .. " matches bid of |  " .. bid .. "  | in a tie.",player.color)
+	else
+		broadcastToColor("Your bid was not accepted as it is longer than current time bid.", player.color, msgError)
+	end
+	updateContractBidStatus()
+end
+
+function updateBidStatus()
+	local str = ""
+	local playerList = Player.getPlayers()
+	local player = {}
+	if toolConfig.turn.soloMode == false then
+		for k,v in pairs(bidTable.pass) do
+			if v == false then
+				for j,l in pairs(playerList) do
+					if l.seated == true and l.color == k then
+						player = l
+						str = player.steam_name .. " | " .. str
+					end
+				end
+			end
+			
+		end	
+	elseif toolConfig.turn.soloMode == true then
+		for k,v in pairs(bidTable.pass) do
+			if v == false then
+				str = k .. " | " .. str
+			end
+			
+		end	
+	end
+	if str == "" then
+		local bidderStr = ""
+		if bidTable.last.special ~= "initiator" then
+			bidderStr = "a bidder"
+		else
+			bidderStr = "an initiator"
+		end
+		if bidTable.last.tied == false then
+			if toolConfig.turn.soloMode == false then
+				broadcastToAll("Auction complete! " .. Player[bidTable.last.bidder].steam_name .. " won the auction with a bid of |    " .. tostring(bidTable.last.amount) .. "    | as " .. bidderStr .. ".",msgPrompt)
+			else
+				broadcastToAll("Auction complete! " .. bidTable.last.bidder .. " won the auction with a bid of |    " .. tostring(bidTable.last.amount) .. "    | as " .. bidderStr .. ".",msgPrompt)
+			end
+		else
+			local tieStr = ""
+			if toolConfig.turn.soloMode == false then
+				for k,v in pairs(bidTable.last.ties) do
+					if Player[v].seated == true then
+						tieStr = tieStr .. " , " .. Player[v].steam_name
+					else
+						tieStr = tieStr .. " , " .. v
+					end
+				end
+			else
+				for k,v in pairs(bidTable.last.ties) do
+					tieStr = tieStr .. " , " .. v
+				end
+			end
+			broadcastToAll("Auction ends in a tie! Auctioneer must choose winner: " .. tieStr .. " are tied with a bid of |    " .. tostring(bidTable.last.amount) .. "    |.",msgPrompt)
+		end
+		local soundAsset = getObjectFromGUID(objRefs.tools.sound)
+		if  soundAsset then
+			soundAsset.AssetBundle.playTriggerEffect(3)
+		end
+		bidTable.last.amount = 0
+		bidTable.last.bidder = ""
+		bidTable.last.special = ""
+		bidTable.last.initiator = {}
+		bidTable.last.ties = {}
+		bidTable.last.tied = false
+		bidTable.ongoing = false
+		timerTable.active = timerTable.prevplayer
+		-- timerUnpause()
+
+		for k,v in pairs(bidTable.pass) do
+			bidTable.pass[k] = false
+		end
+	else
+		printToAll("Pending bids or passes from players: " .. str,msgPrompt)
+	end
+	updateBidUI()
+	hardSaveBid()
+end
+
+function updateContractBidStatus()
+	local str = ""
+	local playerList = Player.getPlayers()
+	local player = {}
+	if toolConfig.turn.soloMode == false then
+		for k,v in pairs(contractBidTable.pass) do
+			if v == false then
+				for j,l in pairs(playerList) do
+					if l.seated == true and l.color == k then
+						player = l
+						str = player.steam_name .. " | " .. str
+					end
+				end
+			end
+			
+		end	
+	elseif toolConfig.turn.soloMode == true then
+		for k,v in pairs(contractBidTable.pass) do
+			if v == false then
+				str = k .. " | " .. str
+			end
+			
+		end	
+	end
+	if str == "" then
+		local bidderStr = ""
+		if contractBidTable.last.special ~= "initiator" then
+			bidderStr = "a bidder"
+		else
+			bidderStr = "an initiator"
+		end
+		if contractBidTable.last.tied == false then
+			if toolConfig.turn.soloMode == false then
+				broadcastToAll("Auction complete! " .. Player[contractBidTable.last.bidder].steam_name .. " won the contract auction with a bid of |    " .. tostring(contractBidTable.last.amount) .. "    | as " .. bidderStr .. ".",msgPrompt)
+			else
+				broadcastToAll("Auction complete! " .. contractBidTable.last.bidder .. " won the contract auction with a bid of |    " .. tostring(contractBidTable.last.amount) .. "    | as " .. bidderStr .. ".",msgPrompt)
+			end
+		else
+			local tieStr = ""
+			if toolConfig.turn.soloMode == false then
+				for k,v in pairs(contractBidTable.last.ties) do
+					if Player[v].seated == true then
+						tieStr = tieStr .. " , " .. Player[v].steam_name
+					else
+						tieStr = tieStr .. " , " .. v
+					end
+				end
+			else
+				for k,v in pairs(contractBidTable.last.ties) do
+					tieStr = tieStr .. " , " .. v
+				end
+			end
+			broadcastToAll("Auction ends in a tie! Auctioneer must choose winner: " .. tieStr .. " are tied with a bid of |    " .. tostring(contractBidTable.last.amount) .. "    |.",msgPrompt)
+		end
+		local soundAsset = getObjectFromGUID(objRefs.tools.sound)
+		if  soundAsset then
+			soundAsset.AssetBundle.playTriggerEffect(3)
+		end
+		contractBidTable.last.amount = 10
+		contractBidTable.last.bidder = ""
+		contractBidTable.last.special = ""
+		contractBidTable.last.initiator = {}
+		contractBidTable.last.ties = {}
+		contractBidTable.last.tied = false
+		contractBidTable.ongoing = false
+		timerUnpause()
+
+		for k,v in pairs(contractBidTable.pass) do
+			contractBidTable.pass[k] = false
+		end
+	else
+		printToAll("Pending bids or passes from players: " .. str,msgPrompt)
+	end
+	updateContractBidUI()
+	hardSaveContractBid()
+end
+
+----------bid input
+function bidStart(player, type, btnID)
+	bidTable.ongoing = true
+	local bid = 0
+	bidTable.last.amount = bid
+	bidTable.last.bidder = player.color
+	bidTable.last.initiator = player.color
+	bidTable.pass[player.color] = true
+	timerTable.prevplayer = timerTable.active
+	broadcastToAll(player.steam_name .. " starts an auction with a bid of 0", player.color)
+	timerAdd()
+	-- timerPauseForAuction()
+	local soundAsset = getObjectFromGUID(objRefs.tools.sound)
+	if  soundAsset then
+		soundAsset.AssetBundle.playTriggerEffect(4)
+	end
+	if player == "Blue" and toolConfig.bid.marketeer == true then
+		bidTable.last.special = "marketeer"
+	else
+		bidTable.last.special = "initiator"
+	end
+	if toolConfig.bid.auto == true then
+		updateBidStatus()
+	else
+		updateBidUI()
+		hardSaveBid()
+	end
+end
+
+function contractBidStart(player, type, btnID)
+	contractBidTable.ongoing = true
+	local bid = 10
+	contractBidTable.last.amount = bid
+	contractBidTable.last.bidder = player.color
+	contractBidTable.last.initiator = player.color
+	contractBidTable.pass[player.color] = true
+	broadcastToAll(player.steam_name .. " starts an auction with a bid of 10", player.color)
+	timerAdd()
+	-- timerPauseForAuction()
+	local soundAsset = getObjectFromGUID(objRefs.tools.sound)
+	if  soundAsset then
+		soundAsset.AssetBundle.playTriggerEffect(4)
+	end
+	if player == "Blue" and toolConfig.bid.marketeer == true then
+		contractBidTable.last.special = "marketeer"
+	else
+		contractBidTable.last.special = "initiator"
+	end
+	if toolConfig.bid.auto == true then
+		updateContractBidStatus()
+	else
+		updateContractBidUI()
+		hardSaveContractBid()
+	end
+end
+
+function bid(player, type, btnID)
+	local bid = {}
+	if toolConfig.bid.auto == true and bidTable.ongoing == false then
+		printToColor("An auction has not yet started.",player.color,msgError)
+	else
+		if btnID ~= "bidMatch" and btnID ~= "bidRaise" then
+			bid = string.sub(btnID,4)
+			bid = tonumber(bid)
+		elseif btnID == "bidMatch" then
+			bid = bidTable.last.amount
+		elseif btnID == "bidRaise" then
+			bid = bidTable.last.amount + 1
+		end
+		local soundAsset = getObjectFromGUID(objRefs.tools.sound)
+		if  soundAsset then
+			soundAsset.AssetBundle.playTriggerEffect(4)
+		end
+		if toolConfig.bid.auto == true then
+			updateBid(player, bid)
+		else
+			local str="bidTextP"
+			for k,v in pairs(seatTable) do
+				if v == player.color then
+					UI.setAttribute(str .. k, "text", bid)
+				end
+			end
+			broadcastToAll(player.steam_name .. " bids " .. bid,player.color)
+
+			if bid > bidTable.last.amount then
+				bidTable.last.amount = bid
+				bidTable.last.bidder = player.color
+			end
+			updateBidUI()
+			hardSaveBid()
+		end
+	end
+end
+
+function contractBid(player, type, btnID)
+	local bid = {}
+	if toolConfig.bid.auto == true and contractBidTable.ongoing == false then
+		printToColor("An auction has not yet started.",player.color,msgError)
+	else
+		if btnID ~= "contractBidMatch" and btnID ~= "contractBidLower" then
+			bid = string.sub(btnID,4)
+			bid = tonumber(bid)
+		elseif btnID == "contractBidMatch" then
+			bid = contractBidTable.last.amount
+		elseif btnID == "contractBidLower" then
+			if contractBidTable.last.amount < 1 then
+				print("Cannot bid less than 0 turns")
+				bid = 0
+			else
+				bid = contractBidTable.last.amount - 1
+			end
+		end
+		local soundAsset = getObjectFromGUID(objRefs.tools.sound)
+		if  soundAsset then
+			soundAsset.AssetBundle.playTriggerEffect(4)
+		end
+		if toolConfig.bid.auto == true then
+			updateContractBid(player, bid)
+		else
+			local str="contractBidTextP"
+			for k,v in pairs(seatTable) do
+				if v == player.color then
+					UI.setAttribute(str .. k, "text", bid)
+				end
+			end
+			broadcastToAll(player.steam_name .. " bids " .. bid,player.color)
+
+			if 0 <= bid < contractBidTable.last.amount  then
+				contractBidTable.last.amount = bid
+				contractBidTable.last.bidder = player.color
+			end
+			updateContractBidUI()
+			hardSaveContractBid()
+		end
+	end
+end
+
+function bidEnter(player, entry, btnID)
+	local sendBid = {}
+	if entry ~= "" then
+		entry = tonumber(entry)
+		if entry >= 0 then
+			sendBid = entry
+			--print(sendBid)
+			bid(player, "manual", "bid" .. sendBid)
+		end
+	else
+	end
+end
+
+function contractBidEnter(player, entry, btnID)
+	local sendBid = {}
+	if entry ~= "" then
+		entry = tonumber(entry)
+		if 10 >= entry >= 0 then
+			sendBid = entry
+			--print(sendBid)
+			contractBid(player, "manual", "bid" .. sendBid)
+		end
+	else
+	end
+end
+
+function bidPass(player, entry, btnID)
+	if toolConfig.bid.auto == true and bidTable.ongoing == false then
+		printToColor("An auction has not yet started.",player.color,msgError)
+	else
+		broadcastToAll(player.steam_name .. " passes.",player.color)
+		local soundAsset = getObjectFromGUID(objRefs.tools.sound)
+		if  soundAsset then
+			soundAsset.AssetBundle.playTriggerEffect(4)
+		end
+		bidTable.pass[player.color] = true
+		if toolConfig.bid.auto == true then
+			updateBidStatus()
+		else
+			local str="bidTextP"
+			for k,v in pairs(seatTable) do
+				if v == player.color then
+					UI.setAttribute(str .. k, "text", "X")
+				end
+			end
+			updateBidUI()
+			hardSaveBid()
+		end
+	end
+end
+
+function contractBidPass(player, entry, btnID)
+	if toolConfig.bid.auto == true and contractBidTable.ongoing == false then
+		printToColor("An auction has not yet started.",player.color,msgError)
+	else
+		broadcastToAll(player.steam_name .. " passes.",player.color)
+		local soundAsset = getObjectFromGUID(objRefs.tools.sound)
+		if  soundAsset then
+			soundAsset.AssetBundle.playTriggerEffect(4)
+		end
+		contractBidTable.pass[player.color] = true
+		if toolConfig.bid.auto == true then
+			updateContractBidStatus()
+		else
+			local str="contractBidTextP"
+			for k,v in pairs(seatTable) do
+				if v == player.color then
+					UI.setAttribute(str .. k, "text", "X")
+				end
+			end
+			updateContractBidUI()
+			hardSaveContractBid()
+		end
+	end
+end
+
+function bidReset(player, entry, btnID)
+	broadcastToAll(player.steam_name .. " closes/resets the Auction.",player.color)
+	bidTable.last.amount = 0
+	bidTable.last.bidder = ""
+	bidTable.last.special = ""
+	bidTable.last.initiator = {}
+	bidTable.ongoing = false
+	timerAdd()
+	-- timerUnpause()
+	for k,v in pairs(bidTable.pass) do
+		bidTable.pass[k] = false
+	end
+	timerTable.active = timerTable.prevplayer
+	updateBidUI()
+	hardSaveBid()
+end
+
+function contractBidReset(player, entry, btnID)
+	broadcastToAll(player.steam_name .. " closes/resets the Auction.",player.color)
+	contractBidTable.last.amount = 10
+	contractBidTable.last.bidder = ""
+	contractBidTable.last.special = ""
+	contractBidTable.last.initiator = {}
+	contractBidTable.ongoing = false
+	timerAdd()
+	-- timerUnpause()
+	for k,v in pairs(contractBidTable.pass) do
+		contractBidTable.pass[k] = false
+	end
+	timerTable.active = timerTable.prevplayer
+	updateContractBidUI()
+	hardSaveContractBid()
+end
+
+--=======================================================================FT TRACKER
+
+----------------------ft tracker config
+
+function changeFTScale(_p, val, btnID)
+	toolConfig.ft.scale = val
+	updateToolScale()
+	hardSave()
+end
+
+function toggleFTMod1(_p, bool, btnID)
+	if bool == "True" then
+		toolConfig.ft.mod1 = true
+	elseif bool == "False" then
+		toolConfig.ft.mod1 = false
+	end
+	updateFTUI()
+	updateFTUIMods()
+	hardSave()
+end
+
+function toggleFTMod2(_p, bool, btnID)
+	if bool == "True" then
+		toolConfig.ft.mod2 = true
+	elseif bool == "False" then
+		toolConfig.ft.mod2 = false
+		for k,v in pairs(seatTable) do
+			ftTrackerTable[v].bank = "LEO"
+		end
+	end
+	updateFTUI()
+	updateFTUIMods()
+	hardSave()
+end
+
+function toggleFTMod4(_p, bool, btnID)
+	if bool == "True" then
+		toolConfig.ft.mod4 = true
+	elseif bool == "False" then
+		toolConfig.ft.mod4 = false
+		for k,v in pairs(seatTable) do
+			ftTrackerTable[v].bank = "LEO"
+		end
+	end
+	updateFTUI()
+	updateFTUIMods()
+	hardSave()
+end
+
+function setBankLEO(player, _c, _i)
+	ftTrackerTable[player.color].bank = "LEO"	
+	updateFTUI()
+	hardSaveFT()
+end
+
+function setBankBK(player, _c, _i)
+	ftTrackerTable[player.color].bank = "BK"	
+	updateFTUI()
+	hardSaveFT()
+end
+
+function setBankBS(player, _c, _i)
+	ftTrackerTable[player.color].bank = "BS"
+	updateFTUI()	
+	hardSaveFT()
+end
+
+
+-----------------------ft tracker input
+
+function clickTracker(player, type, btnID)
+	player = player.color
+	--print(player .. btnID)
+	btnID = string.sub(btnID,string.len(player)+1)
+	--print(btnID)
+	if type == "-1" then
+		addFT(player,btnID)
+	elseif type == "-2" then
+		subFT(player,btnID)
+	elseif type == "-3" then
+		add7FT(player,btnID)
+	end
+	--print(player .. ' has pressed button ' .. btnID)
+end
+
+function addFT(player,btnID)
+	ftTrackerTable[player][btnID] = ftTrackerTable[player][btnID] + 1
+	
+	updateFTUI()
+	hardSaveFT()
+end
+
+function add7FT(player,btnID)
+	ftTrackerTable[player][btnID] = ftTrackerTable[player][btnID] + 7
+
+	updateFTUI()
+	hardSaveFT()
+end
+
+function subFT(player,btnID)
+	if ftTrackerTable[player][btnID] > 0 then
+		ftTrackerTable[player][btnID] = ftTrackerTable[player][btnID] - 1
+		updateFTUI()
+		hardSaveFT()
+	else
+	end
+end
+
+--=======================================================================VP Tracker
+
+
+function clickScore(player, type, btnID)
+	local num = string.len(btnID)
+	local clr = string.sub(btnID,1, num-3)
+	btnID = string.sub(btnID,num-2)
+	
+	if type == "-1" then
+		addVP(clr,btnID)
+	elseif type == "-2" then
+		subVP(clr,btnID)
+	elseif type == "-3" then
+		add5VP(clr,btnID)
+	end
+end
+
+function clickScoreNeg(player, type, btnID)
+	local num = string.len(btnID)
+	local clr = string.sub(btnID,1, num-3)
+	btnID = string.sub(btnID,num-2)
+	
+	if type == "-1" then
+		addVP(clr,btnID)
+	elseif type == "-2" then
+		subVPNeg(clr,btnID)
+	elseif type == "-3" then
+		add5VP(clr,btnID)
+	end
+end
+
+function addVP(player,btnID)
+	vpTrackerTable[player][btnID] = vpTrackerTable[player][btnID] + 1
+	
+	updateVPUI()
+	hardSaveVP()
+end
+
+function add5VP(player,btnID)
+	vpTrackerTable[player][btnID] = vpTrackerTable[player][btnID] + 5
+
+	updateVPUI()
+	hardSaveVP()
+end
+
+function subVP(player,btnID)
+	if vpTrackerTable[player][btnID] > 0 then
+		vpTrackerTable[player][btnID] = vpTrackerTable[player][btnID] - 1
+		updateVPUI()
+		hardSaveVP()
+	else
+	end
+end
+
+function subVPNeg(player,btnID)
+	vpTrackerTable[player][btnID] = vpTrackerTable[player][btnID] - 1
+	updateVPUI()
+	hardSaveVP()
+end
+
+--[[
+function autoUpdateVP(_p, type, btnID)
+	local str = btnAutoVP"
+	local clr = string.sub(btnID, string.len(str))
+	
+	--find boards
+	local map = ""
+	local assembly = ""
+	local objs = getAllObjects()
+	for k,v in pairs(objs) do
+		if v.name == "Custom_Token"
+			if v.getName() == "Standard Map" then
+				if v.getPosition().x < 50 and v.getPosition().x > -50 then
+					map = v
+				end
+			end
+		end
+		if v.name == "Custom_Tile" then
+			if map == "" then
+				if v.getName() == "Neoprene Mat Map" then
+					if v.getPosition().x < 50 and v.getPosition().x > -50 then
+						map = v
+					end
+				end
+			end
+			
+		end
+		
+	end
+end
+
+--]]
+--=======================================================================SCRIPTED SETUP
+
+-----------------------toggles/selections settings
+------------first config window
+function changeSeatCount(_p, count)
+	setupConfig.pConfig.seats = count
+end
+
+function toggleMPMode(_p, bool)
+	if bool=="True" then
+		toolConfig.turn.soloMode = false
+	elseif bool=="False" then
+		toolConfig.turn.soloMode = true
+	end
+	updateTurnUI()
+end
+
+function toggleMap(_p, standardBool)
+	if standardBool == "True" then
+		setupConfig.map.ver="normal"
+	elseif standardBool == "False" then
+		setupConfig.map.ver="big"
+	end
+end
+
+function toggleLutetia(_p, bool)
+	if bool == "True" then
+		setupConfig.map.lutetia=true
+	elseif bool == "False" then
+		setupConfig.map.lutetia=false
+	end
+end
+
+function toggleEarth(_p, bool)
+	if bool == "True" then
+		setupConfig.map.pangea=true
+	elseif bool == "False" then
+		setupConfig.map.pangea=false
+	end
+end
+
+function toggleVenus(_p, bool)
+	if bool == "True" then
+		setupConfig.map.ishtar=true
+	elseif bool == "False" then
+		setupConfig.map.ishtar=false
+	end
+end
+
+function toggleCore(_p, bool)
+	if bool == "True" then
+		setupConfig.mods.base="core"
+		UI.setAttribute("toggleMod0", "active", true)
+		UI.setAttribute("toggleMod1", "active", true)
+		UI.setAttribute("toggleMod2", "active", true)
+		UI.setAttribute("toggleMod3", "active", true)
+		UI.setAttribute("toggleMod4", "active", true)
+	else
+		UI.setAttribute("toggleMod0", "active", false)
+		UI.setAttribute("toggleMod1", "active", false)
+		UI.setAttribute("toggleMod2", "active", false)
+		UI.setAttribute("toggleMod3", "active", false)
+		UI.setAttribute("toggleMod4", "active", false)
+	end
+end
+
+function toggleSd(_p, bool)
+	if bool == "True" then
+		setupConfig.mods.base="sd"
+		UI.setAttribute("togglesSd", "active", true)
+	else
+		UI.setAttribute("togglesSd", "active", false)
+	end
+end
+
+function toggleRfg(_p, bool)
+	if bool == "True" then
+		setupConfig.mods.base="rfg"
+		UI.setAttribute("toggleTutorial", "active", true)
+	else
+		UI.setAttribute("toggleTutorial", "active", false)
+	end
+end
+
+
+function toggleMod0(_p, bool)
+	if bool == "True" then
+		setupConfig.mods.mod0=true
+	elseif bool == "False" then
+		setupConfig.mods.mod0=false
+	end
+end
+
+function toggleMod1(_p, bool)
+	if bool == "True" then
+		setupConfig.mods.mod1=true
+	elseif bool == "False" then
+		setupConfig.mods.mod1=false
+	end
+end
+
+function toggleMod2(_p, bool)
+	if bool == "True" then
+		setupConfig.mods.mod2=true
+	elseif bool == "False" then
+		setupConfig.mods.mod2=false
+	end
+end
+
+function toggleMod3(_p, bool)
+	if bool == "True" then
+		setupConfig.mods.mod3=true
+		setupConfig.mods.mod0=true
+		UI.setAttribute("toggleMod0", "isOn", "True")
+	elseif bool == "False" then
+		setupConfig.mods.mod3=false
+	end
+end
+
+function toggleMod4(_p, bool)
+	if bool == "True" then
+		setupConfig.mods.mod4=true
+	elseif bool == "False" then
+		setupConfig.mods.mod4=false
+	end
+end
+
+function toggleSdMode(_p, bool)
+	if bool == "True" then
+		setupConfig.mods.sdSail=true
+		setupConfig.mods.sdRocket=false
+	else
+		setupConfig.mods.sdSail=false
+		setupConfig.mods.sdRocket=true
+	end
+end
+
+function toggleTutorial(_p, bool)
+	if bool == "True" then
+		setupConfig.other.tutorial = true
+	else
+		setupConfig.other.tutorial = false
+	end
+end
+
+function toggleStackMat(_p, bool)
+	if bool == "True" then
+		setupConfig.other.rocketMats = true
+	else
+		setupConfig.other.rocketMats = false
+	end
+end
+
+function toggleTimer(_p, bool)
+	if bool == "True" then
+		configTable.toolTimer = true
+	else
+		configTable.toolTimer = false
+	end
+end
+
+function toggleMod0Solo(_p, bool)
+	if bool == "True" then
+		setupConfig.other.mod0Solo = true
+	else
+		setupConfig.other.mod0Solo = false
+	end
+end
+
+function toggleVGeoffIntro(_p, bool)
+	if bool == "True" then
+		setupConfig.other.vGeoffIntro = true
+	else
+		setupConfig.other.vGeoffIntro = false
+	end
+end
+
+function toggleVSplitMarket(_p, bool)
+	if bool == "True" then
+		setupConfig.other.vSplitMarket = true
+	else
+		setupConfig.other.vSplitMarket = false
+	end
+end
+
+--------config 2/6 seniority
+function changeSeniority(_p, value, _id)
+	local num = string.sub(value, 1, 1)
+	setupConfig.values.seniority = tonumber(num)
+end
+
+-------- config 4/6
+function toggleC5FT(_p, bool)
+	if bool == "True" then
+		configTable.toolFTTracker = true
+		UI.setAttribute("toggleUIToolSetupFTTracker", "isOn", true)
+	elseif bool == "False" then
+		configTable.toolFTTracker = false
+		UI.setAttribute("toggleUIToolSetupFTTracker", "isOn", false)
+	end
+	updateToolsEnabled()
+end
+
+------------
+function toggleFirstPlayer(_p, bool, id)
+	if bool == "True" then
+		local str = "Setup3FPOpt"
+		local col = ""
+		if string.match(id, str) then
+			col = string.sub(id, #str + 1)
+		end
+		toolConfig.turn.firstPlayer = col
+		-- timerTable.active = col
+		-- timerTable.last = time.Time
+		-- timerAdd()
+		reorderPlayerSeats()
+	end
+	hardSave()
+end
+
+function toggleToolsSetup(_p, bool, btnID)
+	local str = "toggleUIToolSetup"
+	local tool = string.sub(btnID, string.len(str) + 1)
+	local toolStr = "tool" .. tool
+	if bool == "False" then
+		configTable[toolStr] = false
+		printToAll("UI: Disabling tool: " .. tool, msgAction)
+	elseif bool == "True" then
+		configTable[toolStr] = true
+		printToAll("UI: Enabling tool: " .. tool, msgAction)
+	end
+	updateToolsEnabled()
+end
+
+function changeScaleAll(_p, value)
+	toolConfig.turn.scale = value
+	toolConfig.bid.scale = value
+	toolConfig.ft.scale = value
+	UI.setValue("textScaleGlobal", value)
+	
+	updateToolScale()
+	hardSave()
+end
+
+
+function changeTableTexture(_p, value, _id)
+	local flexTable = getObjectFromGUID(objRefs.tables.flexTableControl)
+	if flexTable then
+		local dataTable = flexTable.getTable("tableImageData")
+		for k,v in pairs(dataTable) do
+			if value == v.name then
+				flexTable.call("updateSurfaceFromOutside", v.url)
+			end
+		end
+	end
+end
+
+------------------------------------------------------------SETUP PROCESS/STEPS/TRIGGER FCNS
+
+-------exit of setup
+function killSetup()
+	--hide current setup window
+	local step = setupConfig.general.step
+	UI.setAttribute("WindowSetup" .. step, "active", false)
+	
+	setupConfig.general.step = "done"
+	printToAll("Scripted setup function is permanently closed/disabled for this session.",msgComplete)
+	
+	UI.setAttribute("VPMenu", "active", true)
+	UI.setAttribute("ConfigMenu", "active", true)
+	configTable.toolContractBidTool = true
+	configTable.toolBidTool = true
+	configTable.toolDiceRoller = true
+	configTable.toolTurnTracker = true
+	configTable.toolFTTracker = true
+	configTable.toolBurnTool = true
+	configTable.toolBurnToolBernal = true
+	configTable.toolTimer = true
+	UI.setAttribute("DiceRollerParent", "active", true)
+	UI.setAttribute("TurnTrackerParent", "active", true)
+	UI.setAttribute("BidToolParent", "active", true)
+	UI.setAttribute("FTTrackerParent", "active", true)
+	UI.setAttribute("BurnParentWhite", "active", true)
+	UI.setAttribute("BurnParentBlue", "active", true)
+	UI.setAttribute("BurnParentYellow", "active", true)
+	UI.setAttribute("BurnParentGreen", "active", true)
+	UI.setAttribute("BurnParentRed", "active", true)
+	UI.setAttribute("BurnParentPurple", "active", true)
+	UI.setAttribute("BurnParentBernalWhite", "active", true)
+	UI.setAttribute("BurnParentBernalBlue", "active", true)
+	UI.setAttribute("BurnParentBernalYellow", "active", true)
+	UI.setAttribute("BurnParentBernalGreen", "active", true)
+	UI.setAttribute("BurnParentBernalRed", "active", true)
+	UI.setAttribute("BurnParentBernalPurple", "active", true)
+	
+	
+	updateSetupUI()
+	--set turn order
+	reorderPlayerSeats()
+	hardSave()
+	printToAll("============SCRIPTED SETUP CLOSED============",msgHeader)
+end
+
+-------from landing page, loads step 1
+function nextSetup0()
+	printToAll("============SCRIPTED SETUP INITIALIZED============",msgHeader)
+	printToAll("------------SETUP C0: Layout/Variants/Modules",msgHeader)
+	setupConfig.general.step = "1"
+	UI.setAttribute("WindowSetup0", "active", false)
+	updateSetupUI()
+	printToAll("Admin: Use prompt for layout, game version, modules, and add-ons.",msgInfo)
+	hardSave()
+end
+
+-------after config of layout, branches to core or SD; prompts for players to either hide hands or assign crew to each seat
+function nextSetup1()
+	UI.setAttribute("WindowSetup1", "active", false)
+	setupMap()
+	setupMods()
+	updateUIMods()
+	setupSeats()
+	seatRearrange()
+	if setupConfig.mods.base=="sd" then
+		setupConfig.general.step = "SD"
+		updateSetupUI()
+		printToAll('Admin: Change Hands Hiding to Default then deal cards.',msgInfo)
+	else
+		printToAll("------------SETUP C1: Seniority Disk Placement",msgHeader)
+		printToAll('Admin: Choose seniority disks for game length/scenario on solar track.',msgInfo)
+
+		setupConfig.general.step = "1B"
+		updateSetupUI()
+
+	end
+	hardSave()
+end
+
+----------SD branch
+function nextSetup2SD()
+	printToAll("------------Space Diamonds: Finalizing Configuration",msgHeader)
+	UI.setAttribute("WindowSetupSD", "active", false)
+	setupConfig.general.step = "done"
+	local objs = getAllObjects()
+	local seated = false
+	for k,v in pairs(objs) do
+		if v.tag == "Deck" then
+			if v.getName() == "Spacecraft Deck" then
+				shuffleAndDealToAll(v, 1, false)
+			elseif v.getName() == "Sail Mission Deck" then
+				shuffleAndDealToAll(v, 1, false)
+			elseif v.getName() == "Rocket Mission Deck" and setupConfig.mods.sdRocket == true then
+				shuffleAndDealToAll(v, 1, false)
+			end
+		end
+	end
+	local source = {}
+	local destination = {}
+	local col = ""
+	for k,v in pairs(seatTable) do
+		col = v
+		if refFound.boxes["p" .. col] == true then
+			source = objRefs.boxes["p" .. col]
+			--core components, on mat
+			destination = "figuresMat"
+			local params = {"Core Playmat", col}
+			local mat = findPMat(params)
+			if mat ~= "" then
+				setupPlacerPlayerTokensMat(source, destination, col,  mat)
+			else
+				printToAll("Error: Script cannot find " .. col .. "player mat for figurine deployment.  Obtain manually from player bag.", msgError)
+			end
+		else
+			printToAll("Error: Script cannot find " .. col .. "player bag.", msgError)
+		end
+	end
+	UI.setAttribute("DiceRollerParent", "active", true)
+	configTable.toolDiceRoller = true
+	updateSetupUI()
+	hardSave()
+	printToAll("============SCRIPTED SETUP COMPLETE============",msgHeader)
+end
+
+----------core branch, from faction determination; prompts players to handle final player config settings
+function nextSetup1B()
+	UI.setAttribute("WindowSetup1B", "active", false)
+	
+	updateInteractive()
+	placeSeniority()
+	setupConfig.general.colorSwap = true
+	setupConfig.general.step = "2"
+	updateSetupUI()
+	hardSave()
+	
+	printToAll("------------SETUP C2: Assign Factions and Crew",msgHeader)
+	printToAll("Admin: Use Scripted Deal or manually deal a random/assigned Crew card to each Player Hand.  Moving a Crew card into a Players's Hand will change that seat's color for the first time only.",msgInfo)
+	printToAll("Players: Choose which side of Crew card to use for game.  Place in LEO stack on player mat.",msgPrompt)
+end
+
+
+function nextSetup2()
+	setupConfig.general.colorSwap = false
+	UI.setAttribute("WindowSetup2", "active", false)
+	setupConfig.general.step = "2B"
+	
+	seatRearrange()
+
+	
+	printToAll("------------SETUP C3: Reserves Setup",msgHeader)
+	printToAll("Player components: Placing player faction components for core and any modules.",msgAction)
+	printToAll("Change states on tokens to change which models are used (vanilla or custom).",msgInfo)
+	spawnPlayerTokens()
+	if setupConfig.mods.mod3 == true then
+		changeM3Color()
+	end
+	
+	printToAll("------------SETUP C4: Patent Deck Setup",msgHeader)
+	if setupConfig.other.tutorial == false then
+		if refFound.mats.marketBoard == true then
+			local marketMat = getObjectFromGUID(objRefs.mats.marketBoard)
+			if marketMat then
+				marketMat.call("shuffleAllDecks")
+			end
+			local contractMat = getObjectFromGUID(objRefs.mats.contractBoard)
+			if contractMat then
+				contractMat.call("shuffleAllDecks")
+			end
+		else
+			printToAll("Error: Cannot find market board for shuffle of patents.", msgError)
+		end
+	else
+		printToAll("Decks: Patents decks were not shuffled and kept in order for Race to Mars tutorial guide in manual",msgComplete)
+	end
+	
+	printToAll("------------SETUP C5 (unscripted): Starting Aquas",msgHeader)
+	broadcastToAll("Give players the starting Aqua beads/count for chosen scenario.",msgPrompt)
+	configTable.toolFTTracker = true
+	UI.setAttribute("FTTrackerParent", "active", true)
+	
+	updateSetupUI()
+	hardSave()
+end
+
+function nextSetup2B()
+	UI.setAttribute("WindowSetup2B", "active", false)
+	setupConfig.general.step = "3"
+	
+	
+	printToAll("------------SETUP C6: Exploitation Track Setup",msgHeader)
+	printToAll("Map: Exploitation track should already have beads on starting positions. Adjust as needed.",msgInfo)
+	
+	printToAll("------------SETUP C7: Glory and Heroism Chit Setup",msgHeader)
+	printToAll("Map: Map should already have glory chits.  Adjust as needed.",msgInfo)
+	
+	printToAll("------------SETUP C8: 1st Player and Sunspot Cube",msgHeader)
+	printToAll("Admin: Select 1st Player. Refer to Crew clout values.",msgPrompt)
+
+	updateSetupUI()
+	hardSave()
+end
+
+
+function nextSetup3()
+	broadcastToAll("First Player: Place a cube (factory/delegate) on starting position of Sunspot Cycle.",msgPrompt)
+	if setupConfig.other.vGeoffIntro == true and setupConfig.mods.base == "core" then
+		broadcastToAll("Geoff's Intro Variant: Choose pre-made Rocket stack according to Intro Variant rules; return unused patent cards individually into the discard slots on the market and reshuffle the patent decks.", msgPrompt)
+	end
+	UI.setAttribute("WindowSetup3", "active", false)
+	setupConfig.general.step = "4"
+	
+	
+	printToAll("------------SETUP UI: UI Tool Settings",msgHeader)
+	printToAll("UI: Enabling UI tools.",msgAction)
+	configTable.toolBidTool = true
+	configTable.toolTurnTracker = true
+	configTable.toolDiceRoller = true
+	configTable.toolBurnTool = true
+	updateToolsEnabled()
+	printToAll("UI: Enable/Disable any UI tools and change global scaling.",msgInfo)
+
+	updateSetupUI()
+	hardSave()
+end
+
+
+function nextSetup4()
+	UI.setAttribute("WindowSetup4", "active", false)
+	setupConfig.general.step = "done"
+	printToAll("============SCRIPTED SETUP COMPLETE============",msgComplete)
+	UI.setAttribute("ConfigMenu", "active", true)
+	UI.setAttribute("VPMenu", "active", true)
+	hardSave()
+	-- toggleTurnFirstPlayer()
+end
+
+
+
+----------------------------------------------------------------------SETUP PROCESS FCNS
+
+----------------------------after window 1
+
+--sets up map layout
+function setupMap()
+	printToAll("--Setup C0: Initializing map configuration.",msgHeader)
+	checkGUIDs()
+	
+	local mapStr = ""
+	
+	if setupConfig.map.ver == "normal" then
+		mapStr = "Std"
+		printToAll("Map: Using standard sized map.",msgAction)
+	elseif setupConfig.map.ver == "big" then
+		if refFound.maps.big == true then
+			printToAll("Map: Changing map to neoprene addon sized (Big) map.",msgAction)
+			mapStr = "Big"
+			local obj = ""
+			obj = getObjectFromGUID(mapRefs.standard.guid)
+			if obj ~= "" then
+				--print('putting away board')
+				getObjectFromGUID(objRefs.boxes.core).putObject(obj)
+			end
+			obj = ""
+			obj = getObjectFromGUID(mapRefs.big.guid)
+			if obj ~= "" then
+				obj.setPosition(mapRefs.big.pos)
+				obj.setRotation(mapRefs.big.rot)
+				obj.setLock(true)
+			end
+		else
+			printToAll('Error: Big map cannot be found. Unable to setup big map.',msgError)
+		end
+	end
+	
+	--place tokens
+	local source = {}
+	local destination = {}
+	if setupConfig.mods.base == "sd" then
+	else
+		if refFound.boxes.core == true then
+
+			printToAll("Map: Placing map tokens and overlays.",msgAction)
+			source = objRefs.boxes.core
+			destination  = "mapTokens" .. mapStr
+			setupPlacer(source, destination)
+			
+			destination = "mapExploitation" .. mapStr
+			setupPlacer(source, destination)
+			
+			if tonumber(setupConfig.pConfig.seats) > 2 then
+				destination = "heroTokens" .. mapStr
+				setupPlacer(source, destination)
+			end
+			
+			--place lutetia
+			if setupConfig.map.lutetia == true then
+				local objGUID1 = ""
+				destination = "mapLutetia" .. mapStr
+				objGUID1 = setupPlacer(source, destination)
+				Wait.frames(function() lockMe(objGUID1) end, 60)
+			end
+			
+			--place earth
+			if setupConfig.map.pangea == true then
+				local objGUID2 = ""
+				destination = "mapEarth" .. mapStr
+				objGUID2 = setupPlacer(source, destination)
+				Wait.frames(function() lockMe(objGUID2) end, 60)
+			end
+			
+			--place venus
+			if setupConfig.map.ishtar == true then
+				local objGUID3 = ""
+				destination = "mapVenus" .. mapStr
+				objGUID3 = setupPlacer(source, destination)
+				Wait.frames(function() lockMe(objGUID3) end, 60)
+			end
+			
+			--place split market board for variant options
+			if setupConfig.other.vSplitMarket == true then
+				local objGUID4 = ""
+				destination = "variantSplitMarket" .. mapStr
+				objGUID4 = setupPlacer(source, destination)
+				Wait.frames(function() lockMe(objGUID4) end, 60)
+			end
+		else
+			printToAll('Error: Core box cannot be found. Unable to setup map tokens.',msgError)
+		end
+	end
+	printToAll("Map setup complete.",msgComplete)
+end
+
+
+--adds mod components
+function setupMods()
+	printToAll("--Setup C0: Initializing module/variant configuration.", msgHeader)
+	checkGUIDs()
+	local source = {}
+	local destination = {}
+	
+	
+	--base mode
+	if setupConfig.mods.base == "core" then
+		printToAll("Variant: Placing Core Decks.",msgAction)
+		if setupConfig.other.vGeoffIntro == false then
+			if refFound.boxes.core == true then
+				source = objRefs.boxes.core
+				destination = "decksCore"
+				setupPlacer(source, destination)
+			else
+				printToAll('Error: Core box cannot be found. Unable to setup patent decks.',msgError)
+			end
+		else
+			if refFound.boxes.vGeoffIntro == true then
+				source = objRefs.boxes.vGeoffIntro
+				destination = "varGeoffIntro"
+				setupPlacer(source, destination)
+				
+				--intro cards
+				destination = "varGeoffIntroStacks"
+				local splayDeckGUIDs = setupPlacer(source, destination)
+				for k, v in pairs(splayDeckGUIDs) do
+					Wait.frames(function() splayDeckRight(getObjectFromGUID(v)) end, 30)
+				end
+			else
+				printToAll('Error: Intro variant bag cannot be found. Unable to setup patent decks.',msgError)
+			end
+		end
+	elseif setupConfig.mods.base == "rfg" then
+		printToAll("Variant: Placing Race for Glory components.",msgAction)
+		if refFound.boxes.rfg == true then
+			source = objRefs.boxes.rfg
+			destination = "decksRfg"
+			setupPlacer(source, destination)
+			local obj = getObjectFromGUID(objRefs.mats.polBoard)
+			local pos = obj.getPosition()
+			if obj then
+				obj.setRotation({x=0,y=270,z=180})
+				obj.setPosition({pos.x,pos.y+0.1,pos.z})
+			else
+				printToAll("Error: Cannot find political assembly board.",msgError)
+			end
+			obj = {}
+			pos = {}
+			obj = getObjectFromGUID(objRefs.mats.sunspotBoard)
+			pos = obj.getPosition()
+			if obj then
+				obj.setRotation({x=0,y=270,z=180})
+				obj.setPosition({pos.x,pos.y+0.1,pos.z})
+			else
+				printToAll("Error: Cannot find sunspot board.",msgError)
+			end
+		else
+			printToAll('Error: RfG box cannot be found. Unable to setup RfG components.',msgError)
+		end
+	elseif setupConfig.mods.base == "sd" then
+		printToAll("Variant: Placing Space Diamonds components (iC2).",msgAction)
+		if refFound.boxes.sdBox == true and refFound.boxes.sdBag == true then
+			source = objRefs.boxes.sdBox
+			destination = "decksSd"
+			setupPlacer(source, destination)
+			
+			--randomize tiles
+			source = objRefs.boxes.sdBag
+			getObjectFromGUID(source).shuffle()
+			if setupConfig.map.ver == "normal" then
+				if setupConfig.mods.sdSail == true then
+					destination = "sdDiscoverySail"
+				else
+					destination = "sdDiscoveryRocket"
+				end
+			elseif setupConfig.map.ver == "big" then
+				if setupConfig.mods.sdSail == true then
+					destination = "sdDiscoverySailBig"
+				else
+					destination = "sdDiscoveryRocketBig"
+				end
+			end
+			printToAll("Variant: Randomizing and placing discovery tokens.",msgAction)
+			Wait.frames(function() setupPlacerRandomSpots(source, destination) end, 60)
+		else
+			printToAll('Error: Star Diamonds box and Bag cannot be found. Unable to setup SD components.',msgError)
+		end
+	end
+	
+	--Mod0
+	if setupConfig.mods.mod0 == true and setupConfig.mods.base == "core" then
+		printToAll("Modules: Placing Module 0 components.",msgAction)
+		if setupConfig.pConfig.seats == "1" and setupConfig.other.mod0Solo == true and setupConfig.mods.mod3 == false then
+			if refFound.mats.polBoard == true then
+				getObjectFromGUID(objRefs.mats.polBoard).setState(2)
+				printToAll("Mods: Replacing Politics board with Official Solo Variant",msgAction)
+			end
+		end
+		if refFound.boxes.core == true then
+			source = objRefs.boxes.core
+			destination = "tokensMod0"
+			setupPlacer(source,destination)
+		else
+			printToAll('Error: Core box cannot be found. Unable to setup Module 0 components.',msgError)
+		end
+	end
+	
+	--Mod1
+	if setupConfig.mods.mod1 == true then
+		printToAll("Modules: Placing Module 1 components.",msgAction)
+		if refFound.boxes.mod1 == true then
+			source = objRefs.boxes.mod1
+			destination = "decksMod1"
+			setupPlacer(source, destination)
+			destination = "tokensMod1"
+			setupPlacer(source, destination)
+			local objsToLock = {objRefs.boxes.isotopeFTs, objRefs.boxes.spaceElevators}
+			Wait.frames(function() lockMe(objsToLock) end, 60)
+		else
+			printToAll('Error: Mod1 box cannot be found. Unable to setup Module 1 components.',msgError)
+		end
+	end
+	
+	
+	--Mod2
+	if setupConfig.mods.mod2 == true then
+		printToAll("Modules: Placing Module 2 components.",msgAction)
+		if refFound.boxes.mod2 == true then	
+			source = objRefs.boxes.mod2
+			destination = "decksMod2"
+			setupPlacer(source, destination)
+		else
+			printToAll('Error: Mod2 box cannot be found. Unable to setup Module 2 components.',msgError)
+		end
+	end
+	
+	
+	
+	--Mod3
+	if setupConfig.mods.mod3 == true then
+		printToAll("Modules: Placing Module 3 components.",msgAction)
+		if refFound.boxes.mod3 == true and refFound.boxes.core then
+			source = objRefs.boxes.mod3
+			destination = "tokensMod3"
+			setupPlacer(source, destination)
+			getObjectFromGUID(objRefs.boxes.core).putObject(getObjectFromGUID(objRefs.mats.polBoard))
+			destination = "matMod3"
+			setupPlacer(source, destination)
+			local objsToLock = {objRefs.mats.polBoard3}
+			Wait.frames(function() lockMe(objsToLock) end, 60)
+		else
+			printToAll('Error: Boxes cannot be found. Unable to setup Module 3 components.',msgError)
+		end
+	end
+    
+	--Mod4+0
+	if setupConfig.mods.mod4 == true then
+		printToAll("Modules: Placing Module 0+4 components.",msgAction)
+		if refFound.boxes.mod4 == true then	
+			source = objRefs.boxes.mod4
+			destination = "decksMod4"
+			setupPlacer(source, destination)
+			local objsToLock = {objRefs.mats.contractBoard}
+			Wait.frames(function() lockMe(objsToLock) end, 60)
+		else
+			printToAll('Error: Mod4 box cannot be found. Unable to setup Module 4 components.',msgError)
+		end
+	end
+	
+	--Mod4+2
+	if setupConfig.mods.mod2 == true and setupConfig.mods.mod4 == true then
+		printToAll("Modules: Placing Module 2+4 components.",msgAction)
+		if refFound.boxes.mod4 == true then	
+			source = objRefs.boxes.mod4
+			destination = "decksMod42"
+			setupPlacer(source, destination)
+			local objsToLock = {objRefs.mats.contractBoard}
+			Wait.frames(function() lockMe(objsToLock) end, 60)
+			setupMeatheads()
+			setupExodusDeck()
+		else
+			printToAll('Error: Mod4 box cannot be found. Unable to setup Module 4 components.',msgError)
+		end
+	end
+	printToAll("Initial variant and module placement is complete.",msgComplete)
+end
+
+--updates default settings on ui tools based on mods activated
+function updateUIMods()
+	configTable.toolBurnToolBernal = setupConfig.mods.mod2
+	UI.setAttribute("toggleUIToolSetupBurnToolBernal", "isOn", configTable.toolBurnToolBernal)
+	
+	configTable.toolContractBidTool = setupConfig.mods.mod4
+	UI.setAttribute("toggleUIToolTimer", "isOn", configTable.toolContractBidTool)
+	
+	--turn tracker
+	if setupConfig.mods.mod1 == true then
+		UI.setAttribute("toggleTurnMod1", "isOn", "True")
+		UI.setAttribute("toggleTurnMobile", "isOn", "True")
+		toggleTurnMods("Black", "True", "toggleTurnMod1")
+		toggleTurnMobile("Black", "True", "toggleTurnMobile")
+		UI.setAttribute("toggleFTMod2", "isOn", "True")
+		toggleFTMod1("Black", "True", "toggleFTMod1")
+	end
+	
+	if setupConfig.mods.mod2 == true then
+		UI.setAttribute("toggleTurnMod2", "isOn", "True")
+		UI.setAttribute("toggleTurnColonist", "isOn", "True")
+		UI.setAttribute("toggleTurnProfit", "isOn", "True")
+		toggleTurnMods("Black", "True", "toggleTurnMod2")
+		toggleTurnColonist("Black", "True", "toggleTurnColonist")
+		toggleTurnProfit("Black", "True", "toggleTurnProfit")
+		UI.setAttribute("toggleFTMod2", "isOn", "True")
+		toggleFTMod2("Black", "True", "toggleFTMod2")
+	end
+	
+	if setupConfig.mods.mod3 == true then
+		UI.setAttribute("toggleTurnMod3", "isOn", "True")
+		toggleTurnMods("Black", "True", "toggleTurnMod3")
+	end
+
+	if setupConfig.mods.mod4 == true then
+		UI.setAttribute("toggleTurnMod4", "isOn", "True")
+		toggleTurnMods("Black", "True", "toggleTurnMod4")
+	end
+end
+
+-- configures optimal seat layout
+function setupSeats()
+	printToAll("--Setup C0: Optimizing player seat configuration.",msgHeader)
+	local s = tonumber(setupConfig.pConfig.seats)
+	local modMats = 0
+	
+	----------------------ref sizes for calcs
+	local compSizes = {
+		coreMat = {x=11.8, z=8.4},
+		modMat = {x=5.95, z=8.4},
+		stackMat = {x=20, z=5.8},
+		stdMap = {x=35.5, z=23.6},
+		bigMap = {x=53.5, z=35.9},
+		minBuffer = {x=2, z=0.1},
+		bigArea = {x=76, z=0, centerX = 0},
+		stdArea = {x=61.8, z=0, centerX = 4},
+		bigAreaPref = {x =54, z=0, centerX =-9},
+		stdAreaPref = {x=36, z = 0, centerX=0}
+	}
+	
+
+	-----------------------calculateX
+	--p to sides
+	local bothSides = false
+	if s >= 2 then
+		bothSides = true
+	end
+	local pLower = 0
+	local pUpper = 0
+	if s == 1 then
+		pLower = 1
+	elseif s == 2 then
+		pLower = 2
+	elseif s == 3 then
+		pLower = 2
+		pUpper = 1
+	elseif s == 4 then
+		pLower = 2
+		pUpper = 2
+	elseif s == 5 then
+		pLower = 3
+		pUpper = 2
+	elseif s == 6 then
+		pLower = 3
+		pUpper = 3
+	end
+	------------------------constraints for side areaX
+	local sideAreaX = 0
+	local sideAreaXPref = 0
+	local centerX = 0
+	local centerXPref = 0
+	local fitPreferred = false
+	if setupConfig.map.ver == "normal" then
+		sideAreaX = compSizes.stdArea.x
+		sideAreaXPref = compSizes.stdAreaPref.x
+		centerX = compSizes.stdArea.centerX
+		centerXPref = compSizes.stdAreaPref.centerX
+	else
+		sideAreaX = compSizes.bigArea.x
+		sideAreaXPref = compSizes.bigAreaPref.x
+		centerX = compSizes.bigArea.centerX
+		centerXPref = compSizes.bigAreaPref.centerX
+	end
+	
+	---------------------------calc player space
+	local pXmin = 0
+	local pR = 1
+	if setupConfig.mods.mod1 == true then
+		modMats = modMats + 1
+	end
+	if setupConfig.mods.mod2 == true then
+		modMats = modMats + 1
+	end
+	if setupConfig.mods.mod3 == true then
+		modMats = modMats + 1
+	end
+	
+	printToAll("Seats: Optimizing play area for " .. pLower + pUpper .. " seats with " .. modMats .. " playmat extensions.",msgAction)
+	
+	------------wide attempt
+	local pAreaXWRaw =  compSizes.modMat.x * modMats
+	pAreaXWRaw =  pAreaXWRaw + compSizes.coreMat.x
+	if setupConfig.other.rocketMats == true then
+		local rocketMax = compSizes.stackMat.x
+		if pAreaXWRaw < rocketMax then
+			pAreaXWRaw = rocketMax
+		end
+	end
+	local pAreaXWMaxSide = (pAreaXWRaw* pLower) + (compSizes.minBuffer.x * (pLower-1))
+	if pAreaXWMaxSide > sideAreaX then
+		pR = 2
+	else
+		pXmin = pAreaXWRaw
+		if pAreaXWMaxSide < sideAreaXPref then
+			fitPreferred = true
+		end
+	end
+	
+	--------------compact attempt
+	if pR == 2 then
+		local pAreaXCRaw = compSizes.coreMat.x
+		if setupConfig.other.rocketMats == true then
+			pXmin = compSizes.stackMat.x
+		else
+			if modMats >= 1 then 
+				pXmin = pAreaXCRaw + compSizes.modMat.x
+			end
+		end
+	end
+	
+	--------------find midpoints x
+	local dX = 0
+	local originX = 0
+	if fitPreferred == true then
+		dX = (sideAreaXPref - (compSizes.minBuffer.x * (pLower-1))) / pLower 
+		originX = centerXPref
+	else
+		dX = pXmin
+		originX = centerX
+	end
+	
+	if pLower >= 1 then
+		seatMidXLower = {}
+		for i=1,pLower do
+			seatMidXLower["s" .. i] = (((dX / 2)*(pLower-1))+originX+((compSizes.minBuffer.x * (pLower-1))/2)) - ((dX+compSizes.minBuffer.x)*(i-1))	
+		end
+	end
+	
+	if pUpper >= 1 then
+		seatMidXUpper = {}
+		for i=1,pUpper do
+			seatMidXUpper["s" .. i] = seatMidXLower["s" .. i]
+		end
+	end
+	
+	----------------------------------offsets Rref
+	local matOffsets = {
+		coreFromOrigin1= (( compSizes.coreMat.x + compSizes.modMat.x ) / 2 ) - ( compSizes.coreMat.x / 2 ),
+		coreFromOrigin2=((compSizes.coreMat.x+(compSizes.modMat.x*2))/2)-(compSizes.coreMat.x/2),
+		coreFromOrigin3=((compSizes.coreMat.x+(compSizes.modMat.x*3))/2)-(compSizes.coreMat.x/2),
+		coreToMod = (compSizes.coreMat.x/2)+(compSizes.modMat.x/2), 
+		modToMod = compSizes.modMat.x,
+		alignToCore = (compSizes.coreMat.x-compSizes.modMat.x)/2,
+		stackMatFromCore = (compSizes.stackMat.z/2) + (compSizes.coreMat.z/2)
+	}
+		
+	local originZ = -20
+	local addDZ = {big = ((compSizes.bigMap.z / 2) - (compSizes.stdMap.z / 2)), row = compSizes.modMat.z,  hand = 9, stackMat = compSizes.stackMat.z -4}
+	
+	local tokenOffset = {x = 5.38, y = 0.1, z = 2.52}
+	
+	--------------------------------assign pos for lower
+	local oX = 0
+	local oZ = 0
+	local pos = {x=0,y=0.91,z=0}
+	local rot = {x=0, y=180, z=0}
+	
+	local takeOrdersLower = {}
+	local newHandsPosLower = {}
+	
+	
+	for k,v in pairs(seatMidXLower) do
+		oX = v
+		takeOrdersLower[k] = {}
+		newHandsPosLower[k] = {}
+		
+		--core mat x
+		if modMats == 0 then
+			pos.x = oX
+		elseif modMats == 1 or pR == 2 then
+			pos.x = oX-matOffsets.coreFromOrigin1
+		elseif modMats == 2 and pR == 1 then
+			pos.x = oX-matOffsets.coreFromOrigin2
+		elseif modMats == 3 and pR == 1 then
+			pos.x = oX-matOffsets.coreFromOrigin3
+		end
+		--core mat z
+		pos.z = originZ
+		if setupConfig.map.ver == "big" then
+			pos.z = pos.z - addDZ.big
+		end
+		if setupConfig.other.rocketMats == true then
+			pos.z = pos.z - addDZ.stackMat
+		end
+		takeOrdersLower[k].coreMat = {position = pos, rotation = rot}
+		newHandsPosLower[k].position = {x = oX,y=pos.y+4,z = pos.z-addDZ.hand}
+		newHandsPosLower[k].rotation = {x=0,y=0,z=0}
+		
+		--find wet tokens
+		takeOrdersLower[k].wetI = {position={pos.x + tokenOffset.x, pos.y + tokenOffset.y, pos.z + tokenOffset.z}, rotation = rot}
+		takeOrdersLower[k].wetA = {position={pos.x + tokenOffset.x, pos.y + (tokenOffset.y*2), pos.z + tokenOffset.z}, rotation = rot}
+		
+		--find rocket mat
+		if setupConfig.other.rocketMats == true then
+			takeOrdersLower[k].rocketMat = {position={oX, pos.y, pos.z + matOffsets.stackMatFromCore}, rotation = rot}
+		end
+		
+		--find mod placement
+		if modMats > 0 then
+			if modMats >= 1 then
+				takeOrdersLower[k].modMat1 = {position={pos.x+matOffsets.coreToMod, pos.y, pos.z}, rotation = rot}
+				if modMats >=2 and pR == 1 then
+					takeOrdersLower[k].modMat2 = {position={pos.x+matOffsets.coreToMod+matOffsets.modToMod, pos.y, pos.z}, rotation = rot}
+					if modMats ==3 and pR == 1 then
+						takeOrdersLower[k].modMat3 = {position={pos.x+matOffsets.coreToMod+matOffsets.modToMod+matOffsets.modToMod, pos.y, pos.z}, rotation = rot}
+					end
+				elseif modMats >=2 then
+					takeOrdersLower[k].modMat2 = {position={pos.x-matOffsets.alignToCore, pos.y, pos.z-addDZ.row}, rotation = rot}
+					if modMats ==3 then
+						takeOrdersLower[k].modMat3 = {position={pos.x-matOffsets.alignToCore+matOffsets.modToMod, pos.y, pos.z-addDZ.row}, rotation = rot}
+					end
+					newHandsPosLower[k].position.z = newHandsPosLower[k].position.z - addDZ.row
+				end
+			end
+		end
+		oX = {}
+		oZ = {}
+		pos = {x=0,y=0.91,z=0}
+		rot = {x=0, y=180, z=0}
+	end
+	
+	--------------------------------assign pos for upper
+
+	oX = 0
+	oZ = 0
+	pos = {x=0,y=0.91,z=0}
+	rot = {x=0, y=0, z=0}
+	local takeOrdersUpper = {}
+	local newHandsPosUpper = {}
+	
+	if pUpper >= 1 then
+	
+		for k,v in pairs(seatMidXUpper) do
+			oX = v
+			takeOrdersUpper[k] = {}
+			newHandsPosUpper[k] = {}
+			
+			--core mat x
+			if modMats == 0 then
+				pos.x = oX
+			elseif modMats == 1 or pR == 2 then
+				pos.x = oX+matOffsets.coreFromOrigin1
+			elseif modMats == 2 and pR == 1 then
+				pos.x = oX+matOffsets.coreFromOrigin2
+			elseif modMats == 3 and pR == 1 then
+				pos.x = oX+matOffsets.coreFromOrigin3
+			end
+			--core mat z
+			pos.z = -originZ
+			if setupConfig.map.ver == "big" then
+				pos.z = pos.z + addDZ.big
+			end
+			if setupConfig.other.rocketMats == true then
+				pos.z = pos.z + addDZ.stackMat
+			end
+
+			takeOrdersUpper[k].coreMat = {position = pos, rotation = rot}
+			newHandsPosUpper[k].position = {x = oX,y=pos.y+4,z = pos.z+addDZ.hand}
+			newHandsPosUpper[k].rotation = {x=0,y=180,z=0}
+			
+			--find wet tokens
+			takeOrdersUpper[k].wetI = {position={pos.x - tokenOffset.x, pos.y + tokenOffset.y, pos.z - tokenOffset.z}, rotation = rot}
+			takeOrdersUpper[k].wetA = {position={pos.x - tokenOffset.x, pos.y + (tokenOffset.y*2), pos.z - tokenOffset.z}, rotation = rot}
+		
+			--find rocket mat
+			if setupConfig.other.rocketMats == true then
+				takeOrdersUpper[k].rocketMat = {position={oX, pos.y, pos.z - matOffsets.stackMatFromCore}, rotation = rot}
+			end
+			
+			--find mod placement
+			if modMats > 0 then
+				if modMats >= 1 then
+					takeOrdersUpper[k].modMat1 = {position={pos.x-matOffsets.coreToMod, pos.y, pos.z}, rotation = rot}
+					if modMats >=2 and pR == 1 then
+						takeOrdersUpper[k].modMat2 = {position={pos.x-matOffsets.coreToMod-matOffsets.modToMod, pos.y, pos.z}, rotation = rot}
+						if modMats ==3 and pR == 1 then
+							takeOrdersUpper[k].modMat3 = {position={pos.x-matOffsets.coreToMod-matOffsets.modToMod-matOffsets.modToMod, pos.y, pos.z}, rotation = rot}
+						end
+					elseif modMats >=2 then
+						takeOrdersUpper[k].modMat2 = {position={pos.x+matOffsets.alignToCore, pos.y, pos.z+addDZ.row}, rotation = rot}
+						if modMats ==3 then
+							takeOrdersUpper[k].modMat3 = {position={pos.x+matOffsets.alignToCore-matOffsets.modToMod, pos.y, pos.z+addDZ.row}, rotation = rot}
+						end
+						newHandsPosUpper[k].position.z = newHandsPosUpper[k].position.z + addDZ.row
+					end
+				end
+			end
+			oX = {}
+			oZ = {}
+			pos = {x=0,y=0.91,z=0}
+			rot = {x=0, y=0, z=0}
+		end
+	end
+	--------------------------------spawner
+	printToAll("Seats: Placing playmat components.",msgAction)
+	
+	local objsToLock = {}
+	local params = {}
+	local bag = {}
+	local nameMatch = ""
+	local takeOrders = {}
+	if pUpper >= 1 then
+		takeOrders= {lower = takeOrdersLower, upper = takeOrdersUpper}
+	else
+		takeOrders = {lower = takeOrdersLower}
+	end
+	
+	for m, n in pairs(takeOrders) do
+		for k,v in pairs(n) do
+			local taken = {mod1 = false, mod2 = false, mod3 = false, mod4 = false}
+			for j, l in pairs(v) do
+				params.position = l.position
+				params.rotation = l.rotation
+				params.smooth = false
+				if j == "coreMat" then
+					bag = getObjectFromGUID(objRefs.boxes.core)
+					nameMatch = "Core Playmat"
+				elseif j == "wetI" then
+					bag = getObjectFromGUID(objRefs.boxes.core)
+					nameMatch = "Wet Mass Isotope"
+				elseif j == "wetA" then
+					bag = getObjectFromGUID(objRefs.boxes.core)
+					nameMatch = "Wet Mass Water"
+				elseif j == "modMat1" then
+					if setupConfig.mods.mod1 == true then
+						bag = getObjectFromGUID(objRefs.boxes.mod1)
+						nameMatch = "Module 1 Playmat"
+						taken.mod1 = true
+					elseif setupConfig.mods.mod2 == true then
+						bag = getObjectFromGUID(objRefs.boxes.mod2)
+						nameMatch = "Module 2 Playmat"
+						taken.mod2 = true
+					elseif setupConfig.mods.mod3 == true then
+						bag = getObjectFromGUID(objRefs.boxes.mod3)
+						nameMatch = "Module 3 Playmat"
+						if m == "lower" then
+							if k=="s1" then
+								nameMatch = nameMatch .. " White"
+							elseif k=="s2" then
+								nameMatch = nameMatch .. " Purple"
+							elseif k=="s3" then
+								nameMatch = nameMatch .. " Red"
+							end
+						elseif m == "upper" then
+							if k=="s1" then
+								nameMatch = nameMatch .. " Black (Blue)"
+							elseif k=="s2" then
+								nameMatch = nameMatch .. " Green"
+							elseif k=="s3" then
+								nameMatch = nameMatch .. " Yellow"
+							end
+						end
+						taken.mod3 = true
+					end				
+				elseif j == "modMat2" then
+					if setupConfig.mods.mod2 == true and taken.mod2 == false then
+						bag = getObjectFromGUID(objRefs.boxes.mod2)
+						nameMatch = "Module 2 Playmat"
+						taken.mod2 = true
+					elseif setupConfig.mods.mod3 == true and taken.mod3 == false then
+						bag = getObjectFromGUID(objRefs.boxes.mod3)
+						nameMatch = "Module 3 Playmat"
+						if m == "lower" then
+							if k=="s1" then
+								nameMatch = nameMatch .. " White"
+							elseif k=="s2" then
+								nameMatch = nameMatch .. " Purple"
+							elseif k=="s3" then
+								nameMatch = nameMatch .. " Red"
+							end
+						elseif m == "upper" then
+							if k=="s1" then
+								nameMatch = nameMatch .. " Black (Blue)"
+							elseif k=="s2" then
+								nameMatch = nameMatch .. " Green"
+							elseif k=="s3" then
+								nameMatch = nameMatch .. " Yellow"
+							end
+						end
+						taken.mod3 = true
+					end
+				elseif j == "modMat3" then
+					bag = getObjectFromGUID(objRefs.boxes.mod3)
+					nameMatch = "Module 3 Playmat"
+					if m == "lower" then
+						if k=="s1" then
+							nameMatch = nameMatch .. " White"
+						elseif k=="s2" then
+							nameMatch = nameMatch .. " Purple"
+						elseif k=="s3" then
+							nameMatch = nameMatch .. " Red"
+						end
+					elseif m == "upper" then
+						if k=="s1" then
+							nameMatch = nameMatch .. " Black (Blue)"
+						elseif k=="s2" then
+							nameMatch = nameMatch .. " Green"
+						elseif k=="s3" then
+							nameMatch = nameMatch .. " Yellow"
+						end
+					end
+					taken.mod3 = true
+				elseif j == "rocketMat" then
+					bag = getObjectFromGUID(objRefs.boxes.stackMats)
+				end
+				if bag then
+					local spawned = {}
+					if j == "wetA" or j == "wetI" then
+					else
+						params.callback_function = function(spawned) lockMeCallback(spawned) end
+					end
+					if j == "rocketMat" then
+						objTaken = bag.takeObject(params)
+					else
+						local objs = bag.getObjects()
+						local found = false
+						for a, f in ipairs(objs) do
+							if found == false then 
+								if f.name == nameMatch then
+									params.guid = f.guid
+									found = true
+								end
+							end
+						end
+						if params.guid then
+							objTaken = bag.takeObject(params)
+						end
+					end
+				else
+					printToAll("Error: Cannot find source bag for player setup.",msgError)
+				end
+				params = {}
+				bag = {}
+				nameMatch = ""
+			end
+		end
+	end
+	
+	--------------------------------move hands
+	printToAll("Seats: Moving hand positions.",msgAction)
+	params = {}
+	local sColor = ""
+	local sNum = 0
+	local handsMoved = {White = false, Purple = false, Red = false, Blue = false, Green = false, Yellow = false}
+	local handsTable = Hands.getHands()
+	for k,v in pairs(newHandsPosLower) do
+		sNum = 1 + sNum
+		params.position = v.position
+		params.rotation = v.rotation
+		params.scale = {x=10,y=5.4,z=3}
+		if k == "s1" then
+			sColor = "White"
+		elseif k == "s2" then
+			sColor = "Purple"
+		elseif k == "s3" then
+			sColor = "Red"
+		end
+		Player[sColor].setHandTransform(params)
+		--[[  edit for update 13; alternate way to move hand
+		for j, l in pairs(handsTable) do
+			if l.getValue() == sColor then
+				l.setPosition(params.position)
+				l.setRotation(params.rotation)
+				l.setScale(params.scale)
+			end
+		end
+		--]]
+		handsMoved[sColor] = true
+		seatSetupTable[sNum].color = sColor
+		params.type = "ScriptingTrigger"
+		local spawnedZone = {}
+		local passNum = sNum
+		params.callback_function = function(spawnedZone) reportGUIDSeatZones(spawnedZone, tonumber(passNum)) end
+		spawnObject(params)
+		seatSetupTable[sNum].status = 'notChosen'
+		local sColor = ""
+		params = {}
+		spawnedZone = {}
+	end
+	
+	local iN = 0
+	if pUpper >= 1 then
+		for k,v in pairs(newHandsPosUpper) do
+			sNum = pLower + (pUpper-iN)
+			iN = iN + 1
+			params.position = v.position
+			params.rotation = v.rotation
+			params.scale = {x=10,y=5.4,z=3}
+			local seatActual = ""
+			if k == "s1" then
+				sColor = "Blue"
+				seatActual = "s6"
+			elseif k == "s2" then
+				sColor = "Green"
+			elseif k == "s3" then
+				sColor = "Yellow"
+			end
+			Player[sColor].setHandTransform(params)
+			handsMoved[sColor] = true
+			seatSetupTable[sNum].color = sColor
+			params.type = "ScriptingTrigger"
+			local spawnedZone = {}
+			local passNum = sNum
+			params.callback_function = function(spawnedZone) reportGUIDSeatZones(spawnedZone, tonumber(passNum)) end
+			spawnObject(params)
+			seatSetupTable[sNum].status = 'notChosen'
+			local sColor = ""
+			params = {}
+		end
+	end
+	
+	for k,v in pairs(seatSetupTable) do
+		if v.status == "notSetup" then
+			seatSetupTable[k] = nil
+		end
+	end
+	
+	shiftPlayersToSeats()
+
+	for k,v in pairs(handsMoved) do
+		--params.position = {x=140,y=100,z=120}
+		--params.scale = {x=0,y=0,z=0}
+		if v == false then
+			Player[k].changeColor("Grey")
+			--Player[k].setHandTransform(params)
+			for j, l in pairs(handsTable) do
+				if l.getValue() == k then
+					l.destruct()
+				end
+			end
+		end
+	end
+	
+	
+	printToAll("Optimization of seats is complete.",msgComplete)
+end
+
+function shiftPlayersToSeats()
+	printToAll("Seats: Shifting existing players to available seats.",msgInfo)
+	local openSeats = {}
+	for k,v in pairs(seatSetupTable) do
+		openSeats[v.color] = true
+	end
+	
+	local playerList = Player.getPlayers()
+	for k,v in pairs(playerList) do
+		if v.color ~= "Grey" and v.color ~= "Black" then
+			local inSeat = false
+			for j, l in pairs(openSeats) do
+				if v.color == j then
+					openSeats[j] = false
+					inSeat = true
+				end
+			end
+			if inSeat == false then
+				local openSeat = "none"
+				local found = false
+				for j, l in pairs(openSeats) do
+					if l == true and found == false then
+						openSeat = j
+						found = true
+					end
+				end
+				if openSeat ~= "none" then
+					Player[v.color].changeColor(openSeat)
+					openSeats[openSeat] = false
+				else
+					Player[v.color].changeColor("Grey")
+				end
+			end
+		end
+	end
+end
+
+
+function reportGUIDSeatZones(obj, indexNum)
+	seatSetupTable[indexNum].zoneGUID = obj.getGUID()
+	hardSave()
+end
+
+
+--possibly redundent!
+function seatRearrange()
+	printToAll("Seats: Rearranging seat colors.",msgAction)
+	seatTable = {}
+	local entry = ""
+	for i=1, math.min(#seatSetupTable, 6) do
+		entry = seatSetupTable[i].color
+		seatTable[i] = entry
+		entry = ""
+	end
+	--[[ if needed to reorder
+	if #seatSetupTable == 3 then
+		seatTable[3] = seatSetupTable[3].color
+	elseif #seatSetupTable == 4 then
+		seatTable[3] = seatSetupTable[4].color
+		seatTable[4] = seatSetupTable[3].color
+	elseif #seatSetupTable == 5 then
+		seatTable[3] = seatSetupTable[3].color
+		seatTable[4] = seatSetupTable[5].color
+		seatTable[5] = seatSetupTable[4].color
+	elseif #seatSetupTable == 6 then
+		seatTable[3] = seatSetupTable[3].color
+		seatTable[4] = seatSetupTable[6].color
+		seatTable[5] = seatSetupTable[5].color
+		seatTable[6] = seatSetupTable[4].color
+	end
+	--]]
+	printToAll("Scripted turn order set.", msgComplete)
+	for k,v in pairs (seatTable) do
+		printToAll(k .. "  |  " .. v,v)
+	end
+	updateTTSTurns()
+	
+	setPlayersBidTool()
+	setPlayersContractBidTool()
+	updateFTUI()
+end
+
+-----------------------after window 2 fcns
+
+function placeSeniority()
+	local count = setupConfig.values.seniority
+	local params = {}
+	local bag = {}
+	local offset = {}
+	if setupConfig.mods.base == "core" then
+		offset = {x = 0.58, y = 0, z = 0.14}
+	elseif setupConfig.mods.base == "rfg" then
+		offset = {x = 0.66, y = 0, z = -0.01}
+	end
+	local origin = {}
+	local rot = {}
+	local board = {}
+	if refFound.boxes.seniorityDisks == true then
+		bag = getObjectFromGUID(objRefs.boxes.seniorityDisks)
+	else
+		printToAll("Script cannot find seniority disk bag; place seniority manually.",msgError)
+		return
+	end
+	if refFound.mats.sunspotBoard == true then
+		board = getObjectFromGUID(objRefs.mats.sunspotBoard)
+		origin = board.getPosition()
+		rot = board.getRotation()
+	else
+		printToAll("Script cannot find sunspot board; place seniority manually.",msgError)
+		return
+	end
+	
+	params.position = board.positionToWorld(offset)
+	params.smooth = true
+	
+	for i=1, count do
+		params.position = {x = params.position.x, y = params.position.y+0.3, z = params.position.z}
+		bag.takeObject(params)
+	end
+	if count > 0 then
+		printToAll("Seniority: Placing " .. count .. " seniority disks on sunspot cycle track.",msgAction)
+	else
+		printToAll("Seniority: Manually place desired seniority disks on sunspot track.",msgPrompt)
+	end
+end
+
+-----------------------after window 3 fcns
+function shuffleDealCrew()
+	printToAll("Crew: Scripted shuffle and dealing of Crew cards to existing seats.",msgAction)
+	UI.setAttribute("BtnC2Next", "active", "False")
+	UI.setAttribute("BtnC2Deal", "active", "False")
+	crewDeck = {}
+	local allObjs = getAllObjects()
+	local success = false
+	for k,v in pairs(allObjs) do
+		if v.tag == "Deck" then
+			if string.match(v.getName(),"Crew Deck") then
+				crewDeck = v
+				crewDeck.shuffle()
+				Wait.frames(runShuffleDealCrew, 60)
+				success = true
+			end
+		end
+	end
+	if success == false then
+		UI.setAttribute("BtnC2Next", "active", "True")
+		printToAll("Script cannot find Crew deck. Shuffle and deal manually.",msgError)
+	end
+end
+
+function runShuffleDealCrew()
+	startLuaCoroutine(Global, "coroutineSetupShuffleDealCrew")
+end
+
+function coroutineSetupShuffleDealCrew()
+	local cards = crewDeck.getQuantity()
+	for k,v in pairs(seatSetupTable) do
+		local seat = {}
+		if seatSetupTable[k].status ~= "chosen" then
+			local seat = seatSetupTable[k].color
+			--print('dealing to ' .. seat)
+			if cards > 1 then
+				crewDeck.deal(1, seat)
+				cards = cards - 1
+			elseif cards == 1 then
+				local allObjs = getAllObjects()
+				for j, l in pairs(allObjs) do
+					if l.tag == "Card" then
+						if string.match(l.getName(), "Crew") == "Crew" then
+							if string.match(l.getDescription(), "Seated") ~= "Seated" then
+								l.deal(1, seat)
+							end
+						end
+					end
+				end
+			end
+
+			for i=1, 30 do
+				coroutine.yield(0)
+			end
+		end
+
+	end
+	UI.setAttribute("BtnC2Next", "active", "True")
+	return 1
+end
+
+function spawnPlayerTokens()
+	local source = {}
+	local destination = {}
+	local col = ""
+	
+	--bribe disk edit
+	if setupConfig.mods.mod3 == true then
+		placeBribeDisks()
+	end
+	
+	for k,v in pairs(seatTable) do
+		--core components, not on mat
+		col = v
+		source = objRefs.boxes["p" .. col]
+		destination = "figuresCore"
+		setupPlacerPlayerTokens(source, destination, col)
+		
+		--core components, on mat
+		destination = "figuresMat"
+		
+		local params = {"Core Playmat", col}
+		local mat = findPMat(params)
+		if mat ~= "" then
+			setupPlacerPlayerTokensMat(source, destination, col,  mat)
+		else
+			printToAll("Script cannot find " .. col .. "player mat for figurine deployment.  Obtain manually from player bag.", msgError)
+		end
+		
+		
+		--mod components
+		if setupConfig.mods.mod1 == true then
+			source = objRefs.boxes.mod1
+			destination = "figuresM1"
+			local params = {"Module 1 Playmat", col}
+			local mat = findPMat(params)
+			if mat ~= "" then
+				setupPlacerPlayerTokensMat(source, destination, col,  mat)
+			else
+				printToAll("Script cannot find " .. col .. "player mat for figurine deployment.  Obtain manually from player bag.", msgError)
+			end
+		end
+		
+		if setupConfig.mods.mod2 == true then
+			source = objRefs.boxes.mod2
+			destination = "figuresM2"
+			local params = {"Module 2 Playmat", col}
+			local mat = findPMat(params)
+			if mat ~= "" then
+				setupPlacerPlayerTokensMat(source, destination, col,  mat)
+			else
+				printToAll("Script cannot find " .. col .. "player mat for figurine deployment.  Obtain manually from player bag.", msgError)
+			end
+		end
+		
+		if setupConfig.mods.mod3 == true then
+			source = objRefs.boxes.mod3
+			destination = "figuresM3"
+			local params = {"Module 3 Playmat", col}
+			local mat = findPMat(params)
+			if mat ~= "" then
+				setupPlacerPlayerTokensMat(source, destination, col,  mat)
+			else
+				printToAll("Script cannot find " .. col .. "player mat for figurine deployment.  Obtain manually from player bag.", msgError)
+			end
+		end
+
+		if setupConfig.mods.mod4 == true then
+		    -- source = objRefs.boxes["p" .. col]
+		    source = objRefs.boxes.mod4
+			destination = "figuresM4"
+			if mat ~= "" then
+				setupPlacerPlayerTokens(source, destination, col)
+			else
+				printToAll("Script cannot find " .. col .. "for figurine deployment.  Obtain manually from player bag.", msgError)
+			end
+		end
+	end
+end
+
+function placeBribeDisks()
+	local bag = {}
+	printToAll("Bribes: Dealing bribes to players.",msgAction)
+	checkGUIDs()
+	if refFound.boxes.bribeDisks == true then
+		bag = getObjectFromGUID(objRefs.boxes.bribeDisks)
+	else
+		printToAll("Script cannot find bribe tokens. Deal manually.", msgError)
+		return
+	end
+	
+	local count = 0
+	if #seatTable > 4 then
+		count = 2
+	else
+		count = 3
+	end
+		
+	local i=1
+	for i=1, #seatTable do
+		bag.deal(count, seatTable[i])
+	end
+end
+
+
+function changeM3Color()
+	local mat = {}
+	local matName = "Module 3 Playmat"
+	local stateNum = 0
+	local numTable = {Yellow = 1, Green = 2, Blue = 3, White = 4, Purple = 5, Red = 6}
+	local newMat = {}
+	for k, v in pairs (seatTable) do
+		stateNum = numTable[v]
+		local params = {matName, v}
+		mat = findPMat(params)
+		if mat.getStateId() ~= stateNum then
+			newMat = mat.setState(stateNum)
+			if newMat then
+				newMat.setLock(true)
+			end
+		end
+	end
+end
+
+-----------during window 4
+
+function setupSplitDecks()
+	local deckTypes = {"GW Thruster", "Thruster", "Robonaut", "Refinery", "Generator", "Radiator", "Reactor", "Colonist", "Freighter", "Bernal"}
+	local objs = getAllObjects()
+	local decksFound = {}
+	local foundADeck = false
+	local matResults = {}
+	for k,v in pairs(objs) do
+		if v.name == "Deck" then
+			local found = false
+			for j, l in pairs(deckTypes) do
+				if found == false then
+					if string.match(v.getName(), l) == l then
+						table.insert(decksFound, v)
+						found = true
+						foundADeck = true
+					end
+				end
+			end
+		elseif v.name == "Custom_Tile" then
+			if string.match(v.getName(), "Market Mat") == "Market Mat" then
+				table.insert(matResults, v)
+			end
+		end
+	end
+	
+	if foundADeck == true then
+		local deckResults = {}
+		for k,v in pairs(decksFound) do
+			local count = math.floor(v.getQuantity() / 2, 0)
+			--print(v.getName() .. "  " .. count)
+			deckResults[v.getName()] = v.cut(count)		
+		end
+		printToAll("Decks: Splitting patent/queue decks in half.", msgAction)
+		Wait.frames(function() setupSplitDecks2(deckResults, matResults) end, 10)
+	else
+		printToAll("Script could not find any Patent or Queue decks to split. Perform manually.",msgError)
+	end
+	UI.setAttribute("btnSplitDecks","active","false")
+end
+
+function setupSplitDecks2(deckResults, matResults)
+	local matOrigin = ""
+	local matSplit = ""
+	local matCheck = false
+	if #matResults > 0 then
+		for k,v in pairs(matResults) do
+			if string.match(v.getDescription(), "Split Market") == "Split Market" then
+				matSplit = v
+			else
+				matOrigin = v
+			end
+		end
+		if matSplit ~= "" and matOrigin ~= "" then
+			matCheck = true
+		end
+	end
+	for k,v in pairs(deckResults) do
+		local pos = v[2].getPosition()
+		local rot = v[1].getRotation()
+		v[2].setPosition({pos.x, pos.y+2, pos.z})
+		v[2].setRotation(rot)
+		if setupConfig.other.vSplitMarket == false then
+			if getObjectFromGUID(objRefs.boxes.core) then
+				getObjectFromGUID(objRefs.boxes.core).putObject(v[1])
+			else
+				v[1].destruct()
+			end
+		else
+			if matCheck == true then
+				local pos = matOrigin.positionToLocal(v[1].getPosition())
+				pos = matSplit.positionToWorld(pos)
+				v[1].setPosition({pos.x, pos.y + 1, pos.z})
+				rot = matSplit.getRotation()
+				v[1].setRotation(rot)
+				
+			else
+				pos = v[1].getPosition()
+				v[1].setRotation({x=0, y=90, z=0})
+				v[1].setPosition({-1*(pos.x + 15.62), pos.y, pos.z})
+			end
+		end
+	end
+	if setupConfig.other.vSplitMarket == false then
+		if getObjectFromGUID(objRefs.boxes.core) then
+			printToAll("Decks: Bottom half of decks (rounded up) discarded to box.", msgComplete)
+		else
+			printToAll("Decks: Script cannot find core box. Bottom half of decks (rounded up) destroyed. Reload fresh save if this was not intended.", msgError)
+		end
+	else
+		printToAll("Decks: Bottom half of decks (rounded up) moved to the Second Market or opposite side of the table.", msgComplete)
+	end
+end
+
+--- build meathead decks using colonist robots
+function setupMeatheads()
+	print("Meathead Deck Setup (moving 4 Robots from Colonist Deck)")
+	local objs = getObjects()
+	for k,v in ipairs(objs) do
+		if v.getName() and v.getName() == "Colonist Deck" then
+			colonistGUID = v.guid
+			colonistDeck = getObjectFromGUID(colonistGUID)
+		end
+		if v.getName() and v.getName() == "Meathead Deck" then
+			meatheadGUID = v.guid
+			meatheadDeck = getObjectFromGUID(meatheadGUID)
+		end
+	end
+	if meatheadGUID and colonistGUID then
+		local objs2 = colonistDeck.getObjects()
+		for k2,v2 in ipairs(objs2) do
+			if string.match(v2.description,"Robot") then
+			  -- print(v2.description)
+			  -- if v2.guid then print(v2.guid) end
+			  cardobj = colonistDeck.takeObject({
+					  guid = v2.guid
+				  })
+			  olddesc = cardobj.getDescription()
+			  cardobj.setDescription(olddesc .. ", Meathead")
+			  meatheadDeck.putObject(cardobj)
+			end
+		end
+	else
+		print "Error Setting up Meathead deck.   Please check that all Robot have been moved to the Meathead Deck"
+	end
+	meatheadDeck.shuffle()
+	colonistDeck.shuffle()
+end
+
+function setupExodusDeck()
+  	print("Exodus Deck Setup (choosing card sides)")
+	local cardList = {}
+ 	local mod4box = getObjectFromGUID(objRefs.boxes.mod4)
+ 	local objs = mod4box.getObjects()
+ 	local tempPos = ({x = 43.00, y = 1, z = -14}) --Z -4 for second deck
+ 	local tempPos2 = ({x = 39.00, y = 1, z = -14}) --Z -4 for second deck
+ 	for k,v in ipairs(objs) do
+ 		if v.name and v.name == "Exodus Deck Fronts" then
+ 			frontDeckGUID = v.guid
+ 			frontDeck = mod4box.takeObject({
+ 					position = tempPos,
+ 					guid = frontDeckGUID,
+ 					smooth = false
+ 				})
+ 		elseif v.name and v.name == "Exodus Deck Backs" then
+ 			backDeckGUID = v.guid
+ 			backDeck = mod4box.takeObject({
+ 					position = tempPos2,
+ 					guid = backDeckGUID,
+ 					smooth = false
+ 				})
+ 		end
+ 	end
+ 	if frontDeckGUID and backDeckGUID then
+		local card
+ 		local fx = 6
+ 		local bx = 6
+ 		local exodusPos = ({x = 37.00, y =  1.15, z = 19})
+		local exodusRot = ({x = 0, y = 270, z = 0})
+ 		-- local exodusPos = ({x = 39.25, y =  1.15, z =  -4.34})
+		-- local exodusRot = ({x = 0, y = 270, z = 0})
+		print("POS - " .. exodusPos["z"])
+ 		local fronts = frontDeck.getObjects()
+ 		local backs = backDeck.getObjects()
+ 		for i=1,6 do
+			exodusPos["z"] = exodusPos["z"] + 2.5
+ 			desc = "Card" .. i
+ 			rand = math.random(1,2)
+			-- if fx == 1 then rand = 2 else rand = 1 end
+ 			if rand == 1 then
+ 				for k,v in ipairs(fronts) do
+ 					if string.match(v.description, desc) then
+						if fx == 1 then
+							card = getObjectFromGUID(fronts[6].guid)
+							card.setPosition(exodusPos)
+							card.setRotation(exodusRot)
+						else 
+							card = frontDeck.takeObject({
+ 								guid = v.guid,
+ 							    position = exodusPos,
+ 							    rotation = exodusRot,
+								smooth = false
+ 							})
+						end
+						fx = fx - 1
+ 						  print("Front Side - " .. card.getName())
+ 					end
+ 				end
+ 			else
+ 				for k,v in ipairs(backs) do
+ 					if string.match(v.description, desc) then
+						if bx == 1 then
+							card = getObjectFromGUID(backs[6].guid)
+							card.setPosition(exodusPos)
+							card.setRotation(exodusRot)
+						else 
+							card = backDeck.takeObject({
+ 								guid = v.guid,
+ 							    position = exodusPos,
+								rotation = exodusRot,
+								smooth = false
+ 							})
+						end
+						bx = bx - 1
+ 						  print("Back Side  - " .. card.getName())
+ 					end
+ 				end
+ 			end
+			table.insert(cardList, card)
+		end
+		if fx == 0 then
+			mod4box.putObject(backDeck)
+		elseif bx == 0 then
+			mod4box.putObject(frontDeck)
+		elseif fx == 1 then
+			mod4box.putObject(getObjectFromGUID(fronts[6].guid))
+			mod4box.putObject(backDeck)
+		elseif bx == 1 then
+			mod4box.putObject(getObjectFromGUID(backs[6].guid))
+			mod4box.putObject(frontDeck)
+		else
+			mod4box.putObject(backDeck)
+			mod4box.putObject(frontDeck)
+		end
+ 	else
+ 		print("Couldn't find both decks, setup Exodus Manually")
+ 	end
+	for k,v in ipairs(cardList) do
+	  print("cardlist - " .. v.getGUID() .. v.getName() .. " - " .. type(v))
+	end
+	newDeck = group(cardList)
+	print("NewDeck GUID - " .. newDeck[1].getGUID())
+	newDeck[1].setName("Exodus Contract Deck")
+    newDeck[1].SetDescription("Exodus Description")	
+	newDeck[1].setPosition({x = 39.25, y =  1.15, z =  -4.34})
+	newDeck[1].setRotation({x = 0, y = 270, z = 0})
+end  
+
+function setNewExodusDeck(cardList)
+	newDeck = group(cardList)
+	print(type(newDeck))
+	for k,v in ipairs(newDeck) do
+	  print("deck - " .. v.guid)
+	end
+
+	-- for k,v in ipairs(newDeck) do
+	-- 	if v.guid then print("guid - " ..  v.guid) end
+	-- -- end
+--	for k,v in ipairs(cardList) do
+--	  print("cardlist - " .. v.getName())
+    print("done")
+end
+
+--=========================================================================================DEV TOOLS
+--to write setup component pos,rot to notebook for usage format: table = {[component group]={[guid]={pos={x, y, z}, rot={x,y,z}}}}; use black player to select objects to store; name the component group ref with the black bead name field
+function writeToNotebook()
+	local notebooks = Notes.getNotebookTabs()
+	local bodyText = ""
+	local i = ""
+	for k,v in pairs(notebooks) do
+		if v.title == "Setup" then
+			i = v.index
+			bodyText = v.body
+		end
+	end
+
+	local decoded = {}
+	if JSON.decode(bodyText) ~= nil then
+		decoded = JSON.decode(bodyText)
+	end
+	
+	local objects = getAllObjects()
+	local selection = {}
+	local selectingP = {}
+	local entry = {}
+	entry = {
+		pos = {x, y, z},
+		rot = {x, y, z}
+	}
+	local pos = {}
+	local rot = {}
+	for k,v in pairs(objects) do
+		selectingP = v.getSelectingPlayers()
+		for j,l in pairs(selectingP) do
+			if l=="Black" then
+				pos = v.getPosition()
+				entry.pos.x = pos.x
+				entry.pos.y = pos.y
+				entry.pos.z = pos.z
+				rot = v.getRotation()
+				entry.rot.x = rot.x
+				entry.rot.y = rot.y
+				entry.rot.z = rot.z
+				selection[v.guid] = entry
+				pos = {}
+				rot = {}
+				entry = {
+					pos = {x, y, z},
+					rot = {x, y, z}
+				}
+			end
+		end
+	end
+	
+	local indexObj = getObjectFromGUID(objRefs.tools.setupSaver)
+	local indexName = indexObj.getName()
+	print("Saving obj refs as " .. indexName)
+	
+	decoded[indexName] = selection
+	
+	local encoded = ""
+	encoded = JSON.encode(decoded)
+	
+	Notes.editNotebookTab({index = i, body = encoded})
+end
+
+--modified writer for randomized spots like in space diamonds
+function writeToNotebookRandomSpots()
+	local notebooks = Notes.getNotebookTabs()
+	local bodyText = ""
+	local i = ""
+	for k,v in pairs(notebooks) do
+		if v.title == "SetupSDPlots" then
+			i = v.index
+			bodyText = v.body
+		end
+	end
+	
+	local decoded = {}
+	if JSON.decode(bodyText) ~= nil then
+		decoded = JSON.decode(bodyText)
+	end
+	
+	local objects = getAllObjects()
+	local selection = {}
+	local selectingP = {}
+	local entry = {}
+	entry = {
+		pos = {x, y, z},
+		rot = {x, y, z}
+	}
+	local pos = {}
+	local rot = {}
+	local thing = ""
+	for k,v in pairs(objects) do
+		selectingP = v.getSelectingPlayers()
+		for j,l in pairs(selectingP) do
+			if l=="Black" then
+				thing = v.getName()
+				pos = v.getPosition()
+				entry.pos.x = pos.x
+				entry.pos.y = pos.y
+				entry.pos.z = pos.z
+				rot = v.getRotation()
+				entry.rot.x = rot.x
+				entry.rot.y = rot.y
+				entry.rot.z = rot.z
+				if selection[thing] then
+				else
+					selection[thing] = {}
+				end
+				table.insert(selection[thing], entry)
+				pos = {}
+				rot = {}
+				thing = ""
+				entry = {
+					pos = {x, y, z},
+					rot = {x, y, z}
+				}
+			end
+		end
+	end
+	
+	local indexObj = getObjectFromGUID(objRefs.tools.setupSaver)
+	local indexName = indexObj.getName()
+	print("Saving random refs as " .. indexName)
+	
+	decoded[indexName] = selection
+	
+	local encoded = ""
+	encoded = JSON.encode(decoded)
+	
+	Notes.editNotebookTab({index = i, body = encoded})
+end
+
+function writeToNotebookPFigures()
+	local notebooks = Notes.getNotebookTabs()
+	local bodyText = ""
+	local i = ""
+	for k,v in pairs(notebooks) do
+		if v.title == "SetupPFigures" then
+			i = v.index
+			bodyText = v.body
+		end
+	end
+	
+	local decoded = {}
+	if JSON.decode(bodyText) ~= nil then
+		decoded = JSON.decode(bodyText)
+	end
+	
+	local objects = getAllObjects()
+	local selection = {}
+	local selectingP = {}
+	local entry = {}
+	entry = {
+		pos = {x, y, z},
+		rot = {x, y, z}
+	}
+	local pos = {}
+	local rot = {}
+	local thing = ""
+	for k,v in pairs(objects) do
+		selectingP = v.getSelectingPlayers()
+		for j,l in pairs(selectingP) do
+			if l=="Black" then
+				thing = v.getName()
+				pos = v.getPosition()
+				entry.pos.x = pos.x
+				entry.pos.y = pos.y
+				entry.pos.z = pos.z
+				rot = v.getRotation()
+				entry.rot.x = rot.x
+				entry.rot.y = rot.y
+				entry.rot.z = rot.z
+				if selection[thing] then
+				else
+					selection[thing] = {}
+				end
+				table.insert(selection[thing], entry)
+				pos = {}
+				rot = {}
+				entry = {
+					pos = {x, y, z},
+					rot = {x, y, z}
+				}
+			end
+		end
+	end
+	
+	local indexObj = getObjectFromGUID(objRefs.tools.setupSaver)
+	local indexName = indexObj.getName()
+	print("Saving obj refs as " .. indexName)
+	
+	decoded[indexName] = selection
+	
+	local encoded = ""
+	encoded = JSON.encode(decoded)
+	
+	Notes.editNotebookTab({index = i, body = encoded})
+end
+
+--places components stored from data; source = guid of bag, placement = destination table in notebook
+function setupPlacer(source, placement)
+	local bag = getObjectFromGUID(source)
+	if bag then
+	else
+		print("Error: Cannot find source bag.")
+		return
+	end
+	
+	local coordTable = {}
+	local notebooks = Notes.getNotebookTabs()
+	local bodyText = ""
+	local i = ""
+	for k,v in pairs(notebooks) do
+		if v.title == "Setup" then
+			i = v.index
+			bodyText = v.body
+		end
+	end
+	local decoded = JSON.decode(bodyText)
+	if decoded == nil then
+		print("Error: cannot find destination table.")
+		return
+	end
+	coordTable = decoded[placement]
+	
+	local found = false
+	local objs = bag.getObjects()
+	local params = {}
+	local returnedGUIDS = {}
+	for k,v in pairs(coordTable) do
+		params.guid = tostring(k)
+		params.position = v.pos
+		params.rotation = v.rot
+		params.smooth = false
+		for j, l in pairs(objs) do
+			if l.guid == params.guid then
+				found=true
+			end
+		end
+		if found==true then
+			bag.takeObject(params)
+			found=false
+			table.insert(returnedGUIDS, params.guid)
+		else
+			printToAll("Error: Scripted setup component not found in box. Check for component: " .. params.guid,msgError)
+		end
+	end
+	return returnedGUIDS
+end
+
+--modified placer for SD
+function setupPlacerRandomSpots(source, placement)
+	local bag = getObjectFromGUID(source)
+	if bag then
+	else
+		print("Error: Cannot find source bag.")
+		return
+	end
+	
+	local coordTable = {}
+	local notebooks = Notes.getNotebookTabs()
+	local bodyText = ""
+	local ind = ""
+	for k,v in pairs(notebooks) do
+		if v.title == "SetupSDPlots" then
+			ind = v.index
+			bodyText = v.body
+		end
+	end
+	local decoded = JSON.decode(bodyText)
+	if decoded == nil then
+		print("Error: cannot find destination table.")
+		return
+	end
+	coordTable = decoded[placement]
+	
+	local found = false
+	local objs = bag.getObjects()
+	local params = {}
+	for k,v in pairs(coordTable) do
+		for n, d in pairs(v) do
+			params.position = d.pos
+			params.rotation = d.rot
+			params.smooth = false
+			for j, l in pairs(objs) do
+				--print('checking tokens')
+				if l.name == k and found == false then
+					found=true
+					params.guid = l.guid
+				end
+			end
+			
+			if found==true then
+				bag.takeObject(params)
+				objs = bag.getObjects()
+				found=false
+				params= {}
+				--print('placing a token')
+			else
+				printToAll("Error: Scripted setup component not found in box. Check for component: " .. k, msgError)
+			end
+		end
+	end
+end
+
+--modified placer for placing player components based on player pos BY NAME AND DESCRIPTION
+function setupPlacerPlayerTokens(source, placement, color)
+	local bag = getObjectFromGUID(source)
+	if bag then
+	else
+		printToAll("Error: Cannot find source bag.", msgError)
+		return
+	end
+	
+	local handData = {}
+	local reversed = false
+	handData = Player[color].getHandTransform()
+	if handData.rotation.y >= 90 and handData.rotation.y <= 270 then
+		reversed = true
+	end
+	
+	local coordTable = {}
+	local notebooks = Notes.getNotebookTabs()
+	local bodyText = ""
+	local i = ""
+	for k,v in pairs(notebooks) do
+		if v.title == "SetupPFigures" then
+			i = v.index
+			bodyText = v.body
+		end
+	end
+	local decoded = JSON.decode(bodyText)
+	if decoded == nil then
+		printToAll("Error: cannot find destination table.", msgError)
+		return
+	end
+	coordTable = decoded[placement]
+	
+	local found = false
+	local objs = bag.getObjects()
+	local params = {}
+	local objName = ""
+	--local index = ""
+	for k,v in pairs(coordTable) do
+		params.guid = ""
+		objName = tostring(k)
+		for num, spot in pairs(v) do
+			if reversed == false then
+				params.position = {spot.pos.x + handData.position.x, spot.pos.y, spot.pos.z + handData.position.z + 3.75}
+				params.rotation = {handData.rotation.x, 180, handData.rotation.z}
+			else
+				params.position = {spot.pos.x * -1 + handData.position.x, spot.pos.y, spot.pos.z * -1 + handData.position.z - 3.75}
+				params.rotation = {handData.rotation.x, 0, handData.rotation.z}
+			end
+			params.smooth = false
+			for j, l in pairs(objs) do
+				if l.name == objName then
+					if string.match(l.description, color) then
+						params.guid = l.guid
+						found=true
+						--index = l.index
+					end
+				end
+			end
+			if found==true then
+				bag.takeObject(params)
+				found=false
+				objs = bag.getObjects()
+				--Table.remove(objs, index)
+				params = {}
+			else
+				printToAll("Error: Scripted setup component not found in box. Check for component: " .. params.guid, msgError)
+			end
+		end
+	end
+end
+
+--modified placer for placing player components based on SPECIFIED PLAYER MAT, BY NAME AND DESCRIPTION
+function setupPlacerPlayerTokensMat(source, placement, color, mat)
+	local bag = getObjectFromGUID(source)
+	if bag then
+	else
+		printToAll("Error: Cannot find source bag.", msgError)
+		return
+	end
+	
+	local oPos = mat.getPosition()
+	local oRot = mat.getRotation()
+	local reversed = true
+	if oRot.y >= 90 and oRot.y <= 270 then
+		reversed = false
+	end
+	
+	local coordTable = {}
+	local notebooks = Notes.getNotebookTabs()
+	local bodyText = ""
+	local i = ""
+	for k,v in pairs(notebooks) do
+		if v.title == "SetupPFigures" then
+			i = v.index
+			bodyText = v.body
+		end
+	end
+	local decoded = JSON.decode(bodyText)
+	if decoded == nil then
+		printToAll("Error: cannot find destination table.", msgError)
+		return
+	end
+	coordTable = decoded[placement]
+	
+	local found = false
+	local objs = bag.getObjects()
+	local params = {}
+	local objName = ""
+	--local index = ""
+	for k,v in pairs(coordTable) do
+		params.guid = ""
+		objName = tostring(k)
+		for num, spot in pairs(v) do
+			if reversed == false then
+				params.position = {spot.pos.x + oPos.x, spot.pos.y, spot.pos.z + oPos.z}
+				params.rotation = {oRot.x, 180, oRot.z}
+			else
+				params.position = {spot.pos.x * -1 + oPos.x, spot.pos.y, spot.pos.z * -1 + oPos.z}
+				params.rotation = {oRot.x, 0, oRot.z}
+			end
+			params.smooth = false
+			for j, l in pairs(objs) do
+				if l.name == objName then
+					if string.match(l.description, color) then
+						params.guid = l.guid
+						found=true
+						--index = l.index
+					end
+				end
+			end
+			if found==true then
+				bag.takeObject(params)
+				found=false
+				objs = bag.getObjects()
+				--Table.remove(objs, index)
+				params = {}
+			else
+				printToAll("Error: Scripted setup component not found in box. Check for component: " .. params.guid, msgError)
+			end
+		end
+	end
+end

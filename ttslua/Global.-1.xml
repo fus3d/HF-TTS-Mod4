@@ -1,0 +1,3025 @@
+<!-- High Frontier 4, Eskander scripts, UI Global-->
+
+
+<!--=============TOC=============-->
+<!--Defaults-->
+<!--UI Menu-->
+<!--Tools, Dice Roller-->
+<!--Tools, Music Player-->
+<!--Tools, Turn Tracker-->
+<!--Tools, Bid Tool-->
+<!--Tools, FT Tracker-->
+<!--Setup Process-->
+<!--Dev Tools-->
+
+
+<Defaults>
+	<Text color="White" fontSize="16" />
+	<Panel class="WindowParent" color="rgba(1,1,1,0)" allowDragging="true" returnToOriginalPositionWhenReleased="false" outline="rgba(0.1,0.1,0.1,0)" outlineSize="1 -1" height="40" textColor="White" />
+	<TableLayout class="WindowTable" rectAlignment="UpperRight" color="black" outline="rgba(0.1,0.1,0.1,0.25)" outlineSize="1 -1" autoCalculateHeight="true" cellBackgroundColor="rgba(0.1,0.1,0.1,0.25)" padding = "20 20 10 10"/>
+	<TableLayout class="ContentTable" rectAlignment="UpperCenter" color="black" outline="rgba(0.1,0.1,0.1,0)" outlineSize="1 -1" autoCalculateHeight="true" cellBackgroundColor="rgba(0.1,0.1,0.1,0.25)" padding="20 20 20 60" />
+	<Row class="TopRow" preferredHeight="40" />
+	<Row class="BasicRow" preferredHeight="40" />
+	<Button class="BtnMinMax" rectAlignment="UpperRight" ignoreLayout="true" width="40" height="40" fontSize="25" textColor="White" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" />
+	<Button class="BtnConfig" icon="Sprites/Icons/Cog" tooltip="Configure" visibility="Admin" rectAlignment="UpperLeft" ignoreLayout="true" width="40" height="40" fontSize="25" textColor="White" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" />
+	<Button class="BtnClose" tooltip="Close" rectAlignment="UpperRight" ignoreLayout="true" width="40" height="40" fontSize="25" textColor="White" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" />
+	<Text class="WindowHeader" color="white" fontStyle="Bold" alignment="MiddleCenter" fontSize="22"/>
+	<Text class="h2Text" color="white" alignment="MiddleCenter" fontSize="16"/>
+	<Text class="BasicText" color="white" alignment="MiddleLeft" fontSize="16" horizontalOverflow="Wrap" verticalOverflow="Overflow"/>
+	<Toggle class="ToggleConfig" textColor="white" fontSize="14" />
+	<Text class="textMarker" color="black" fontSize="30" fontStyle="Bold" alignment = "MiddleCenter" horizontalOverflow="Overflow" verticalOverflow="Overflow" />
+	<Button class="swapButton" active="False" tooltip="Swap to Color" rectAlignment="MiddleCenter" ignoreLayout="true" width="30" height="30" fontSize="10" textColor="White" colors="rgba(0,0,0,0)|rgba(0,0,0,0)|rgba(0,0,0,0)|rgba(0,0,0,0)" />
+	<Button class="btnScore" color="Black" textColor="White" fontSize="30" fontStyle="Normal" tooltip = "LMB:+1/RMB:-1/MMB:+5" allowDragging="false"/>
+	
+	
+	<Panel class="clearPanel" color="rgba(1,1,1,0)" allowDragging="true" returnToOriginalPositionWhenReleased="false" padding="0 0 0 0" />
+	<Panel class="panelHeader" color="Black" outline="Grey" outlineSize="1 -1"  />
+	<Panel class="TopBar"  height="30" width="300" rectAlignment="UpperCenter" color="#19197040" outline="#00008B"/>
+	<VerticalLayout class="verticalTable" color="Black" spacing="0" minHeight="40" preferredHeight="40" flexibleHeight="0" padding="0 0 0 0" />
+	<TableLayout class ="clearTable" color="rgba(1,1,1,0)" cellBackgroundColor="rgba(1,1,1,0)" cellSpacing="0" padding="0 0 0 0" />
+	<TableLayout class ="blackTable" cellPadding = "0 0 0 0" color="black" cellBackgroundColor="Grey" cellSpacing="0" padding="0 0 0 0" />
+	<Row class="headerRow" cellSpacing="0" cellBackgroundColor="black" color="black" dontUseTableRowBackground="false" dontUseTableCellBackground="false" minHeight="40" preferredHeight="40" flexibleHeight="0" minWidth="330" preferredWidth="330" flexibleWidth="0" />
+	<Row class="headerRowFlex" cellSpacing="0" cellBackgroundColor="black" color="black" dontUseTableRowBackground="false" dontUseTableCellBackground="false"  minWidth="330" preferredWidth="330" flexibleWidth="0" />
+	<Row class="trackerRowSelf" cellPadding = "0 0 0 0" cellSpacing="0" cellBackgroundColor="black" color="black" dontUseTableRowBackground="true" dontUseTableCellBackground="true" minHeight="50" preferredHeight="50" flexibleHeight="0" minWidth="330" preferredWidth="330" flexibleWidth="1"/>
+	<Row class="trackerRowOther" cellSpacing="0" cellBackgroundColor="black" color="black" dontUseTableRowBackground="true" dontUseTableCellBackground="true" minHeight="40" preferredHeight="40" flexibleHeight="0" minWidth="330" preferredWidth="330" flexibleWidth="1"/>
+	<Row class="trackerRow" cellSpacing="1" minHeight="60" preferredHeight="60" flexibleHeight="0" minWidth="180" preferredWidth="180" flexibleWidth="0" cellBackgroundColor="black" color="black"/>
+	<Row class="timerRow" cellSpacing="0" cellBackgroundColor="black" color="black" dontUseTableRowBackground="true" dontUseTableCellBackground="true" minHeight="40" preferredHeight="40" flexibleHeight="0" minWidth="330" preferredWidth="330" flexibleWidth="1"/>
+	<Cell class="trackerCellLabel" columnSpan="3" />
+	<Cell class="trackerCellLEO" columnSpan="2" />
+	<Cell class="trackerCellOther" columnSpan="2" />
+	<Button class="btnMinimize" rectAlignment="MiddleRight" width="40" height="40" fontSize="25" tooltip="Minimize" textColor="White" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" />
+	<Button class="btnMaximize" rectAlignment="UpperRight" ignoreLayout="true" width="40" height="40" fontSize="25" textColor="White" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" />
+	<Button class="cmdMenu" textColor="white" fontSize="22" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" />
+	<Button class="btnTrackerA" color="blue" textColor="black" fontSize="30" fontStyle="Bold" tooltip = "LMB:+1/RMB:-1/MMB:+7" allowDragging="false"/>
+	<Button class="btnTrackerI" color="yellow" textColor="black" fontSize="30" fontStyle="Bold" tooltip = "LMB:+1/RMB:-1/MMB:+7" allowDragging="false"/>
+	<Button class="btnBids" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" textColor="white" width="80" fontSize="22" height="40" allowDragging="false" />
+	<Button class="buttonStart" textColor="white" />
+	<ToggleButton class="toggleButtonsTurns" textAlignment = "MiddleLeft" padding= "10 0 0 0" height="40" textColor="White" color="Grey" colors="Black|Grey|White|rgba(0.78,0.78,0.78,0.5)" selectedBackgroundColor="Green" deselectedBackgroundColor="Black" />
+	<Text class="trackerHeader" color="white" fontStyle="Bold" alignment="MiddleCenter" fontSize="22"/>
+	<Text class="trackerText" color="white" alignment="MiddleCenter" fontSize="22"/>
+	<Text class="timerText" color="white" alignment="MiddleCenter" fontSize="22"/>
+	<Text class="headerText" color="white" fontStyle="Bold" alignment="MiddleCenter" fontSize="22"/>
+	<Text class="bidderText" color="white" alignment="MiddleCenter" fontSize="30" resizeTextForBestFit="false" />
+	<Tooltip tooltipBorderColor="White" tooltipTextColor = "White" tooltipBackgroundColor="Black" tooltipPosition="Above"/>
+</Defaults>
+
+
+<!--========================================================= UI CONFIG=========================================================-->
+
+<Panel
+	id = "ConfigMenu"
+	active="False"
+	class="clearPanel"
+	visibility = "Admin"
+	width="70"
+	height="65"
+	rectAlignment="UpperLeft"
+	offsetXY="327 0"
+	>
+		<Button ignoreLayout="True" onClick="uiConfigOpen" tooltip="Mod: UI/General Config Menu" color = "Black">
+			<Image width = "40" height = "40" offsetXY="0 10" alignment="UpperCenter" image="Sprites/Icons/Cog"></Image>
+		</Button>
+		<Text class="BasicText" ignoreLayout="True" alignment="LowerCenter" offsetXY="0 5" fontSize = "14" fontStyle="Bold" >UI</Text>
+</Panel>
+
+<Panel id="UIConfig"
+	class="WindowParent"
+	visibility="Admin"
+	active="false"
+	width="600"
+	rectAlignment="MiddleCenter"
+	offsetXY="0 100"
+	>
+	<TableLayout id="UIConfigContent"
+		class="WindowTable"
+		width="600"
+		padding="10 10 0 0"
+		
+		>
+		<Row class="TopRow">
+			<Text class="WindowHeader">Configure Mod UI/General</Text>
+			<Button id="UITrackerConfigClose" class="BtnClose" onClick="uiConfigClose" tooltip="Close">X</Button>		
+		</Row>
+		<Row class="BasicRow" preferredHeight="180">
+			<TableLayout id="UIConfigContentChild"
+			class="ContentTable"
+			width="600"
+			padding="40 40 0 0"
+			>
+				<Row class="BasicRow" preferredHeight="40">
+					<Text class="BasicText" fontSize="18" fontStyle="Bold" alignment="MiddleCenter" >Tools</Text>
+				</Row>
+				<Row class="BasicRow" preferredHeight="60">
+					<Cell>
+						<Toggle id="toggleUIToolDiceRoller" class="toggleConfig" onValueChanged="toggleTools" isOn="true" >Dice Roller</Toggle>
+					</Cell>
+					<Cell>
+						<Toggle id="toggleUIToolBurnTool" class="toggleConfig" onValueChanged="toggleTools" isOn="true" >Rocket Burn Tool</Toggle>
+					</Cell>
+					<Cell>
+						<Toggle id="toggleUIToolBurnToolBernal" class="toggleConfig" onValueChanged="toggleTools" isOn="true" >Bernal Burn Tool</Toggle>
+					</Cell>
+				</Row>
+				<Row class="BasicRow" preferredHeight="60">
+					<Cell>
+						<Toggle id="toggleUIToolTurnTracker" class="toggleConfig" onValueChanged="toggleTools" isOn="true" >Turn Tracker</Toggle>
+					</Cell>
+					<Cell>
+						<Toggle id="toggleUIToolFTTracker" class="toggleConfig" onValueChanged="toggleTools" isOn="true" >FT Tracker</Toggle>
+					</Cell>
+					<Cell>
+						<Toggle id="toggleUIToolBidTool" class="toggleConfig" onValueChanged="toggleTools" isOn="true" >Bid Tool</Toggle>
+					</Cell>
+				</Row>
+				<Row class="BasicRow" preferredHeight="80">
+					<Toggle id="toggleInteractable" class="toggleConfig" onValueChanged="toggleInteractable" isOn="False" tooltip="Make certain objects interactable -- boards,tables, etc" >Unlock Static Objects</Toggle>
+				</Row>
+			</TableLayout>
+		</Row>
+	</TableLayout>
+</Panel>
+
+
+
+<!--========================================================= Dice Roller=========================================================-->
+<Panel
+	id = "DiceRollerParent"
+	active="False"
+	class="clearPanel"
+	width="50"
+	height="50"
+	rectAlignment="MiddleRight"
+	offsetXY="-220 -105"
+	>
+		<Button onClick="rollD6" tooltip="LMB: Roll 1d6 / RMB: Roll 2d6 / MMB: Roll 3d6" color = "rgba(1,1,1,0)">
+			<Image image="BlackDie"></Image>
+		</Button>
+</Panel>
+
+<!--========================================================= Burn Tool=========================================================-->
+<Panel
+	id = "BurnParentWhite"
+	active="False"
+	visibility="White"
+	class="WindowParent"
+	width="195"
+	height="85"
+	rectAlignment="MiddleRight"
+	offsetXY="0 -86"
+	>
+	<Button class="btnMaximize" height="30" width="30" onClick="maximizeBurnTool" tooltip="Maximize Burn Tool">+</Button>
+	<TableLayout
+		id="BurnToolChildWhite"
+		class="WindowTable"
+		width="195"
+		padding = "0 0 0 0"
+		outline="Grey"
+		cellBackgroundColor="Grey"
+		>
+		<Row preferredHeight = "30">
+			<Text class="headerText" fontSize="20">Rocket Tool</Text>
+			<Button class="btnMinimize" height="30" width="30" onClick="minimizeBurnTool" >-</Button>
+		</Row>	
+		<Row preferredHeight = "20">
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">Fuel C</Text>
+			</Cell>
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">Burns A</Text>
+			</Cell>
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">BURN</Text>
+			</Cell>
+		</Row>
+		<Row preferredHeight = "65">
+			<Cell>
+				
+				<Button id="fuelRateWhite" height="65" onClick="changeFuelRate" tooltip="Adjust Fuel Consumption Rate (LMB:+/RMB:-)" color = "rgba(1,1,1,1)" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" fontSize="40" textColor="White">0</Button>
+			</Cell>
+			<Cell>
+				
+				<Text id="burnsWhite" class="BasicText" alignment="MiddleCenter" tooltip="Burns Available" fontSize="40">0</Text>
+			</Cell>
+			<Cell>
+				
+				<Button onClick="burn" tooltip="Execute Burn" color = "rgba(1,1,1,0)" fontSize="20" textColor="White"><Image image="RedButton" height="80" width = "80" ></Image></Button>
+			</Cell>
+		</Row>
+	</TableLayout>
+</Panel>
+
+<Panel
+	id = "BurnParentYellow"
+	active="False"
+	visibility="Yellow"
+	class="WindowParent"
+	width="195"
+	height="85"
+	rectAlignment="MiddleRight"
+	offsetXY="0 -86"
+	>
+	<Button class="btnMaximize" height="30" width="30" onClick="maximizeBurnTool" tooltip="Maximize Burn Tool">+</Button>
+	<TableLayout
+		id="BurnToolChildYellow"
+		class="WindowTable"
+		width="195"
+		padding = "0 0 0 0"
+		outline="Grey"
+		cellBackgroundColor="Grey"
+		>
+		<Row preferredHeight = "30">
+			<Text class="headerText" fontSize="20">Rocket Tool</Text>
+			<Button class="btnMinimize" height="30" width="30" onClick="minimizeBurnTool" >-</Button>
+		</Row>	
+		<Row preferredHeight = "20">
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">Fuel C</Text>
+			</Cell>
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">Burns A</Text>
+			</Cell>
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">BURN</Text>
+			</Cell>
+		</Row>
+		<Row preferredHeight = "65">
+			<Cell>
+				
+				<Button id="fuelRateYellow" height="65" onClick="changeFuelRate" tooltip="Adjust Fuel Consumption Rate (LMB:+/RMB:-)" color = "rgba(1,1,1,1)" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" fontSize="40" textColor="White">0</Button>
+			</Cell>
+			<Cell>
+				
+				<Text id="burnsYellow" class="BasicText" alignment="MiddleCenter" tooltip="Burns Available" fontSize="40">0</Text>
+			</Cell>
+			<Cell>
+				
+				<Button onClick="burn" tooltip="Execute Burn" color = "rgba(1,1,1,0)" fontSize="20" textColor="White"><Image image="RedButton" height="80" width = "80" ></Image></Button>
+			</Cell>
+		</Row>
+	</TableLayout>
+</Panel>
+
+<Panel
+	id = "BurnParentPurple"
+	active="False"
+	visibility="Purple"
+	class="WindowParent"
+	width="195"
+	height="85"
+	rectAlignment="MiddleRight"
+	offsetXY="0 -86"
+	>
+	<Button class="btnMaximize" height="30" width="30" onClick="maximizeBurnTool" tooltip="Maximize Burn Tool">+</Button>
+	<TableLayout
+		id="BurnToolChildPurple"
+		class="WindowTable"
+		width="195"
+		padding = "0 0 0 0"
+		outline="Grey"
+		cellBackgroundColor="Grey"
+		>
+		<Row preferredHeight = "30">
+			<Text class="headerText" fontSize="20">Rocket Tool</Text>
+			<Button class="btnMinimize" height="30" width="30" onClick="minimizeBurnTool" >-</Button>
+		</Row>	
+		<Row preferredHeight = "20">
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">Fuel C</Text>
+			</Cell>
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">Burns A</Text>
+			</Cell>
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">BURN</Text>
+			</Cell>
+		</Row>
+		<Row preferredHeight = "65">
+			<Cell>
+				
+				<Button id="fuelRatePurple" height="65" onClick="changeFuelRate" tooltip="Adjust Fuel Consumption Rate (LMB:+/RMB:-)" color = "rgba(1,1,1,1)" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" fontSize="40" textColor="White">0</Button>
+			</Cell>
+			<Cell>
+				
+				<Text id="burnsPurple" class="BasicText" alignment="MiddleCenter" tooltip="Burns Available" fontSize="40">0</Text>
+			</Cell>
+			<Cell>
+				
+				<Button onClick="burn" tooltip="Execute Burn" color = "rgba(1,1,1,0)" fontSize="20" textColor="White"><Image image="RedButton" height="80" width = "80" ></Image></Button>
+			</Cell>
+		</Row>
+	</TableLayout>
+</Panel>
+
+<Panel
+	id = "BurnParentRed"
+	active="False"
+	visibility="Red"
+	class="WindowParent"
+	width="195"
+	height="85"
+	rectAlignment="MiddleRight"
+	offsetXY="0 -86"
+	>
+	<Button class="btnMaximize" height="30" width="30" onClick="maximizeBurnTool" tooltip="Maximize Burn Tool">+</Button>
+	<TableLayout
+		id="BurnToolChildRed"
+		class="WindowTable"
+		width="195"
+		padding = "0 0 0 0"
+		outline="Grey"
+		cellBackgroundColor="Grey"
+		>
+		<Row preferredHeight = "30">
+			<Text class="headerText" fontSize="20">Rocket Tool</Text>
+			<Button class="btnMinimize" height="30" width="30" onClick="minimizeBurnTool" >-</Button>
+		</Row>	
+		<Row preferredHeight = "20">
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">Fuel C</Text>
+			</Cell>
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">Burns A</Text>
+			</Cell>
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">BURN</Text>
+			</Cell>
+		</Row>
+		<Row preferredHeight = "65">
+			<Cell>
+				
+				<Button id="fuelRateRed" height="65" onClick="changeFuelRate" tooltip="Adjust Fuel Consumption Rate (LMB:+/RMB:-)" color = "rgba(1,1,1,1)" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" fontSize="40" textColor="White">0</Button>
+			</Cell>
+			<Cell>
+				
+				<Text id="burnsRed" class="BasicText" alignment="MiddleCenter" tooltip="Burns Available" fontSize="40">0</Text>
+			</Cell>
+			<Cell>
+				
+				<Button onClick="burn" tooltip="Execute Burn" color = "rgba(1,1,1,0)" fontSize="20" textColor="White"><Image image="RedButton" height="80" width = "80" ></Image></Button>
+			</Cell>
+		</Row>
+	</TableLayout>
+</Panel>
+
+<Panel
+	id = "BurnParentGreen"
+	active="False"
+	visibility="Green"
+	class="WindowParent"
+	width="195"
+	height="85"
+	rectAlignment="MiddleRight"
+	offsetXY="0 -86"
+	>
+	<Button class="btnMaximize" height="30" width="30" onClick="maximizeBurnTool" tooltip="Maximize Burn Tool">+</Button>
+	<TableLayout
+		id="BurnToolChildGreen"
+		class="WindowTable"
+		width="195"
+		padding = "0 0 0 0"
+		outline="Grey"
+		cellBackgroundColor="Grey"
+		>
+		<Row preferredHeight = "30">
+			<Text class="headerText" fontSize="20">Rocket Tool</Text>
+			<Button class="btnMinimize" height="30" width="30" onClick="minimizeBurnTool" >-</Button>
+		</Row>	
+		<Row preferredHeight = "20">
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">Fuel C</Text>
+			</Cell>
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">Burns A</Text>
+			</Cell>
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">BURN</Text>
+			</Cell>
+		</Row>
+		<Row preferredHeight = "65">
+			<Cell>
+				
+				<Button id="fuelRateGreen" height="65" onClick="changeFuelRate" tooltip="Adjust Fuel Consumption Rate (LMB:+/RMB:-)" color = "rgba(1,1,1,1)" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" fontSize="40" textColor="White">0</Button>
+			</Cell>
+			<Cell>
+				
+				<Text id="burnsGreen" class="BasicText" alignment="MiddleCenter" tooltip="Burns Available" fontSize="40">0</Text>
+			</Cell>
+			<Cell>
+				
+				<Button onClick="burn" tooltip="Execute Burn" color = "rgba(1,1,1,0)" fontSize="20" textColor="White"><Image image="RedButton" height="80" width = "80" ></Image></Button>
+			</Cell>
+		</Row>
+	</TableLayout>
+</Panel>
+
+<Panel
+	id = "BurnParentBlue"
+	active="False"
+	visibility="Blue"
+	class="WindowParent"
+	width="195"
+	height="85"
+	rectAlignment="MiddleRight"
+	offsetXY="0 -86"
+	>
+	<Button class="btnMaximize" height="30" width="30" onClick="maximizeBurnTool" tooltip="Maximize Burn Tool">+</Button>
+	<TableLayout
+		id="BurnToolChildBlue"
+		class="WindowTable"
+		width="195"
+		padding = "0 0 0 0"
+		outline="Grey"
+		cellBackgroundColor="Grey"
+		>
+		<Row preferredHeight = "30">
+			<Text class="headerText" fontSize="20">Rocket Tool</Text>
+			<Button class="btnMinimize" height="30" width="30" onClick="minimizeBurnTool" >-</Button>
+		</Row>	
+		<Row preferredHeight = "20">
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">Fuel C</Text>
+			</Cell>
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">Burns A</Text>
+			</Cell>
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">BURN</Text>
+			</Cell>
+		</Row>
+		<Row preferredHeight = "65">
+			<Cell>
+				
+				<Button id="fuelRateBlue" height="65" onClick="changeFuelRate" tooltip="Adjust Fuel Consumption Rate (LMB:+/RMB:-)" color = "rgba(1,1,1,1)" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" fontSize="40" textColor="White">0</Button>
+			</Cell>
+			<Cell>
+				
+				<Text id="burnsBlue" class="BasicText" alignment="MiddleCenter" tooltip="Burns Available" fontSize="40">0</Text>
+			</Cell>
+			<Cell>
+				
+				<Button onClick="burn" tooltip="Execute Burn" color = "rgba(1,1,1,0)" fontSize="20" textColor="White"><Image image="RedButton" height="80" width = "80" ></Image></Button>
+			</Cell>
+		</Row>
+	</TableLayout>
+</Panel>
+
+<!--========================================================= Burn Tool BERNAL=========================================================-->
+
+<Panel
+	id = "BurnParentBernalWhite"
+	active="False"
+	visibility="White"
+	class="WindowParent"
+	width="195"
+	height="85"
+	rectAlignment="MiddleRight"
+	offsetXY="0 29"
+	>
+	<Button class="btnMaximize" height="30" width="30" onClick="maximizeBernalBurnTool" tooltip="Maximize Bernal Burn Tool">+</Button>
+	<TableLayout
+		id="BurnToolChildBernalWhite"
+		class="WindowTable"
+		width="195"
+		padding = "0 0 0 0"
+		outline="Grey"
+		cellBackgroundColor="Grey"
+		>
+		<Row preferredHeight = "30">
+			<Text class="headerText" fontSize="20">Bernal Tool</Text>
+			<Button class="btnMinimize" height="30" width="30" onClick="minimizeBernalBurnTool" >-</Button>
+		</Row>	
+		<Row preferredHeight = "20">
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">Fuel C</Text>
+			</Cell>
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">Burns A</Text>
+			</Cell>
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">BURN</Text>
+			</Cell>
+		</Row>
+		<Row preferredHeight = "65">
+			<Cell>
+				
+				<Button id="bernalFuelRateWhite" height="65" onClick="changeBernalFuelRate" tooltip="Adjust Fuel Consumption Rate (LMB:+/RMB:-)" color = "rgba(1,1,1,1)" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" fontSize="40" textColor="White">0</Button>
+			</Cell>
+			<Cell>
+				
+				<Text id="burnsBernalWhite" class="BasicText" alignment="MiddleCenter" tooltip="Burns Available" fontSize="40">0</Text>
+			</Cell>
+			<Cell>
+				
+				<Button onClick="burnBernal" tooltip="Execute Burn" color = "rgba(1,1,1,0)" fontSize="20" textColor="White"><Image image="RedButton" height="80" width = "80" ></Image></Button>
+			</Cell>
+		</Row>
+	</TableLayout>
+</Panel>
+
+<Panel
+	id = "BurnParentBernalYellow"
+	active="False"
+	visibility="Yellow"
+	class="WindowParent"
+	width="195"
+	height="85"
+	rectAlignment="MiddleRight"
+	offsetXY="0 29"
+	>
+	<Button class="btnMaximize" height="30" width="30" onClick="maximizeBernalBurnTool" tooltip="Maximize Bernal Burn Tool">+</Button>
+	<TableLayout
+		id="BurnToolChildBernalYellow"
+		class="WindowTable"
+		width="195"
+		padding = "0 0 0 0"
+		outline="Grey"
+		cellBackgroundColor="Grey"
+		>
+		<Row preferredHeight = "30">
+			<Text class="headerText" fontSize="20">Bernal Tool</Text>
+			<Button class="btnMinimize" height="30" width="30" onClick="minimizeBernalBurnTool" >-</Button>
+		</Row>	
+		<Row preferredHeight = "20">
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">Fuel C</Text>
+			</Cell>
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">Burns A</Text>
+			</Cell>
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">BURN</Text>
+			</Cell>
+		</Row>
+		<Row preferredHeight = "65">
+			<Cell>
+				
+				<Button id="bernalFuelRateYellow" height="65" onClick="changeBernalFuelRate" tooltip="Adjust Fuel Consumption Rate (LMB:+/RMB:-)" color = "rgba(1,1,1,1)" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" fontSize="40" textColor="White">0</Button>
+			</Cell>
+			<Cell>
+				
+				<Text id="burnsBernalYellow" class="BasicText" alignment="MiddleCenter" tooltip="Burns Available" fontSize="40">0</Text>
+			</Cell>
+			<Cell>
+				
+				<Button onClick="burnBernal" tooltip="Execute Burn" color = "rgba(1,1,1,0)" fontSize="20" textColor="White"><Image image="RedButton" height="80" width = "80" ></Image></Button>
+			</Cell>
+		</Row>
+	</TableLayout>
+</Panel>
+
+<Panel
+	id = "BurnParentBernalPurple"
+	active="False"
+	visibility="Purple"
+	class="WindowParent"
+	width="195"
+	height="85"
+	rectAlignment="MiddleRight"
+	offsetXY="0 29"
+	>
+	<Button class="btnMaximize" height="30" width="30" onClick="maximizeBernalBurnTool" tooltip="Maximize Bernal Burn Tool">+</Button>
+	<TableLayout
+		id="BurnToolChildBernalPurple"
+		class="WindowTable"
+		width="195"
+		padding = "0 0 0 0"
+		outline="Grey"
+		cellBackgroundColor="Grey"
+		>
+		<Row preferredHeight = "30">
+			<Text class="headerText" fontSize="20">Bernal Tool</Text>
+			<Button class="btnMinimize" height="30" width="30" onClick="minimizeBernalBurnTool" >-</Button>
+		</Row>	
+		<Row preferredHeight = "20">
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">Fuel C</Text>
+			</Cell>
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">Burns A</Text>
+			</Cell>
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">BURN</Text>
+			</Cell>
+		</Row>
+		<Row preferredHeight = "65">
+			<Cell>
+				
+				<Button id="bernalFuelRatePurple" height="65" onClick="changeBernalFuelRate" tooltip="Adjust Fuel Consumption Rate (LMB:+/RMB:-)" color = "rgba(1,1,1,1)" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" fontSize="40" textColor="White">0</Button>
+			</Cell>
+			<Cell>
+				
+				<Text id="burnsBernalPurple" class="BasicText" alignment="MiddleCenter" tooltip="Burns Available" fontSize="40">0</Text>
+			</Cell>
+			<Cell>
+				
+				<Button onClick="burnBernal" tooltip="Execute Burn" color = "rgba(1,1,1,0)" fontSize="20" textColor="White"><Image image="RedButton" height="80" width = "80" ></Image></Button>
+			</Cell>
+		</Row>
+	</TableLayout>
+</Panel>
+
+<Panel
+	id = "BurnParentBernalRed"
+	active="False"
+	visibility="Red"
+	class="WindowParent"
+	width="195"
+	height="85"
+	rectAlignment="MiddleRight"
+	offsetXY="0 29"
+	>
+	<Button class="btnMaximize" height="30" width="30" onClick="maximizeBernalBurnTool" tooltip="Maximize Bernal Burn Tool">+</Button>
+	<TableLayout
+		id="BurnToolChildBernalRed"
+		class="WindowTable"
+		width="195"
+		padding = "0 0 0 0"
+		outline="Grey"
+		cellBackgroundColor="Grey"
+		>
+		<Row preferredHeight = "30">
+			<Text class="headerText" fontSize="20">Bernal Tool</Text>
+			<Button class="btnMinimize" height="30" width="30" onClick="minimizeBernalBurnTool" >-</Button>
+		</Row>	
+		<Row preferredHeight = "20">
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">Fuel C</Text>
+			</Cell>
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">Burns A</Text>
+			</Cell>
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">BURN</Text>
+			</Cell>
+		</Row>
+		<Row preferredHeight = "65">
+			<Cell>
+				
+				<Button id="bernalFuelRateRed" height="65" onClick="changeBernalFuelRate" tooltip="Adjust Fuel Consumption Rate (LMB:+/RMB:-)" color = "rgba(1,1,1,1)" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" fontSize="40" textColor="White">0</Button>
+			</Cell>
+			<Cell>
+				
+				<Text id="burnsBernalRed" class="BasicText" alignment="MiddleCenter" tooltip="Burns Available" fontSize="40">0</Text>
+			</Cell>
+			<Cell>
+				
+				<Button onClick="burnBernal" tooltip="Execute Burn" color = "rgba(1,1,1,0)" fontSize="20" textColor="White"><Image image="RedButton" height="80" width = "80" ></Image></Button>
+			</Cell>
+		</Row>
+	</TableLayout>
+</Panel>
+
+<Panel
+	id = "BurnParentBernalGreen"
+	active="False"
+	visibility="Green"
+	class="WindowParent"
+	width="195"
+	height="85"
+	rectAlignment="MiddleRight"
+	offsetXY="0 29"
+	>
+	<Button class="btnMaximize" height="30" width="30" onClick="maximizeBernalBurnTool" tooltip="Maximize Bernal Burn Tool">+</Button>
+	<TableLayout
+		id="BurnToolChildBernalGreen"
+		class="WindowTable"
+		width="195"
+		padding = "0 0 0 0"
+		outline="Grey"
+		cellBackgroundColor="Grey"
+		>
+		<Row preferredHeight = "30">
+			<Text class="headerText" fontSize="20">Bernal Tool</Text>
+			<Button class="btnMinimize" height="30" width="30" onClick="minimizeBernalBurnTool" >-</Button>
+		</Row>	
+		<Row preferredHeight = "20">
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">Fuel C</Text>
+			</Cell>
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">Burns A</Text>
+			</Cell>
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">BURN</Text>
+			</Cell>
+		</Row>
+		<Row preferredHeight = "65">
+			<Cell>
+				
+				<Button id="bernalFuelRateGreen" height="65" onClick="changeBernalFuelRate" tooltip="Adjust Fuel Consumption Rate (LMB:+/RMB:-)" color = "rgba(1,1,1,1)" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" fontSize="40" textColor="White">0</Button>
+			</Cell>
+			<Cell>
+				
+				<Text id="burnsBernalGreen" class="BasicText" alignment="MiddleCenter" tooltip="Burns Available" fontSize="40">0</Text>
+			</Cell>
+			<Cell>
+				
+				<Button onClick="burnBernal" tooltip="Execute Burn" color = "rgba(1,1,1,0)" fontSize="20" textColor="White"><Image image="RedButton" height="80" width = "80" ></Image></Button>
+			</Cell>
+		</Row>
+	</TableLayout>
+</Panel>
+
+<Panel
+	id = "BurnParentBernalBlue"
+	active="False"
+	visibility="Blue"
+	class="WindowParent"
+	width="195"
+	height="85"
+	rectAlignment="MiddleRight"
+	offsetXY="0 29"
+	>
+	<Button class="btnMaximize" height="30" width="30" onClick="maximizeBernalBurnTool" tooltip="Maximize Bernal Burn Tool">+</Button>
+	<TableLayout
+		id="BurnToolChildBernalBlue"
+		class="WindowTable"
+		width="195"
+		padding = "0 0 0 0"
+		outline="Grey"
+		cellBackgroundColor="Grey"
+		>
+		<Row preferredHeight = "30">
+			<Text class="headerText" fontSize="20">Bernal Tool</Text>
+			<Button class="btnMinimize" height="30" width="30" onClick="minimizeBernalBurnTool" >-</Button>
+		</Row>	
+		<Row preferredHeight = "20">
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">Fuel C</Text>
+			</Cell>
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">Burns A</Text>
+			</Cell>
+			<Cell cellBackgroundColor="{0,0,0,0}">
+				<Text class="BasicText" alignment="MiddleCenter" fontSize="12" textColor="White">BURN</Text>
+			</Cell>
+		</Row>
+		<Row preferredHeight = "65">
+			<Cell>
+				
+				<Button id="bernalFuelRateBlue" height="65" onClick="changeBernalFuelRate" tooltip="Adjust Fuel Consumption Rate (LMB:+/RMB:-)" color = "rgba(1,1,1,1)" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" fontSize="40" textColor="White">0</Button>
+			</Cell>
+			<Cell>
+				
+				<Text id="burnsBernalBlue" class="BasicText" alignment="MiddleCenter" tooltip="Burns Available" fontSize="40">0</Text>
+			</Cell>
+			<Cell>
+				
+				<Button onClick="burnBernal" tooltip="Execute Burn" color = "rgba(1,1,1,0)" fontSize="20" textColor="White"><Image image="RedButton" height="80" width = "80" ></Image></Button>
+			</Cell>
+		</Row>
+	</TableLayout>
+</Panel>
+
+
+
+
+<!--========================================================= Music Player=========================================================-->
+<Panel
+	id = "MusicParent"
+	active="True"
+	class="clearPanel"
+	width="195"
+	height="65"
+	rectAlignment="UpperLeft"
+	offsetXY="125 0"
+	>
+	<HorizontalLayout>
+		<Button onClick="musicPrevious" tooltip="Previous Track" color = "rgba(1,1,1,0)">
+			<Image image="MusicPrevious"></Image>
+		</Button>
+		<Button onClick="musicPlayPause" tooltip="Play/Pause" color = "rgba(1,1,1,0)">
+			<Image image="MusicPlayPause"></Image>
+		</Button>
+		<Button onClick="musicNext" tooltip="Next Track" color = "rgba(1,1,1,0)">
+			<Image image="MusicNext"></Image>
+		</Button>
+	</HorizontalLayout>
+</Panel>
+
+
+<!--========================================================= Timer Tool=========================================================-->
+<Panel
+	id = "TimerToolParent"
+	active="False"
+	class="clearPanel"
+	width="260"
+	height="80"
+	scale="1 1 1"
+	rectAlignment="UpperLeft"
+	offsetXY="95 -80"
+	>
+	<Button class="btnMaximize" rectAlignment="UpperLeft" onClick="maximizeTimerTool" tooltip="Maximize Timer Tool">+</Button>
+	<VerticalLayout id="TimerToolChild" class="verticalTable" height="40">
+		<Panel
+			id="TimerChild2"
+			class="panelHeader"
+			color="Black"
+			width="260">
+			<Text class="headerText">Timers</Text>
+			<Button class="btnMinimize" rectAlignment="MiddleLeft" onClick="minimizeTimerTool" >-</Button>
+			<Button id="timerConfigOpen" class="btnMinimize" onClick="timerConfig" icon="Sprites/Icons/Cog" tooltip="Config" visibility="Admin" ></Button>
+		</Panel>
+		<TableLayout
+		id="TimerChild3"
+		class="blackTable"
+		columnWidths="140 120">
+		<Row
+			id="p1TimerRow"
+			class="TimerRow"
+			active = "false"
+			>
+			<cell class="timerCellLabel">
+				<Text id = "p1TimerLabel" alignment="MiddleCenter" class="timerText" resizeTextForBestFit="true" resizeTextMaxSize="22" color="Yellow">P1</Text>
+			</cell>
+			<cell class="timerText">
+				<Text id = "p1TimerText" class="timerText" fontStyle="Bold" color="Yellow">00:00:00</Text>
+			</cell>
+		</Row>
+		<Row
+			id="p2TimerRow"
+			class="TimerRow"
+			active = "false"
+			>
+			<cell class="timerCellLabel">
+				<Text id = "p2TimerLabel" alignment="MiddleCenter" class="timerText" resizeTextForBestFit="true" resizeTextMaxSize="22" color="Green">P2</Text>
+			</cell>
+			<cell class="timerText">
+				<Text id = "p2TimerText" class="timerText" fontStyle="Bold" color="Green">00:00:00</Text>
+			</cell>
+		</Row>
+		<Row
+			id="p3TimerRow"
+			class="TimerRow"
+			active = "false"
+			>
+			<cell class="timerCellLabel">
+				<Text id = "p3TimerLabel" alignment="MiddleCenter" class="timerText" resizeTextForBestFit="true" resizeTextMaxSize="22" color="Blue">P3</Text>
+			</cell>
+			<cell id = "p3Time" class="timerText">
+				<Text id = "p3TimerText" class="timerText" fontStyle="Bold" color="Blue">00:00:00</Text>
+			</cell>
+		</Row>
+		<Row
+			id="p4TimerRow"
+			class="TimerRow"
+			active = "false"
+			>
+			<cell class="timerCellLabel">
+				<Text id = "p4TimerLabel" alignment="MiddleCenter" class="timerText" resizeTextForBestFit="true" resizeTextMaxSize="22" color="White">P4</Text>
+			</cell>
+			<cell id = "p4Time" class="timerText">
+				<Text id = "p4TimerText" class="timerText" fontStyle="Bold" color="White">00:00:00</Text>
+			</cell>
+		</Row>
+		<Row
+			id="p5TimerRow"
+			class="TimerRow"
+			active = "false"
+			>
+			<cell class="timerCellLabel">
+				<Text id = "p5TimerLabel" alignment="MiddleCenter" class="timerText" resizeTextForBestFit="true" resizeTextMaxSize="22" color="Purple">P5</Text>
+			</cell>
+			<cell id = "p5Time" class="timerText">
+				<Text id = "p5TimerText" class="timerText" fontStyle="Bold" color="Purple">00:00:00</Text>
+			</cell>
+		</Row>
+		<Row
+			id="p6TimerRow"
+			class="TimerRow"
+			active = "false"
+			>
+			<cell class="timerCellLabel">
+				<Text id = "p6TimerLabel" alignment="MiddleCenter" class="timerText" resizeTextForBestFit="true" resizeTextMaxSize="22" color="Red">P6</Text>
+			</cell>
+			<cell id = "p6Time" class="timerText">
+				<Text id = "p6TimerText" class="timerText" fontStyle="Bold" color="Red">00:00:00</Text>
+			</cell>
+		</Row>
+		<Row
+			id="PauseTimerRow"
+			class="TimerRow"
+			active = "false"
+			>
+			<cell class="timerCellLabel">
+				<Text id = "PauseTimerLabel" alignment="MiddleCenter" class="timerText" resizeTextForBestFit="true" resizeTextMaxSize="22" color="Orange">Pause</Text>
+			</cell>
+			<cell id = "PauseTime" class="timerText">
+				<Text id = "PauseTimerText" class="timerText" fontStyle="Bold" color="orange">00:00:00</Text>
+			</cell>
+		</Row>
+		<Row
+			id="PauseButtonRow"
+			class="TimerRow"
+			active="false"
+			>
+			<cell class="timerCellLabel" columnSpan="2">
+				<Button id="PauseButton" active="false" onClick="timerPauseForAuction" tooltip="Config" visibility="Admin" color="black"><Text class="timerText" resizeTextForBestFit="true" resizeTextMaxSize="22" fontStyle="Bold" color="red">Pause Timer</Text></Button>
+				<Button id="UnpauseButton" active="false" onClick="timerUnpause" tooltip="Config" visibility="Admin" color="black"><Text class="timerText" resizeTextForBestFit="true" resizeTextMaxSize="22" fontStyle="Bold" color="green">Unpause Timer</Text></Button>
+	  		</cell>
+		</Row>
+		</TableLayout>
+	</VerticalLayout>
+</Panel>
+
+<!--========================================================= Turn Tracker=========================================================-->
+<Panel
+	id="TurnTrackerParent"
+	active="False"
+	class="WindowParent"
+	width="220"
+	height="40"
+	rectAlignment="UpperRight"
+	offsetXY="-240 -2"
+	>
+	<Button class="btnMaximize" onClick="maximizeTurnTracker" tooltip="Maximize Turn Tracker">+</Button>
+	<TableLayout
+		id="TurnTrackerChild"
+		class="WindowTable"
+		rowBackgroundColor="Black"
+		padding = "0 0 0 0"
+		autoCalculateHeight="True"
+		outline="Grey"
+		cellBackgroundColor="Grey"
+		>
+		<Row class="TopRow" preferredHeight = "40">
+			<Text class="headerText">Turn Tracker</Text>
+			<Button class="btnMinimize" onClick="minimizeTurnTracker" >-</Button>
+			<Button id="turnTrackerConfigOpen" class="btnMinimize" onClick="turnConfig" rectAlignment="MiddleLeft" icon="Sprites/Icons/Cog" tooltip="Config" visibility="Admin" ></Button>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40" >
+			<cell columnSpan ="6">
+				<GridLayout childAlignment="MiddleCenter" cellSize="30 30" spacing="5 5" padding = "5 5 5 5" outline="Grey" outlineSize="1 -1" >
+					<cell id="turnCellP1" color="Yellow" dontUseTableCellBackground="True">
+						<Text id="turnTextP1" class="textMarker" ></Text>
+						<Button id="turnButtonP1" class="swapButton" onClick="turnSwapToColor"></Button>
+					</cell>
+					<cell id="turnCellP2" color="Purple" dontUseTableCellBackground="True">
+						<Text id="turnTextP2" class="textMarker" ></Text>
+						<Button id="turnButtonP2" class="swapButton" onClick="turnSwapToColor"></Button>
+					</cell>
+					<cell id="turnCellP3" color="White" dontUseTableCellBackground="True">
+						<Text id="turnTextP3" class="textMarker" ></Text>
+						<Button id="turnButtonP3" class="swapButton" onClick="turnSwapToColor"></Button>
+					</cell>
+					<cell id="turnCellP4" color="Green" dontUseTableCellBackground="True">
+						<Text id="turnTextP4" class="textMarker" ></Text>
+						<Button id="turnButtonP4" class="swapButton" onClick="turnSwapToColor"></Button>
+					</cell>
+					<cell id="turnCellP5" color="Blue" dontUseTableCellBackground="True">
+						<Text id="turnTextP5" class="textMarker" ></Text>
+						<Button id="turnButtonP5" class="swapButton" onClick="turnSwapToColor"></Button>
+					</cell>
+					<cell id="turnCellP6" color="Red" dontUseTableCellBackground="True">
+						<Text id="turnTextP6" class="textMarker" ></Text>
+						<Button id="turnButtonP6" class="swapButton" onClick="turnSwapToColor"></Button>
+					</cell>
+				</GridLayout>
+			</cell>
+		</Row>
+		<Row class="headerRow" minHeight="40" preferredHeight="40" flexibleHeight="0" >
+			<cell columnSpan ="3" overrideGlobalCellPadding="True" padding="10 10 10 10">
+				<Text class="headerText" fontSize="18" >Year </Text>
+			</cell>
+			<cell columnSpan ="3" overrideGlobalCellPadding="True" padding="10 10 10 10">
+				<InputField id="InputCurrentYear" onEndEdit="enterYear" height="30" width="30" textColor="White" colors="rgba(0.78,0.78,0.78,0)|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" characterValidation="Integer" textAlignment="MiddleCenter" fontSize="18" placeholder="YR">1</InputField>
+			</cell>
+		</Row>
+		<Row id="rowActionGrid" class="headerRowFlex" minHeight="40" preferredHeight="40"  >
+			<cell columnSpan ="6">
+				<GridLayout visibility="Yellow" cellSize="106 40" cellBackgroundColor="Grey" spacing="2 2" padding = "2 2 2 2" outline="Grey" outlineSize="2 -2" constraint="FixedColumnCount" constraintCount="2" childAlignment="MiddleCenter" childForceExpandHeight="True" >
+					<ToggleButton id="YellowTurnToggleHBP" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="+1 aqua per turn while Home Bernal is anchored" >Bernal Profits</ToggleButton>
+					<ToggleButton id="YellowTurnToggleOp" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="1 Operation per turn">Operation</ToggleButton>
+					<ToggleButton id="YellowTurnToggleCln" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Free Operations from Colonist Specialties">Colonist Spc</ToggleButton>
+					<ToggleButton id="YellowTurnToggleCon" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Free Action Complete a Contract / Extra Action for Losing a Contract Auction">Contract</ToggleButton>
+					<ToggleButton id="YellowTurnToggleRkt" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movement of Rocket token">&#x21D1; Rocket</ToggleButton>
+					<ToggleButton id="YellowTurnToggleFrt" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movement of Freighter token">&#x21D1; Freighter</ToggleButton>
+					<ToggleButton id="YellowTurnToggleMFc" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movements of any/all Mobile Factory tokens">&#x21D1; Mobile Fct</ToggleButton>
+					<ToggleButton id="YellowTurnToggleBK" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movement of 1 Bernal token per turn">&#x21D1; Bernal</ToggleButton>
+					<ToggleButton id="YellowTurnToggleDS" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movement of Dropstone token">&#x21D1; Dropstone</ToggleButton>
+					
+				</GridLayout>
+				<GridLayout visibility="Purple" cellSize="106 40" cellBackgroundColor="Grey" spacing="2 2" padding = "2 2 2 2" outline="Grey" outlineSize="2 -2" constraint="FixedColumnCount" constraintCount="2" childAlignment="MiddleCenter" >
+					<ToggleButton id="PurpleTurnToggleHBP" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="+1 aqua per turn while Home Bernal is anchored" >Bernal Profits</ToggleButton>
+					<ToggleButton id="PurpleTurnToggleOp" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="1 Operation per turn">Operation</ToggleButton>
+					<ToggleButton id="PurpleTurnToggleCln" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Free Operations from Colonist Specialties">Colonist Spc</ToggleButton>
+					<ToggleButton id="PurpleTurnToggleCon" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Free Action Complete a Contract / Extra Action for Losing a Contract Auction">Contract</ToggleButton>
+					<ToggleButton id="PurpleTurnToggleRkt" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movement of Rocket token">&#x21D1; Rocket</ToggleButton>
+					<ToggleButton id="PurpleTurnToggleFrt" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movement of Freighter token">&#x21D1; Freighter</ToggleButton>
+					<ToggleButton id="PurpleTurnToggleMFc" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movements of any/all Mobile Factory tokens">&#x21D1; Mobile Fct</ToggleButton>
+					<ToggleButton id="PurpleTurnToggleBK" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movement of 1 Bernal token per turn">&#x21D1; Bernal</ToggleButton>
+					<ToggleButton id="PurpleTurnToggleDS" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movement of Dropstone token">&#x21D1; Dropstone</ToggleButton>
+					
+				</GridLayout>
+				<GridLayout visibility="White" cellSize="106 40" cellBackgroundColor="Grey" spacing="2 2" padding = "2 2 2 2" outline="Grey" outlineSize="2 -2" constraint="FixedColumnCount" constraintCount="2" childAlignment="MiddleCenter" >
+					<ToggleButton id="WhiteTurnToggleHBP" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="+1 aqua per turn while Home Bernal is anchored" >Bernal Profits</ToggleButton>
+					<ToggleButton id="WhiteTurnToggleOp" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="1 Operation per turn">Operation</ToggleButton>
+					<ToggleButton id="WhiteTurnToggleCln" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Free Operations from Colonist Specialties">Colonist Spc</ToggleButton>
+					<ToggleButton id="WhiteTurnToggleCon" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Free Action Complete a Contract / Extra Action for Losing a Contract Auction">Contract</ToggleButton>
+					<ToggleButton id="WhiteTurnToggleRkt" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movement of Rocket token">&#x21D1; Rocket</ToggleButton>
+					<ToggleButton id="WhiteTurnToggleFrt" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movement of Freighter token">&#x21D1; Freighter</ToggleButton>
+					<ToggleButton id="WhiteTurnToggleMFc" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movements of any/all Mobile Factory tokens">&#x21D1; Mobile Fct</ToggleButton>
+					<ToggleButton id="WhiteTurnToggleBK" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movement of 1 Bernal token per turn">&#x21D1; Bernal</ToggleButton>
+					<ToggleButton id="WhiteTurnToggleDS" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movement of Dropstone token">&#x21D1; Dropstone</ToggleButton>
+					
+				</GridLayout>
+				<GridLayout visibility="Green" cellSize="106 40" cellBackgroundColor="Grey" spacing="2 2" padding = "2 2 2 2" outline="Grey" outlineSize="2 -2" constraint="FixedColumnCount" constraintCount="2" childAlignment="MiddleCenter" >
+					<ToggleButton id="GreenTurnToggleHBP" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="+1 aqua per turn while Home Bernal is anchored" >Bernal Profits</ToggleButton>
+					<ToggleButton id="GreenTurnToggleOp" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="1 Operation per turn">Operation</ToggleButton>
+					<ToggleButton id="GreenTurnToggleCln" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Free Operations from Colonist Specialties">Colonist Spc</ToggleButton>
+					<ToggleButton id="GreenTurnToggleCon" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Free Action Complete a Contract / Extra Action for Losing a Contract Auction">Contract</ToggleButton>
+					<ToggleButton id="GreenTurnToggleRkt" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movement of Rocket token">&#x21D1; Rocket</ToggleButton>
+					<ToggleButton id="GreenTurnToggleFrt" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movement of Freighter token">&#x21D1; Freighter</ToggleButton>
+					<ToggleButton id="GreenTurnToggleMFc" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movements of any/all Mobile Factory tokens">&#x21D1; Mobile Fct</ToggleButton>
+					<ToggleButton id="GreenTurnToggleBK" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movement of 1 Bernal token per turn">&#x21D1; Bernal</ToggleButton>
+					<ToggleButton id="GreenTurnToggleDS" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movement of Dropstone token">&#x21D1; Dropstone</ToggleButton>
+					
+				</GridLayout>
+				<GridLayout visibility="Blue" cellSize="106 40" cellBackgroundColor="Grey" spacing="2 2" padding = "2 2 2 2" outline="Grey" outlineSize="2 -2" constraint="FixedColumnCount" constraintCount="2" childAlignment="MiddleCenter" >
+					<ToggleButton id="BlueTurnToggleHBP" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="+1 aqua per turn while Home Bernal is anchored" >Bernal Profits</ToggleButton>
+					<ToggleButton id="BlueTurnToggleOp" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="1 Operation per turn">Operation</ToggleButton>
+					<ToggleButton id="BlueTurnToggleCln" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Free Operations from Colonist Specialties">Colonist Spc</ToggleButton>
+					<ToggleButton id="BlueTurnToggleCon" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Free Action Complete a Contract / Extra Action for Losing a Contract Auction">Contract</ToggleButton>
+					<ToggleButton id="BlueTurnToggleRkt" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movement of Rocket token">&#x21D1; Rocket</ToggleButton>
+					<ToggleButton id="BlueTurnToggleFrt" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movement of Freighter token">&#x21D1; Freighter</ToggleButton>
+					<ToggleButton id="BlueTurnToggleMFc" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movements of any/all Mobile Factory tokens">&#x21D1; Mobile Fct</ToggleButton>
+					<ToggleButton id="BlueTurnToggleBK" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movement of 1 Bernal token per turn">&#x21D1; Bernal</ToggleButton>
+					<ToggleButton id="BlueTurnToggleDS" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movement of Dropstone token">&#x21D1; Dropstone</ToggleButton>
+					
+				</GridLayout>
+				<GridLayout visibility="Red" cellSize="106 40" cellBackgroundColor="Grey" spacing="2 2" padding = "2 2 2 2" outline="Grey" outlineSize="2 -2" constraint="FixedColumnCount" constraintCount="2" childAlignment="MiddleCenter" >
+					<ToggleButton id="RedTurnToggleHBP" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="+1 aqua per turn while Home Bernal is anchored" >Bernal Profits</ToggleButton>
+					<ToggleButton id="RedTurnToggleOp" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="1 Operation per turn">Operation</ToggleButton>
+					<ToggleButton id="RedTurnToggleCln" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Free Operations from Colonist Specialties">Colonist Spc</ToggleButton>
+					<ToggleButton id="RedTurnToggleCon" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Free Action Complete a Contract / Extra Action for Losing a Contract Auction">Contract</ToggleButton>
+					<ToggleButton id="RedTurnToggleRkt" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movement of Rocket token">&#x21D1; Rocket</ToggleButton>
+					<ToggleButton id="RedTurnToggleFrt" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movement of Freighter token">&#x21D1; Freighter</ToggleButton>
+					<ToggleButton id="RedTurnToggleMFc" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movements of any/all Mobile Factory tokens">&#x21D1; Mobile Fct</ToggleButton>
+					<ToggleButton id="RedTurnToggleBK" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movement of 1 Bernal token per turn">&#x21D1; Bernal</ToggleButton>
+					<ToggleButton id="RedTurnToggleDS" class="toggleButtonsTurns" onValueChanged="toggleTurnAction" tooltip="Movement of Dropstone token">&#x21D1; Dropstone</ToggleButton>
+					
+				</GridLayout>
+			</cell>
+		</Row>
+		<Row id="TurnToolNextRow" class="BasicRow" preferredHeight="45" >
+			<cell columnSpan="6">
+				<Button class="cmdMenu" colors="#009900|Green|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" onClick="nextTurn" text="Next Turn" tooltip = "Complete your turn and pass to next player."></Button>
+				<Button id="BtnNextYear" class="cmdMenu" colors="Red|#ff9900|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" onClick="nextYear" text="Next Year" tooltip = "Advance Sol Sunspot Cycle. Requires player tracker on track."></Button>
+			</cell>
+		</Row>
+	</TableLayout>
+</Panel>
+
+<Panel id="TurnTrackerConfig"
+	class="WindowParent"
+	visibility="Admin"
+	active="false"
+	width="600"
+	rectAlignment="MiddleCenter"
+	offsetXY="0 260"
+	>
+	<TableLayout id="TurnTrackerConfigContent"
+		class="WindowTable"
+		width="600"
+		padding="10 10 0 0"
+		>
+		<Row 
+		class="TopRow"
+		>
+			<Text class="WindowHeader">Configure Turn Tracker</Text>
+			<Button id="turnTrackerConfigClose" class="BtnClose" onClick="turnConfig" tooltip="Close">X</Button>		
+		</Row>
+		<Row
+		class="BasicRow"
+		preferredHeight="520"
+		>
+			<TableLayout id="TurnTrackerConfigContentChild"
+			class="ContentTable"
+			width="600"
+			padding="40 40 0 0"
+			>
+				<Row class="BasicRow"
+				preferredHeight="40"
+				>
+					<Cell columnSpan="1">
+						<Text alignment="MiddleLeft" class="h2Text">Turn Tracker Scale</Text>
+					</Cell>
+					<Cell columnSpan="2">
+						<Text id="textScaleTurn" alignment="MiddleCenter" class="h2Text">1.0</Text>
+						<Slider id="SliderTurnTracker" minValue="0.5" maxValue="1.5" value="1.0" onValueChanged="changeScaleTurn" tooltip="Change scale of Turn Tool only"/>
+					</Cell>
+				</Row>
+				<Row class="BasicRow">
+					<Cell>
+						<Text alignment="MiddleLeft" class="h2Text">Module 1</Text>
+					</Cell>
+					<Cell>
+						<Toggle id="toggleTurnMod1" class="toggleConfig" onValueChanged="toggleTurnMods" isOn="False" tooltip="Toggle Mod1 Actions" >Enable Module 1 Actions</Toggle>
+					</Cell>
+					<Cell>
+						<Toggle id="toggleTurnMobile" class="toggleConfig" onValueChanged="toggleTurnMobile" isOn="False" tooltip="Toggle Mobile Factories as an action button" >Show Mobile Factories</Toggle>
+					</Cell>
+				</Row>
+				<Row class="BasicRow">
+					<Cell>
+						<Text alignment="MiddleLeft" class="h2Text">Module 2</Text>
+					</Cell>
+					<Cell>
+						<Toggle id="toggleTurnMod2" class="toggleConfig" tooltip="Toggle Mod2 Actions" onValueChanged="toggleTurnMods" isOn="False" >Enable Module 2 Actions</Toggle>
+					</Cell>
+					<Cell>
+						<Toggle id="toggleTurnColonist" class="toggleConfig" onValueChanged="toggleTurnColonist" isOn="False" tooltip="Toggle Colonist Specialties as an action button">Show Colonist Specialties</Toggle>
+					</Cell>
+				</Row>
+				<Row class="BasicRow">
+					<Cell>
+						<Text alignment="MiddleLeft" class="h2Text">Module 2</Text>
+					</Cell>
+					<Cell>
+						<Toggle id="toggleTurnProfit" class="toggleConfig" tooltip="Toggle Home Bernal Profit as an action button" onValueChanged="toggleTurnProfit" isOn="False" >Show Home Bernal Profit</Toggle>
+					</Cell>
+					<Cell>
+						<Toggle id="toggleTurnAutoProfit" class="toggleConfig" onValueChanged="toggleTurnAutoProfit" isOn="False" tooltip="Toggle scripted +1 aqua income to Home Bernal when active (requires FT Tracker usage)">Auto Home Bernal Profit</Toggle>
+					</Cell>
+				</Row>
+				<Row class="BasicRow">
+					<Cell>
+						<Text alignment="MiddleLeft" class="h2Text">Module 3</Text>
+					</Cell>
+					<Cell>
+						<Toggle id="toggleTurnMod3" class="toggleConfig" tooltip="Toggle Mod3 Actions" onValueChanged="toggleTurnMods" isOn="False" >Enable Module 3 Actions</Toggle>
+					</Cell>
+					<Cell>
+					</Cell>
+				</Row>
+				<Row class="BasicRow">
+					<Cell>
+						<Text alignment="MiddleLeft" class="h2Text">Module 4</Text>
+					</Cell>
+					<Cell>
+						<Toggle id="toggleTurnMod4" class="toggleConfig" tooltip="Toggle Mod4 Actions" onValueChanged="toggleTurnMods" isOn="False" >Enable Module 4 Actions</Toggle>
+					</Cell>
+					<Cell>
+					</Cell>
+				</Row>
+				<Row class="BasicRow">
+					<Cell>
+						<Text alignment="MiddleLeft" class="h2Text">Tracker Functions</Text>
+					</Cell>
+					<Cell>
+						<Toggle id="toggleTurnSolo" class="toggleConfig" onValueChanged="toggleTurnSolo" isOn="False" tooltip="Enable solo-friendly/hotseat mode: Click turn color to change seats. Next Turn changes player's seat." >Solo Mode</Toggle>
+					</Cell>
+					<Cell>
+						<Toggle id="toggleTurnAutoSol" class="toggleConfig" onValueChanged="toggleTurnAutoSol" isOn="True" tooltip="Next Turn button of Last Player auto triggers Sunspot Cycle advancement and resolution." >Auto Trigger Sol Track</Toggle>
+					</Cell>
+				</Row>
+				<Row class="BasicRow">
+					<Cell>
+						<Text alignment="MiddleLeft" class="h2Text">Turn Notifications</Text>
+					</Cell>
+					<Cell>
+						<Toggle id="toggleTurnTTS" class="toggleConfig" onValueChanged="toggleTurnTTS" isOn="False" tooltip="Use TTS built in turn system concurrently so players receive a sound notice when it is their turn." >TTS Turn Alert</Toggle>
+					</Cell>
+					<Cell>
+						<Toggle id="toggleTurnSound" class="toggleConfig" onValueChanged="toggleTurnSound" isOn="True" tooltip="Plays custom sound on turn switch (heard by all players)." >Custom Turn Sound</Toggle>
+					</Cell>
+				</Row>
+				<Row class="BasicRow" preferredHeight="60">
+					<Cell columnSpan = "3">
+						<VerticalLayout childAlignment ="MiddleCenter" >
+							<Text class="BasicText" alignment="MiddleCenter" >Change First Player</Text>
+							<ToggleGroup>    
+								<HorizontalLayout childAlignment="MiddleLeft">
+									<Toggle id="Turn1FPOptYellow" active="False" class="ToggleConfig" onValueChanged="toggleTurnFirstPlayer" tooltip="Set First Player as Color" >Yellow</Toggle>
+									<Toggle id="Turn1FPOptPurple" active="False" class="ToggleConfig" onValueChanged="toggleTurnFirstPlayer" tooltip="Set First Player as Color" >Purple</Toggle>
+									<Toggle id="Turn1FPOptWhite" active="False" class="ToggleConfig" onValueChanged="toggleTurnFirstPlayer" tooltip="Set First Player as Color" >White</Toggle>
+									<Toggle id="Turn1FPOptGreen" active="False" class="ToggleConfig" onValueChanged="toggleTurnFirstPlayer" tooltip="Set First Player as Color" >Green</Toggle>
+									<Toggle id="Turn1FPOptBlue" active="False" class="ToggleConfig" onValueChanged="toggleTurnFirstPlayer" tooltip="Set First Player as Color" >Blue</Toggle>
+									<Toggle id="Turn1FPOptRed" active="False" class="ToggleConfig" onValueChanged="toggleTurnFirstPlayer" tooltip="Set First Player as Color" >Red</Toggle>
+								</HorizontalLayout>
+							</ToggleGroup>
+						</VerticalLayout>
+					</Cell>
+				</Row>
+				<Row class="BasicRow">
+					<Text class="headerText">Manually Modify Turn Order/Players</Text>
+				</Row>
+				<Row class="BasicRow"
+				preferredHeight="40"
+				>
+					<HorizontalLayout childAlignment="MiddleCenter">
+						<Text class="BasicText" alignment="MiddleCenter" >Player 1</Text>
+						<Dropdown id="turnOptCfg1" onValueChanged="changeTurnOrderInput" dropdownHeight="220" tooltip="Set P# color">
+							<Option selected="true">Unseated</Option>
+							<Option>Yellow</Option>
+							<Option>Purple</Option>
+							<Option>White</Option>
+							<Option>Green</Option>
+							<Option>Blue</Option>
+							<Option>Red</Option>
+						</Dropdown>
+					</HorizontalLayout>
+				</Row>
+				<Row class="BasicRow"
+				preferredHeight="40"
+				>
+					<HorizontalLayout childAlignment="MiddleCenter">
+						<Text class="BasicText" alignment="MiddleCenter" >Player 2</Text>
+						<Dropdown id="turnOptCfg2" onValueChanged="changeTurnOrderInput" dropdownHeight="220" tooltip="Set P# color">
+							<Option selected="true">Unseated</Option>
+							<Option>Yellow</Option>
+							<Option>Purple</Option>
+							<Option>White</Option>
+							<Option>Green</Option>
+							<Option>Blue</Option>
+							<Option>Red</Option>
+						</Dropdown>
+					</HorizontalLayout>
+				</Row>
+				<Row class="BasicRow"
+				preferredHeight="40"
+				>
+					<HorizontalLayout childAlignment="MiddleCenter">
+						<Text class="BasicText" alignment="MiddleCenter" >Player 3</Text>
+						<Dropdown id="turnOptCfg3" onValueChanged="changeTurnOrderInput" dropdownHeight="220" tooltip="Set P# color">
+							<Option selected="true">Unseated</Option>
+							<Option>Yellow</Option>
+							<Option>Purple</Option>
+							<Option>White</Option>
+							<Option>Green</Option>
+							<Option>Blue</Option>
+							<Option>Red</Option>
+						</Dropdown>
+					</HorizontalLayout>
+				</Row>
+				<Row class="BasicRow"
+				preferredHeight="40"
+				>
+					<HorizontalLayout childAlignment="MiddleCenter">
+						<Text class="BasicText" alignment="MiddleCenter" >Player 4</Text>
+						<Dropdown id="turnOptCfg4" onValueChanged="changeTurnOrderInput" dropdownHeight="220" tooltip="Set P# color">
+							<Option selected="true">Unseated</Option>
+							<Option>Yellow</Option>
+							<Option>Purple</Option>
+							<Option>White</Option>
+							<Option>Green</Option>
+							<Option>Blue</Option>
+							<Option>Red</Option>
+						</Dropdown>
+					</HorizontalLayout>
+				</Row>
+				<Row class="BasicRow"
+				preferredHeight="40"
+				>
+					<HorizontalLayout childAlignment="MiddleCenter">
+						<Text class="BasicText" alignment="MiddleCenter" >Player 5</Text>
+						<Dropdown id="turnOptCfg5" onValueChanged="changeTurnOrderInput" dropdownHeight="220" tooltip="Set P# color">
+							<Option selected="true">Unseated</Option>
+							<Option>Yellow</Option>
+							<Option>Purple</Option>
+							<Option>White</Option>
+							<Option>Green</Option>
+							<Option>Blue</Option>
+							<Option>Red</Option>
+						</Dropdown>
+					</HorizontalLayout>
+				</Row>
+				<Row class="BasicRow"
+				preferredHeight="40"
+				>
+					<HorizontalLayout childAlignment="MiddleCenter">
+						<Text class="BasicText" alignment="MiddleCenter" >Player 6</Text>
+						<Dropdown id="turnOptCfg6" onValueChanged="changeTurnOrderInput" dropdownHeight="220" tooltip="Set P# color">
+							<Option selected="true">Unseated</Option>
+							<Option>Yellow</Option>
+							<Option>Purple</Option>
+							<Option>White</Option>
+							<Option>Green</Option>
+							<Option>Blue</Option>
+							<Option>Red</Option>
+						</Dropdown>
+					</HorizontalLayout>
+				</Row>
+				<Row class="BasicRow"
+				preferredHeight="80"
+				>
+				<Button class="cmdMenu" colors="Red|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" width = "250" height="40" rectAlignment="MiddleCenter" onClick="changeTurnOrderCommit" tooltip="Commit change to turn order">Change Turn Order</Button>
+				</Row>
+			</TableLayout>
+		</Row>
+	</TableLayout>
+</Panel>
+
+<!--========================================================= Bid Tool=========================================================-->
+<Panel
+	id="BidToolParent"
+	class="clearPanel"
+	active="false"
+	width="320"
+	height="80"
+	scale="1 1 1"
+	rectAlignment="MiddleLeft"
+	offsetXY="10 -100"
+	textColor="white" 
+	>
+	<Button class="btnMaximize" rectAlignment="UpperLeft" onClick="maximizeBidTool" tooltip="Maximize Bid Tool">+</Button>
+	<VerticalLayout id="BidToolChild" class="verticalTable" height="40">
+		<Panel
+			id="BidToolChild2"
+			class="panelHeader"
+			width="320">
+			<Text class="headerText">Bid Tool</Text>
+			<Button class="btnMinimize" rectAlignment="MiddleLeft" onClick="minimizeBidTool" >-</Button>
+			<Button id="bidConfigOpen" class="btnMinimize" onClick="bidConfig" icon="Sprites/Icons/Cog" tooltip="Config" visibility="Admin" ></Button>
+		</Panel>
+		<TableLayout
+		id="BidToolChild3"
+		class="blackTable"
+		>
+			<Row class="headerRow">
+				<cell columnSpan ="6">
+					<GridLayout childAlignment="MiddleCenter" cellSize="30 30" spacing="5 5" padding = "5 5 5 5" outline="Grey" outlineSize="1 -1" >
+						<cell id="bidCellP1" color="Yellow" dontUseTableCellBackground="True">
+							<Text id="bidTextP1" class="textMarker" ></Text>
+						</cell>
+						<cell id="bidCellP2" color="Purple" dontUseTableCellBackground="True">
+							<Text id="bidTextP2" class="textMarker" ></Text>
+						</cell>
+						<cell id="bidCellP3" color="White" dontUseTableCellBackground="True">
+							<Text id="bidTextP3" class="textMarker" ></Text>
+						</cell>
+						<cell id="bidCellP4" color="Green" dontUseTableCellBackground="True">
+							<Text id="bidTextP4" class="textMarker" ></Text>
+						</cell>
+						<cell id="bidCellP5" color="Blue" dontUseTableCellBackground="True">
+							<Text id="bidTextP5" class="textMarker" ></Text>
+						</cell>
+						<cell id="bidCellP6" color="Red" dontUseTableCellBackground="True">
+							<Text id="bidTextP6" class="textMarker" ></Text>
+						</cell>
+					</GridLayout>
+				</cell>
+				<cell columnSpan="2">
+					<HorizontalLayout>
+						<Text id="bidText" class="bidderText"></Text>
+						<Text class="bidderText"></Text>
+					</HorizontalLayout>
+				</cell>
+				<Button rectAlignment="MiddleRight" ignoreLayout="true" width="38" height="38" fontSize="25" textColor="White" onClick="bidReset" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" tooltip="Close/Reset Bid" visibility="Admin">X</Button>
+				<Button id ="bidStart" class="buttonStart" rectAlignment="MiddleLeft" width="280" height="38" fontSize="22" textColor="white" onClick="bidStart" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" tooltip="Start an Auction">Start Auction</Button>
+			</Row>
+			<Row class="headerRow">
+				<cell columnSpan="2">
+					<Button id="bid0" class="btnBids" onClick="bid">0</Button>
+				</cell>
+				<cell columnSpan="2">
+					<Button id="bid1" class="btnBids" onClick="bid">1</Button>
+				</cell>
+				<cell columnSpan="2">
+					<Button id="bid2" class="btnBids" onClick="bid">2</Button>
+				</cell>
+				<cell columnSpan="2">
+					<Button id="bid3" class="btnBids" onClick="bid">3</Button>
+				</cell>
+			</Row>
+			<Row class="headerRow">
+				<cell columnSpan="2">
+					<InputField id="bidEnter" onEndEdit="bidEnter" textColor="Black" colors="Grey|#FFFFFF|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" characterValidation="Integer" textAlignment="MiddleCenter" fontSize="22" placeholder="0"></InputField>
+				</cell>
+				<cell columnSpan="2">
+					<Button id="bidRaise" class="btnBids" onClick="bid">+1</Button>
+				</cell>
+				<cell columnSpan="2">
+					<Button id="bidMatch" class="btnBids" onClick="bid">Match</Button>
+				</cell>
+				<cell columnSpan="2">
+					<Button id="bidPass" class="btnBids" onClick="bidPass">Pass</Button>
+				</cell>
+			</Row>
+		</TableLayout>
+	</VerticalLayout>
+</Panel>
+
+<Panel
+	id="BidToolConfig"
+	class="WindowParent"
+	visibility="Admin"
+	active="false"
+	width="500"
+	rectAlignment="MiddleCenter"
+	offsetXY="0 0"
+	>
+	<TableLayout id="BidConfigChild" 
+	class="WindowTable"
+	rectAlignment="UpperCenter"
+	padding="20 20 0 20"
+	>
+		<Row class="TopRow" preferredHeight = "40" >
+			<Text class="headerText" >Bid Tool Config</Text>
+			<Button id="bidConfigClose" class="btnMinimize" rectAlignment="UpperRight" ignoreLayout="True" onClick="bidConfig" width="30" height="30" fontSize="22" tooltip="Close window" >X</Button>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40" >
+			<cell columnSpan="1">
+				<Text class="BasicText" >Bid Tool Scale</Text>
+			</cell>
+			<cell columnSpan="2">
+				<Text id="textScaleBid" class="BasicText" alignment="MiddleCenter">1</Text> 
+				<Slider id="SliderTurnTracker" minValue="0.5" maxValue="1.5" value="1.0" onValueChanged="changeBidScale" />
+			</cell>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40" >
+			<Toggle id="toggleBidAuto" width="250" textColor="white" onValueChanged="toggleAutoBid" isOn="true" >Enable Automated Bidding Process</Toggle>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "60" >
+			<Toggle id="toggleBidMarketeer" width="250" textColor="white" onValueChanged="toggleMarketeer" isOn="true" >Enable Marketeer for Blue Player</Toggle>
+		</Row>
+	</TableLayout>z
+</Panel>
+
+<Panel
+	id="TimerToolConfig"
+	class="WindowParent"
+	visibility="Admin"
+	active="false"
+	width="500"
+	rectAlignment="MiddleCenter"
+	offsetXY="0 0"
+	>
+	<TableLayout id="TimerConfigChild" 
+	class="WindowTable"
+	rectAlignment="UpperCenter"
+	padding="20 20 0 20"
+	>
+		<Row class="TopRow" preferredHeight = "40" >
+			<Text class="headerText" >Timer Tool Config</Text>
+			<Button id="timerConfigClose" class="btnMinimize" rectAlignment="UpperRight" ignoreLayout="True" onClick="timerConfig" width="30" height="30" fontSize="22" tooltip="Close window" >X</Button>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40" >
+			<cell columnSpan="1">
+				<Text class="BasicText" >Timer Tool Scale</Text>
+			</cell>
+			<cell columnSpan="2">
+				<Text id="textScaleTimer" class="BasicText" alignment="MiddleCenter">1</Text> 
+				<Slider id="SliderTurnTracker" minValue="0.5" maxValue="1.5" value="1.0" onValueChanged="changeTimerScale" />
+			</cell>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40" >
+			<Toggle id="toggleTimerPause" width="250" textColor="white" onValueChanged="timerToggleShowPause" isOn="false" >Show the pause time status</Toggle>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40" >
+			<Toggle id="toggleTimerPauseButton" width="250" textColor="white" onValueChanged="timerToggleShowPauseButton" isOn="false" >Show the manual pause button</Toggle>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40" >
+			<Toggle id="toggleTimerCountAuctions" width="250" textColor="white" onValueChanged="timerToggleCountAuctions" isOn="false" >Count auction time against players timer</Toggle>
+		</Row>
+	</TableLayout>
+</Panel>
+
+<!--=================================================Contract Bid Tool=========================================================-->
+<Panel
+	id="ContractBidToolParent"
+	class="clearPanel"
+	active="False"
+	width="320"
+	height="80"
+	scale="1 1 1"
+	rectAlignment="MiddleLeft"
+	offsetXY="10 60"
+	textColor="white" 
+	>
+	<Button class="btnMaximize" rectAlignment="UpperLeft" onClick="maximizeContractBidTool" tooltip="Maximize Contract Bid Tool">+</Button>
+	<VerticalLayout id="ContractBidToolChild" class="verticalTable" height="40">
+		<Panel
+			id="ContractBidToolChild2"
+			class="panelHeader"
+			width="320">
+			<Text class="headerText">Contract Bid Tool</Text>
+			<Button class="btnMinimize" rectAlignment="MiddleLeft" onClick="minimizeContractBidTool" >-</Button>
+			<Button id="bidConfigOpen" class="btnMinimize" onClick="bidConfig" icon="Sprites/Icons/Cog" tooltip="Config" visibility="Admin" ></Button>
+		</Panel>
+		<TableLayout
+		id="ContractBidToolChild3"
+		class="blackTable"
+		>
+			<Row class="headerRow">
+				<cell columnSpan ="6">
+					<GridLayout childAlignment="MiddleCenter" cellSize="30 30" spacing="5 5" padding = "5 5 5 5" outline="Grey" outlineSize="1 -1" >
+						<cell id="contractBidCellP1" color="Yellow" dontUseTableCellBackground="True">
+							<Text id="contractBidTextP1" class="textMarker" ></Text>
+						</cell>
+						<cell id="contractBidCellP2" color="Purple" dontUseTableCellBackground="True">
+							<Text id="contractBidTextP2" class="textMarker" ></Text>
+						</cell>
+						<cell id="contractBidCellP3" color="White" dontUseTableCellBackground="True">
+							<Text id="contractBidTextP3" class="textMarker" ></Text>
+						</cell>
+						<cell id="contractBidCellP4" color="Green" dontUseTableCellBackground="True">
+							<Text id="contractBidTextP4" class="textMarker" ></Text>
+						</cell>
+						<cell id="contractBidCellP5" color="Blue" dontUseTableCellBackground="True">
+							<Text id="contractBidTextP5" class="textMarker" ></Text>
+						</cell>
+						<cell id="contractBidCellP6" color="Red" dontUseTableCellBackground="True">
+							<Text id="contractBidTextP6" class="textMarker" ></Text>
+						</cell>
+					</GridLayout>
+				</cell>
+				<cell columnSpan="2">
+					<HorizontalLayout>
+						<Text id="contractBidText" class="bidderText"></Text>
+						<Text class="bidderText"></Text>
+					</HorizontalLayout>
+				</cell>
+				<Button rectAlignment="MiddleRight" ignoreLayout="true" width="38" height="38" fontSize="25" textColor="White" onClick="contractBidReset" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" tooltip="Close/Reset Contract Bid" visibility="Admin">X</Button>
+				<Button id ="contractBidStart" class="buttonStart" rectAlignment="MiddleLeft" width="280" height="38" fontSize="22" textColor="white" onClick="contractBidStart" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" tooltip="Start a Contract Auction">Start Contract Auction</Button>
+			</Row>
+			<Row class="headerRow">
+				<cell columnSpan="2">
+					<Button id="bid9" class="btnBids" onClick="contractBid">9</Button>
+				</cell>
+				<cell columnSpan="2">
+					<Button id="bid7" class="btnBids" onClick="contractBid">7</Button>
+				</cell>
+				<cell columnSpan="2">
+					<Button id="bid5" class="btnBids" onClick="contractBid">5</Button>
+				</cell>
+				<cell columnSpan="2">
+					<Button id="bid3" class="btnBids" onClick="contractBid">3</Button>
+				</cell>
+			</Row>
+			<Row class="headerRow">
+				<cell columnSpan="2">
+					<InputField id="contractBidEnter" onEndEdit="contractBidEnter" textColor="Black" colors="Grey|#FFFFFF|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" characterValidation="Integer" textAlignment="MiddleCenter" fontSize="22" placeholder="0"></InputField>
+				</cell>
+				<cell columnSpan="2">
+					<Button id="contractBidLower" class="btnBids" onClick="contractBid">-1</Button>
+				</cell>
+				<cell columnSpan="2">
+					<Button id="contractBidMatch" class="btnBids" onClick="contractBid">Match</Button>
+				</cell>
+				<cell columnSpan="2">
+					<Button id="contractBidPass" class="btnBids" onClick="contractBidPass">Pass</Button>
+				</cell>
+			</Row>
+		</TableLayout>
+	</VerticalLayout>
+</Panel>
+
+<!--=================================================Contract Bid Tool=========================================================-->
+
+<!--========================================================= FT Tracker=========================================================-->
+<Panel
+	id="FTTrackerParent"
+	active="False"
+	class="clearPanel"
+	width="550"
+	height="80"
+	rectAlignment="LowerRight"
+	offsetXY="0 300"
+	>
+	<Button class="btnMaximize" onClick="maximizeFTTracker" tooltip="Maximize FT Tracker">+</Button>
+	<VerticalLayout id="FTTrackerChild" class="verticalTable" height="40">
+		<Panel
+			id="FTTrackerChild2"
+			class="panelHeader"
+			color="Black"
+			width="550" 
+			
+			>
+			<Text class="headerText">FT Tracker</Text>
+			<Button class="btnMinimize" onClick="minimizeFTTracker" >-</Button>
+			<Button id="ftConfigOpen" class="btnMinimize" rectAlignment="MiddleLeft" onClick="ftConfig" icon="Sprites/Icons/Cog" tooltip="Config" visibility="Admin" ></Button>
+		</Panel>
+		<TableLayout
+		id="FTTrackerChild3"
+		class="blackTable"
+		>
+			<Row class="headerRow">
+				<cell class="trackerCellLabel">
+					<Text class="headerText">Player</Text>
+				</cell>
+				<cell id = "headerLEOCell" class="trackerCellLEO">
+					<Text class="headerText">LEO</Text>
+					<Button id="BtnBankLEO" class="swapButton" active = "False" tooltip = "Set Aqua Bank Location" width = "70" height = "38" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" textColor = "White" fontSize="22" fontStyle="Bold" onClick="setBankLEO">LEO</Button>
+				</cell>
+				<cell id = "headerB1Cell" class="trackerCellOther">
+					<Text class="headerText">B-K</Text>
+					<Button id="BtnBankB1" class="swapButton" active = "True" tooltip = "Set Aqua Bank Location" width = "70" height = "38" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" textColor = "White" fontSize="22" fontStyle="Bold" onClick="setBankBK">B-K</Button>
+				</cell>
+				<cell id = "headerB2Cell" class="trackerCellOther">
+					<Text class="headerText">B-S</Text>
+					<Button id="BtnBankB2" class="swapButton" active = "True" tooltip = "Set Aqua Bank Location" width = "70" height = "38" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" textColor = "White" fontSize="22" fontStyle="Bold" onClick="setBankBS">B-S</Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Text class="headerText">OP1</Text>
+				</cell>
+				<cell class="trackerCellOther">
+					<Text class="headerText">OP2</Text>
+				</cell>
+				<cell id = "headerFCell" class="trackerCellOther">
+					<Text class="headerText">FRT</Text>
+				</cell>
+			</Row>
+			<Row class="trackerRowSelf" 
+			visibility="White"
+			>
+				<cell class="trackerCellLabel">
+					<Text class="trackerText" color ="White">Self</Text>
+				</cell>
+				<cell id = "WhiteLEOACell" class="trackerCellLEO">
+					<Button id="WhiteLEOA" onClick="clickTracker" text="0" class="btnTrackerA" fontSize="40" resizeTextForBestFit="true" resizeTextMaxSize="40"></Button>
+				</cell>
+				<cell id = "WhiteB1ACell" class="trackerCellOther">
+					<Button id="WhiteB1A" onClick="clickTracker" text="0" class="btnTrackerA" resizeTextForBestFit="true" resizeTextMaxSize="30"></Button>
+				</cell>
+				<cell id = "WhiteB2ACell" class="trackerCellOther">
+					<Button id="WhiteB2A" onClick="clickTracker" text="0" class="btnTrackerA" resizeTextForBestFit="true" resizeTextMaxSize="30"></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="WhiteOP1A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="WhiteOP2A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+				<cell id = "WhiteFACell" class="trackerCellOther">
+					<Button id="WhiteFA" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+			</Row>
+			<Row
+			id = "WhiteIRow"
+			class="trackerRowSelf"
+			visibility="White"
+			>
+				<cell class="trackerCellLabel">
+					<Text class="trackerText" color ="White">Self</Text>
+				</cell>
+				<cell class="trackerCellLEO">
+					<Button id="WhiteLEOI" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell id = "WhiteB1ICell" class="trackerCellOther">
+					<Button id="WhiteB1I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell id = "WhiteB2ICell" class="trackerCellOther">
+					<Button id="WhiteB2I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="WhiteOP1I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="WhiteOP2I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell id = "WhiteFICell" class="trackerCellOther">
+					<Button id="WhiteFI" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+
+			</Row>
+			<Row class="trackerRowSelf" 
+			visibility="Purple"
+			>
+				<cell class="trackerCellLabel">
+					<Text class="trackerText" color ="Purple">Self</Text>
+				</cell>
+				<cell id = "PurpleLEOACell" class="trackerCellLEO">
+					<Button id="PurpleLEOA" onClick="clickTracker" text="0" class="btnTrackerA" fontSize="40" resizeTextForBestFit="true" resizeTextMaxSize="40"></Button>
+				</cell>
+				<cell id = "PurpleB1ACell" class="trackerCellOther">
+					<Button id="PurpleB1A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+				<cell id = "PurpleB2ACell" class="trackerCellOther">
+					<Button id="PurpleB2A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="PurpleOP1A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="PurpleOP2A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+				<cell id = "PurpleFACell" class="trackerCellOther">
+					<Button id="PurpleFA" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+
+			</Row>
+			<Row
+			id = "PurpleIRow"
+			class="trackerRowSelf"
+			visibility="Purple"
+			>
+				<cell class="trackerCellLabel">
+					<Text class="trackerText" color ="Purple">Self</Text>
+				</cell>
+				<cell class="trackerCellLEO">
+					<Button id="PurpleLEOI" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell id = "PurpleB1ICell" class="trackerCellOther">
+					<Button id="PurpleB1I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell id = "PurpleB2ICell" class="trackerCellOther">
+					<Button id="PurpleB2I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="PurpleOP1I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="PurpleOP2I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell id = "PurpleFICell" class="trackerCellOther">
+					<Button id="PurpleFI" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+
+			</Row>
+			<Row class="trackerRowSelf" 
+			visibility="Yellow"
+			>
+				<cell class="trackerCellLabel">
+					<Text class="trackerText" color ="Yellow">Self</Text>
+				</cell>
+				<cell id = "YellowLEOACell" class="trackerCellLEO">
+					<Button id="YellowLEOA" onClick="clickTracker" text="0" class="btnTrackerA" fontSize="40" resizeTextForBestFit="true" resizeTextMaxSize="40"></Button>
+				</cell>
+				<cell id = "YellowB1ACell" class="trackerCellOther">
+					<Button id="YellowB1A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+				<cell id = "YellowB2ACell" class="trackerCellOther">
+					<Button id="YellowB2A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="YellowOP1A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="YellowOP2A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+				<cell id = "YellowFACell" class="trackerCellOther">
+					<Button id="YellowFA" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+
+			</Row>
+			<Row
+			id = "YellowIRow"
+			class="trackerRowSelf"
+			visibility="Yellow"
+			>
+				<cell class="trackerCellLabel">
+					<Text class="trackerText" color ="Yellow">Self</Text>
+				</cell>
+				<cell class="trackerCellLEO">
+					<Button id="YellowLEOI" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell id = "YellowB1ICell" class="trackerCellOther">
+					<Button id="YellowB1I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell id = "YellowB2ICell" class="trackerCellOther">
+					<Button id="YellowB2I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="YellowOP1I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="YellowOP2I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell id = "YellowFICell" class="trackerCellOther">
+					<Button id="YellowFI" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+
+			</Row>
+			<Row class="trackerRowSelf" 
+			visibility="Red"
+			>
+				<cell class="trackerCellLabel">
+					<Text class="trackerText" color ="Red">Self</Text>
+				</cell>
+				<cell id = "RedLEOACell" class="trackerCellLEO">
+					<Button id="RedLEOA" onClick="clickTracker" text="0" class="btnTrackerA" fontSize="40" resizeTextForBestFit="true" resizeTextMaxSize="40"></Button>
+				</cell>
+				<cell id = "RedB1ACell" class="trackerCellOther">
+					<Button id="RedB1A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+				<cell id = "RedB2ACell" class="trackerCellOther">
+					<Button id="RedB2A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="RedOP1A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="RedOP2A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+				<cell id = "RedFACell" class="trackerCellOther">
+					<Button id="RedFA" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+
+			</Row>
+			<Row
+			id = "RedIRow"
+			class="trackerRowSelf"
+			visibility="Red"
+			>
+				<cell class="trackerCellLabel">
+					<Text class="trackerText" color ="Red">Self</Text>
+				</cell>
+				<cell class="trackerCellLEO">
+					<Button id="RedLEOI" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell id = "RedB1ICell" class="trackerCellOther">
+					<Button id="RedB1I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell id = "RedB2ICell" class="trackerCellOther">
+					<Button id="RedB2I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="RedOP1I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="RedOP2I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell id = "RedFICell" class="trackerCellOther">
+					<Button id="RedFI" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+
+			</Row>
+			<Row class="trackerRowSelf" 
+			visibility="Green"
+			>
+				<cell class="trackerCellLabel">
+					<Text class="trackerText" color ="Green">Self</Text>
+				</cell>
+				<cell id = "GreenLEOACell" class="trackerCellLEO">
+					<Button id="GreenLEOA" onClick="clickTracker" text="0" class="btnTrackerA" fontSize="40" resizeTextForBestFit="true" resizeTextMaxSize="40"></Button>
+				</cell>
+				<cell id = "GreenB1ACell" class="trackerCellOther">
+					<Button id="GreenB1A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+				<cell id = "GreenB2ACell" class="trackerCellOther">
+					<Button id="GreenB2A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="GreenOP1A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="GreenOP2A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+				<cell id = "GreenFACell" class="trackerCellOther">
+					<Button id="GreenFA" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+
+			</Row>
+			<Row
+			id = "GreenIRow"
+			class="trackerRowSelf"
+			visibility="Green"
+			>
+				<cell class="trackerCellLabel">
+					<Text class="trackerText" color ="Green">Self</Text>
+				</cell>
+				<cell class="trackerCellLEO">
+					<Button id="GreenLEOI" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell id = "GreenB1ICell" class="trackerCellOther">
+					<Button id="GreenB1I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell id = "GreenB2ICell" class="trackerCellOther">
+					<Button id="GreenB2I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="GreenOP1I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="GreenOP2I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell id = "GreenFICell" class="trackerCellOther">
+					<Button id="GreenFI" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+
+			</Row>
+			<Row class="trackerRowSelf" 
+			visibility="Blue"
+			>
+				<cell class="trackerCellLabel">
+					<Text class="trackerText" color ="Blue">Self</Text>
+				</cell>
+				<cell id = "BlueLEOACell" class="trackerCellLEO">
+					<Button id="BlueLEOA" onClick="clickTracker" text="0" class="btnTrackerA" fontSize="40" resizeTextForBestFit="true" resizeTextMaxSize="40"></Button>
+				</cell>
+				<cell id = "BlueB1ACell" class="trackerCellOther">
+					<Button id="BlueB1A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+				<cell id = "BlueB2ACell" class="trackerCellOther">
+					<Button id="BlueB2A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="BlueOP1A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="BlueOP2A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+				<cell id = "BlueFACell" class="trackerCellOther">
+					<Button id="BlueFA" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+
+			</Row>
+			<Row
+			id = "BlueIRow"
+			class="trackerRowSelf"
+			visibility="Blue"
+			>
+				<cell class="trackerCellLabel">
+					<Text class="trackerText" color ="Blue">Self</Text>
+				</cell>
+				<cell class="trackerCellLEO">
+					<Button id="BlueLEOI" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell id = "BlueB1ICell" class="trackerCellOther">
+					<Button id="BlueB1I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell id = "BlueB2ICell" class="trackerCellOther">
+					<Button id="BlueB2I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="BlueOP1I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="BlueOP2I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell id = "BlueFICell" class="trackerCellOther">
+					<Button id="BlueFI" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+
+			</Row>
+			<Row
+			id="p1FTTrackerRow"
+			class="trackerRowOther"
+			active = "true"
+			>
+				<cell class="trackerCellLabel">
+					<Text id = "p1FTTrackerLabel" class="trackerText" resizeTextForBestFit="true" resizeTextMaxSize="22" color="White">P1</Text>
+				</cell>
+				<cell id = "p1LEOCell" class="trackerCellLEO">
+					<Text id = "p1LEOAtxt" class="trackerText" fontStyle="Bold" fontSize="30" resizeTextForBestFit="true" resizeTextMaxSize="30" color="Blue">0</Text>
+					<Text id = "p1LEOItxt" class="trackerText" fontStyle="Bold" color="Yellow">0</Text>
+				</cell>
+				<cell id = "p1B1Cell" class="trackerCellOther">
+					<Text id = "p1B1Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p1B1Itxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+				<cell id = "p1B2Cell" class="trackerCellOther">
+					<Text id = "p1B2Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p1B2Itxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+				<cell class="trackerCellOther">
+					<Text id = "p1OP1Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p1OP1Itxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+				<cell class="trackerCellOther">
+					<Text id = "p1OP2Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p1OP2Itxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+				<cell id = "p1FCell" class="trackerCellOther">
+					<Text id = "p1FAtxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p1FItxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+
+			</Row>
+			<Row
+				id="p2FTTrackerRow"
+				class="trackerRowOther"
+				active = "true"
+				>
+				<cell class="trackerCellLabel">
+					<Text id = "p2FTTrackerLabel" class="trackerText" resizeTextForBestFit="true" resizeTextMaxSize="22" color="White">P2</Text>
+				</cell>
+				<cell id = "p2LEOCell" class="trackerCellLEO">
+					<Text id = "p2LEOAtxt" class="trackerText" fontStyle="Bold" fontSize="30" resizeTextForBestFit="true" resizeTextMaxSize="30" color="Blue">0</Text>
+					<Text id = "p2LEOItxt" class="trackerText" fontStyle="Bold" color="Yellow">0</Text>
+				</cell>
+				<cell id = "p2B1Cell" class="trackerCellOther">
+					<Text id = "p2B1Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p2B1Itxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+				<cell id = "p2B2Cell" class="trackerCellOther">
+					<Text id = "p2B2Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p2B2Itxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+				<cell class="trackerCellOther">
+					<Text id = "p2OP1Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p2OP1Itxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+				<cell class="trackerCellOther">
+					<Text id = "p2OP2Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p2OP2Itxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+				<cell id = "p2FCell" class="trackerCellOther">
+					<Text id = "p2FAtxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p2FItxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+
+			</Row>
+			<Row
+				id="p3FTTrackerRow"
+				class="trackerRowOther"
+				active = "true"
+				>
+				<cell class="trackerCellLabel">
+					<Text id = "p3FTTrackerLabel" class="trackerText" resizeTextForBestFit="true" resizeTextMaxSize="22" color="White">P3</Text>
+				</cell>
+				<cell id = "p3LEOCell" class="trackerCellLEO">
+					<Text id = "p3LEOAtxt" class="trackerText" fontStyle="Bold" fontSize="30" resizeTextForBestFit="true" resizeTextMaxSize="30" color="Blue">0</Text>
+					<Text id = "p3LEOItxt" class="trackerText" fontStyle="Bold" color="Yellow">0</Text>
+				</cell>
+				<cell id = "p3B1Cell" class="trackerCellOther">
+					<Text id = "p3B1Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p3B1Itxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+				<cell id = "p3B2Cell" class="trackerCellOther">
+					<Text id = "p3B2Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p3B2Itxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+				<cell class="trackerCellOther">
+					<Text id = "p3OP1Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p3OP1Itxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+				<cell class="trackerCellOther">
+					<Text id = "p3OP2Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p3OP2Itxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+				<cell id = "p3FCell" class="trackerCellOther">
+					<Text id = "p3FAtxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p3FItxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+
+			</Row>
+			<Row
+				id="p4FTTrackerRow"
+				class="trackerRowOther"
+				active = "true"
+				>
+				<cell class="trackerCellLabel">
+					<Text id = "p4FTTrackerLabel" class="trackerText" resizeTextForBestFit="true" resizeTextMaxSize="22" color="White">P4</Text>
+				</cell>
+				<cell id = "p4LEOCell" class="trackerCellLEO">
+					<Text id = "p4LEOAtxt" class="trackerText" fontStyle="Bold" fontSize="30" resizeTextForBestFit="true" resizeTextMaxSize="30" color="Blue">0</Text>
+					<Text id = "p4LEOItxt" class="trackerText" fontStyle="Bold" color="Yellow">0</Text>
+				</cell>
+				<cell id = "p4B1Cell" class="trackerCellOther">
+					<Text id = "p4B1Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p4B1Itxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+				<cell id = "p4B2Cell" class="trackerCellOther">
+					<Text id = "p4B2Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p4B2Itxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+				<cell class="trackerCellOther">
+					<Text id = "p4OP1Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p4OP1Itxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+				<cell class="trackerCellOther">
+					<Text id = "p4OP2Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p4OP2Itxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+				<cell id = "p4FCell" class="trackerCellOther">
+					<Text id = "p4FAtxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p4FItxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+
+			</Row>
+			<Row
+				id="p5FTTrackerRow"
+				class="trackerRowOther"
+				active = "true"
+				>
+				<cell class="trackerCellLabel">
+					<Text id = "p5FTTrackerLabel" class="trackerText" resizeTextForBestFit="true" resizeTextMaxSize="22" color="White">P5</Text>
+				</cell>
+				<cell id = "p5LEOCell" class="trackerCellLEO">
+					<Text id = "p5LEOAtxt" class="trackerText" fontStyle="Bold" fontSize="30" resizeTextForBestFit="true" resizeTextMaxSize="30" color="Blue">0</Text>
+					<Text id = "p5LEOItxt" class="trackerText" fontStyle="Bold" color="Yellow">0</Text>
+				</cell>
+				<cell id = "p5B1Cell" class="trackerCellOther">
+					<Text id = "p5B1Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p5B1Itxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+				<cell id = "p5B2Cell" class="trackerCellOther">
+					<Text id = "p5B2Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p5B2Itxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+				<cell class="trackerCellOther">
+					<Text id = "p5OP1Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p5OP1Itxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+				<cell class="trackerCellOther">
+					<Text id = "p5OP2Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p5OP2Itxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+				<cell id = "p5FCell" class="trackerCellOther">
+					<Text id = "p5FAtxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p5FItxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+
+			</Row>
+			<Row
+				id="p6FTTrackerRow"
+				class="trackerRowOther"
+				active = "true"
+				>
+				<cell class="trackerCellLabel">
+					<Text id = "p6FTTrackerLabel" class="trackerText" resizeTextForBestFit="true" resizeTextMaxSize="22" color="White">P6</Text>
+				</cell>
+				<cell id = "p6LEOCell" class="trackerCellLEO">
+					<Text id = "p6LEOAtxt" class="trackerText" fontStyle="Bold" fontSize="30" resizeTextForBestFit="true" resizeTextMaxSize="30" color="Blue">0</Text>
+					<Text id = "p6LEOItxt" class="trackerText" fontStyle="Bold" color="Yellow">0</Text>
+				</cell>
+				<cell id = "p6B1Cell" class="trackerCellOther">
+					<Text id = "p6B1Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p6B1Itxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+				<cell id = "p6B2Cell" class="trackerCellOther">
+					<Text id = "p6B2Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p6B2Itxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+				<cell class="trackerCellOther">
+					<Text id = "p6OP1Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p6OP1Itxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+				<cell class="trackerCellOther">
+					<Text id = "p6OP2Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p6OP2Itxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+				<cell id = "p6FCell" class="trackerCellOther">
+					<Text id = "p6FAtxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p6FItxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+
+			</Row>
+		</TableLayout>
+	</VerticalLayout>
+</Panel>
+
+
+<Panel
+	id="ftToolConfig"
+	class="WindowParent"
+	visibility="Admin"
+	active="false"
+	width="500"
+	rectAlignment="MiddleCenter"
+	offsetXY="0 0"
+	>
+	<TableLayout id="ftConfigChild" 
+	class="WindowTable"
+	rectAlignment="UpperCenter"
+	padding="20 20 0 20"
+	>
+		<Row class="TopRow" preferredHeight = "40" >
+			<Text class="headerText" >FT Tracker Config</Text>
+			<Button id="ftConfigClose" class="btnMinimize" rectAlignment="UpperRight" ignoreLayout="True" onClick="ftConfig" width="30" height="30" fontSize="22" tooltip="Close window" >X</Button>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40" >
+			<cell columnSpan="1">
+				<Text class="BasicText" >FT Tool Scale</Text>
+			</cell>
+			<cell columnSpan="2">
+				<Text id="textScaleFT" class="BasicText" alignment="MiddleCenter">1</Text> 
+				<Slider id="SliderFTTracker" minValue="0.5" maxValue="1.5" value="1.0" onValueChanged="changeFTScale" />
+			</cell>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40" >
+			<Toggle id="toggleFTMod1" width="250" textColor="white" onValueChanged="toggleFTMod1" isOn="False" >Module 1 Stacks/FTs</Toggle>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "60" >
+			<Toggle id="toggleFTMod2" width="250" textColor="white" onValueChanged="toggleFTMod2" isOn="False" >Module 2 Stacks</Toggle>
+		</Row>
+	</TableLayout>
+</Panel>
+
+<!--=========================================================VP TRACKER========================================================-->
+
+<Panel
+	id = "VPMenu"
+	active="False"
+	class="clearPanel"
+	width="70"
+	height="65"
+	rectAlignment="UpperLeft"
+	offsetXY="400 0"
+	>
+		<Button ignoreLayout="True" onClick="maximizeVPTracker" tooltip="Show VP Tracker" color = "Black">
+			<Image width = "40" height = "40" offsetXY="0 10" alignment="UpperCenter" image="laurel"></Image>
+		</Button>
+		<Text class="BasicText" ignoreLayout="True" alignment="LowerCenter" offsetXY="0 5" fontSize = "14" fontStyle="Bold" >VP</Text>
+</Panel>
+
+<Panel
+	id="VPTrackerParent"
+	active="False"
+	class="clearPanel"
+	width="560"
+	height="80"
+	rectAlignment="MiddleCenter"
+	offsetXY="0 300"
+	>
+	<VerticalLayout id="VPTrackerChild" class="verticalTable" height="40">
+		<Panel
+		id="VPTrackerChild2"
+		class="panelHeader"
+		color="Black"
+		width="560" 
+		>
+			<Text class="headerText">VP Tracker</Text>
+			<Button class="btnMinimize" onClick="closeVPTracker" >X</Button>
+		</Panel>
+		<TableLayout
+		id="VPTrackerChild3"
+		class="blackTable"
+		columnWidths="200 60 60 60 60 60 60"
+		>
+			<Row class="headerRow">
+				<cell >
+					<Text class="headerText">Category</Text>
+				</cell>
+				<cell >
+					<Text id="YellowScoreHeader" class="headerText" fontSize = "30" color="Yellow">Y</Text>
+				</cell>
+				<cell  >
+					<Text id="PurpleScoreHeader" class="headerText" fontSize = "30" color="Purple" >P</Text>
+				</cell>
+				<cell >
+					<Text id="WhiteScoreHeader" class="headerText" fontSize = "30" color="White">W</Text>
+				</cell>
+				<cell >
+					<Text id="GreenScoreHeader" class="headerText" fontSize = "30" color="Green">G</Text>
+				</cell>
+				<cell >
+					<Text id="BlueScoreHeader" class="headerText" fontSize = "30" color="Blue">B</Text>
+				</cell>
+				<cell  >
+					<Text id="RedScoreHeader" class="headerText" fontSize = "30" color="Red">R</Text>
+				</cell>
+			</Row>
+			<Row id="vpRow1" class="trackerRowOther">
+				<cell >
+					<Text class="trackerText" alignment="MiddleLeft" color="White" fontSize="22" tooltip="+1 VP for each wooden or plastic token on map or in political assembly."> Tokens</Text>
+				</cell>
+				<cell >
+					<Button id="YellowTkn" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="PurpleTkn" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="WhiteTkn" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="GreenTkn" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="BlueTkn" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="RedTkn" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+			</Row>
+			<Row id="vpRow2" class="trackerRowOther">
+				<cell >
+					<Text class="trackerText" alignment="MiddleLeft" color="White" fontSize="22" tooltip="+x VP for each factory based on spectral exploitation value. (+2VP if war at end; x2 per if connected to Space Elevator.)"> Factories</Text>
+				</cell>
+				<cell >
+					<Button id="YellowFct" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="PurpleFct" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="WhiteFct" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="GreenFct" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="BlueFct" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="RedFct" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+			</Row>
+			<Row id="vpRow3" class="trackerRowOther">
+				<cell >
+					<Text class="trackerText" alignment="MiddleLeft" color="White" fontSize="22" tooltip="+1 VP for Colony on Astrobiology / +2 VP for Colony on Submarine or Bernal"> Colonies</Text>
+				</cell>
+				<cell >
+					<Button id="YellowCol" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="PurpleCol" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="WhiteCol" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="GreenCol" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="BlueCol" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="RedCol" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+			</Row>
+			<Row id="vpRow4" class="trackerRowOther">
+				<cell >
+					<Text class="trackerText" alignment="MiddleLeft" color="White" fontSize="22" tooltip="+x VP faceup value on Glory chits. (M3: x2 if Loyalist V)"> Glory</Text>
+				</cell>
+				<cell >
+					<Button id="YellowGlr" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="PurpleGlr" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="WhiteGlr" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="GreenGlr" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="BlueGlr" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="RedGlr" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+			</Row>
+			<Row id="vpRow5" class="trackerRowOther">
+				<cell >
+					<Text class="trackerText" alignment="MiddleLeft" color="White" fontSize="22" tooltip="+x VP for dirtside hydration / +6 VP for Home Bernal."> Dirtside (m2)</Text>
+				</cell>
+				<cell >
+					<Button id="YellowDrt" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="PurpleDrt" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="WhiteDrt" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="GreenDrt" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="BlueDrt" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="RedDrt" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+			</Row>
+			<Row id="vpRow6" class="trackerRowOther">
+				<cell >
+					<Text class="trackerText" alignment="MiddleLeft" color="White" fontSize="22" tooltip="+x VP for completed future listed on card."> Futures (m0/1/2)</Text>
+				</cell>
+				<cell >
+					<Button id="YellowFut" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="PurpleFut" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="WhiteFut" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="GreenFut" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="BlueFut" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="RedFut" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+			</Row>
+			<Row id="vpRow7" class="trackerRowOther">
+				<cell >
+					<Text class="trackerText" alignment="MiddleLeft" color="White" fontSize="22" tooltip="+x VP according to final Active Law. (M3: x0 if Loyalist V or war continues/true / x1 if Independent V.)"> Politics (m0)</Text>
+				</cell>
+				<cell >
+					<Button id="YellowPol" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="PurplePol" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="WhitePol" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="GreenPol" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="BluePol" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="RedPol" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+			</Row>
+			<Row id="vpRow8" class="trackerRowOther">
+				<cell >
+					<Text class="trackerText" alignment="MiddleLeft" color="White" fontSize="22" tooltip="+x VP for specific anchored/promoted bernals as listed on card."> Bernal (m2)</Text>
+				</cell>
+				<cell >
+					<Button id="YellowBrn" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="PurpleBrn" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="WhiteBrn" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="GreenBrn" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="BlueBrn" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="RedBrn" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+			</Row>
+			<Row id="vpRow9" class="trackerRowOther">
+				<cell >
+					<Text class="trackerText" alignment="MiddleLeft" color="White" fontSize="22" tooltip="+1 VP per bribe / x2 if truce/war continues / Loyalist V: x0 / Independent V: x1."> Bribes (m3)</Text> 
+				</cell>
+				<cell >
+					<Button id="YellowBrb" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="PurpleBrb" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="WhiteBrb" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="GreenBrb" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="BlueBrb" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="RedBrb" class="btnScore" onClick="clickScore" text="0"></Button>
+				</cell>
+			</Row>
+			<Row id="vpRow10" class="trackerRowOther">
+				<cell >
+					<Text class="trackerText" alignment="MiddleLeft" color="White" fontSize="22" tooltip="Contract VP"> Contracts (m4)</Text>
+				</cell>
+				<cell >
+					<Button id="YellowCon" class="btnScore" onClick="clickScoreNeg" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="PurpleCon" class="btnScore" onClick="clickScoreNeg" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="WhiteCon" class="btnScore" onClick="clickScoreNeg" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="GreenCon" class="btnScore" onClick="clickScoreNeg" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="BlueCon" class="btnScore" onClick="clickScoreNeg" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="RedCon" class="btnScore" onClick="clickScoreNeg" text="0"></Button>
+				</cell>
+			</Row>
+			<Row id="vpRow11" class="trackerRowOther">
+				<cell >
+					<Text class="trackerText" alignment="MiddleLeft" color="White" fontSize="22" tooltip="Contract VP"> Exodus (m4)</Text>
+				</cell>
+				<cell >
+					<Button id="YellowExo" class="btnScore" onClick="clickScoreNeg" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="PurpleExo" class="btnScore" onClick="clickScoreNeg" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="WhiteExo" class="btnScore" onClick="clickScoreNeg" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="GreenExo" class="btnScore" onClick="clickScoreNeg" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="BlueExo" class="btnScore" onClick="clickScoreNeg" text="0"></Button>
+				</cell>
+				<cell >
+					<Button id="RedExo" class="btnScore" onClick="clickScoreNeg" text="0"></Button>
+				</cell>
+			</Row>
+			<Row class="trackerRowOther">
+				<cell >
+					<Text class="headerText" alignment="MiddleCenter">TOTAL</Text>
+				</cell>
+				<cell >
+					<Text id="YellowTtl" class="headerText" fontSize = "30" color="Yellow">0</Text>
+				</cell>
+				<cell  >
+					<Text id="PurpleTtl" class="headerText" fontSize = "30" color="Purple" >0</Text>
+				</cell>
+				<cell >
+					<Text id="WhiteTtl" class="headerText" fontSize = "30" color="White">0</Text>
+				</cell>
+				<cell >
+					<Text id="GreenTtl" class="headerText" fontSize = "30" color="Green">0</Text>
+				</cell>
+				<cell >
+					<Text id="BlueTtl" class="headerText" fontSize = "30" color="Blue">0</Text>
+				</cell>
+				<cell  >
+					<Text id="RedTtl" class="headerText" fontSize = "30" color="Red">0</Text>
+				</cell>
+			</Row>
+		</TableLayout>
+	</VerticalLayout>
+</Panel>
+
+
+<!--========================================================= Setup=========================================================-->
+
+<Panel id="WindowSetup0"
+	class="WindowParent"
+	active="False"
+	visibility="Admin"
+	width ="300"
+	height="435"
+	rectAlignment="MiddleCenter"
+	offsetXY="0 0"
+	>
+	<Text class="WindowHeader" alignment="UpperCenter" offsetXY="0 0" fontSize="40">UNOFFICIAL</Text>
+	<Image image="hf-cover" height="300" rectAlignment="UpperCenter" offsetXY="0 -45" width="300"></Image>
+	<Button class="BtnMinMax" width="300" rectAlignment="LowerCenter" offsetXY="0 45" onClick="nextSetup0" tooltip="Use scripted setup">Scripted Setup</Button>
+	<Button class="BtnMinMax" width="300" rectAlignment="LowerCenter" offsetXY="0 0" onClick="killSetup" tooltip="Close scripted setup (cannot undo)">Manual Setup</Button>
+</Panel>
+
+<Panel id="WindowSetup1"
+	class="WindowParent"
+	active="False"
+	visibility="Admin"
+	width ="550"
+	rectAlignment="MiddleCenter"
+	offsetXY="0 350"
+	>
+	<Button class="BtnMinMax" onClick="maxSetup" tooltip="Maximize Setup Window">+</Button>
+	<TableLayout id="SetupContent1"
+		class="WindowTable"
+		width="550"
+		>
+		<Row class="TopRow">
+			<Text class="WindowHeader" fontSize="22">SCRIPTED SETUP (1/6)</Text>
+			<Button class="BtnMinMax" onClick="minSetup" tooltip="Minimize">-</Button>
+		</Row>
+		<Row class="BasicRow">
+			<TableLayout id="SetupContentChild1"
+			class="ContentTable"
+			width="550"
+			cellSpacing = "40"
+			>
+				<Row class="BasicRow" preferredHeight="20">
+					<Text class="BasicText" fontStyle="Bold" fontSize="18">Setup C0: Layout and Modules</Text>
+				</Row>
+				<Row class="BasicRow" preferredHeight="40">
+					<Cell> 
+						<Text class="BasicText" >Seat Count</Text>
+						<Dropdown id="dropdownPCount" onValueChanged="changeSeatCount" tooltip="Sets how many available factions/hands there are">
+							<Option>1</Option>
+							<Option>2</Option>
+							<Option>3</Option>
+							<Option>4</Option>
+							<Option>5</Option>
+							<Option selected="true">6</Option>
+						</Dropdown>
+					 </Cell>
+					 <Cell> 
+						<ToggleGroup>    
+							<HorizontalLayout childAlignment="MiddleCenter">
+								<Toggle id="toggleC0MP" class="ToggleConfig" isOn="True" onValueChanged="toggleMPMode" tooltip="Seats are played by multiple Humans" >Multiplayer</Toggle>
+								<Toggle id="toggleC0Solo" class="ToggleConfig" tooltip="Optimized for one player controlling x number of seats">Solo/Hotseat</Toggle>
+							</HorizontalLayout>
+						</ToggleGroup>
+					 </Cell>
+				</Row>
+				<Row class="BasicRow" preferredHeight="20">
+					<Text class="WindowHeader" fontSize="18">Map Setup</Text>
+				</Row>
+				<Row class="BasicRow" preferredHeight="60">
+					<Cell>  
+						<ToggleGroup>    
+							<VerticalLayout childAlignment="UpperCenter">
+								<Toggle class="ToggleConfig" onValueChanged="toggleMap" tooltip="Standard map size that comes with published copy of game">Normal Map</Toggle>
+								<Toggle class="ToggleConfig" tooltip="2x scaled map that matches the size of the addon Neoprene Map">Large Map (Neoprene Size)</Toggle>
+							</VerticalLayout>
+						</ToggleGroup>
+					</Cell>
+					<Cell>  
+						<VerticalLayout childAlignment="UpperCenter">
+							<Toggle class="ToggleConfig" onValueChanged="toggleLutetia" tooltip="Adds map update that modifies hydration and size of lutetia">Lutetia Update</Toggle>
+							<Toggle class="ToggleConfig" onValueChanged="toggleEarth" tooltip="Overlays Earth with pangea site for Bios:Venus or Bios:Mars variants">Pangea Earth Overlay</Toggle>
+							<Toggle class="ToggleConfig" onValueChanged="toggleVenus" tooltip="Overlays Venus with Ishtar site for Bios:Earth/Bios:Venus/Bios:Mars variants">Habitable Venus Overlay</Toggle>
+						</VerticalLayout>
+					</Cell>
+				</Row>
+				<Row class="BasicRow" preferredHeight="20">
+					<Text class="WindowHeader" fontSize="18" >Modules/Mode Setup</Text>
+				</Row>
+				<Row class="BasicRow" preferredHeight="80">
+					<Cell> 
+						<ToggleGroup>    
+							<VerticalLayout childAlignment="UpperCenter">
+								<Toggle class="ToggleConfig" onValueChanged="toggleCore" tooltip="Standard HF game" >Core</Toggle>
+								<Toggle class="ToggleConfig" onValueChanged="toggleSd" tooltip="Basic movement tutorial game" >Space Diamonds</Toggle>
+								<Toggle class="ToggleConfig" onValueChanged="toggleRfg" tooltip="Essentials-only standard tutorial game" >Race for Glory</Toggle>
+							</VerticalLayout>
+						</ToggleGroup>
+					</Cell>
+					<Cell> 
+						<VerticalLayout childAlignment="UpperCenter">
+							<Toggle id="toggleMod0" class="ToggleConfig" onValueChanged="toggleMod0" tooltip="Adds political assemby">Module 0: Politics</Toggle>
+							<Toggle id="toggleMod1" class="ToggleConfig" onValueChanged="toggleMod1" tooltip="Adds freighters, advanced thrusters, and futures projects">Module 1: Terrawatt and Futures</Toggle>
+							<Toggle id="toggleMod2" class="ToggleConfig" onValueChanged="toggleMod2" tooltip="Adds bernals and colonial partisans">Module 2: Colonization</Toggle>
+							<Toggle id="toggleMod3" class="ToggleConfig" onValueChanged="toggleMod3" tooltip="Adds strategic warfare">Module 3: Conflict</Toggle>
+							<Toggle id="toggleMod4" class="ToggleConfig" onValueChanged="toggleMod4" tooltip="Adds contracts and end game objectives">Module 4: Exodus</Toggle>
+							<ToggleGroup id="togglesSd" active="false">
+								<VerticalLayout childAlignment="UpperCenter">
+									<Toggle id="toggleSail" onValueChanged="toggleSdMode" class="ToggleConfig" active="true" tooltip="Players use sails but ignore fuel">Solar Sails</Toggle>
+									<Toggle id="toggleRocket" class="ToggleConfig" active="true" tooltip="Players use rockets and manage fuel">Rockets</Toggle>
+								</VerticalLayout>
+							</ToggleGroup>
+							<Toggle id="toggleTutorial" class="ToggleConfig" active="false" onValueChanged="toggleTutorial" tooltip="Keep Patent cards in order for following tutorial in RfG manual">Tutorial Deck Order</Toggle>
+						</VerticalLayout>
+					 </Cell>
+				</Row>
+				<Row class="BasicRow" preferredHeight="20">
+					<Text class="WindowHeader" fontSize="18" >Other</Text>
+				</Row>
+				<Row class="BasicRow" preferredHeight="10">
+					<Cell>
+						<Toggle class="ToggleConfig" rectAlignment="UpperLeft" onValueChanged="toggleVSplitMarket" tooltip="Places a second market board for splitting patent decks for some scenarios (ex. V9. Sirens)">Variant: Split Market(V9b)</Toggle>
+					</Cell>
+					<Cell>
+						<Toggle class="ToggleConfig" rectAlignment="UpperRight" onValueChanged="toggleMod0Solo" tooltip="Changes Mod0 political mat to Official Solo Variant (In Testing)">Variant: Solo Mod 0 Politics</Toggle>
+					</Cell>
+				</Row>
+				<Row class="BasicRow" preferredHeight="10">
+					<Cell>
+						<Toggle class="ToggleConfig" rectAlignment="UpperLeft" onValueChanged="toggleVGeoffIntro" tooltip="Patents are setup into pre-built rocket stacks for Custom Intro Variant by Geoff">Custom: Geoff's Intro Variant</Toggle>
+					</Cell>
+					<Cell>
+						<Toggle class="ToggleConfig" rectAlignment="UpperLeft" onValueChanged="toggleStackMat" tooltip="Adds fan made Rocket Stack mats">Custom: Rocket Stack Mats</Toggle>
+					</Cell>
+				</Row>
+				<Row class="BasicRow" preferredHeight="20">
+					<Cell>
+						<Toggle class="ToggleConfig" rectAlignment="UpperLeft" onValueChanged="toggleTimer" tooltip="Enables Turn Timers">Enable Turn Timer</Toggle>
+					</Cell>
+				</Row>
+				<Row class="BasicRow" preferredHeight="40">
+					<Button class="BtnClose" onClick="nextSetup1" width="150" ignoreLayout="true" colors="Green|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" rectAlignment="LowerCenter" offsetXY="100 0" tooltip="Initiate scripted setup with current settings">Next</Button>
+					<Button class="BtnClose" onClick="killSetup" width="150" ignoreLayout="true" colors="Red|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" rectAlignment="LowerCenter" offsetXY="-100 0" tooltip="Cancel scripted setup">Cancel</Button>
+				</Row>
+			</TableLayout>
+		</Row>
+	</TableLayout>
+</Panel>
+
+<Panel id="WindowSetupSD"
+	class="WindowParent"
+	color="black" 
+	outline="rgba(0.1,0.1,0.1,0)" 
+	outlineSize="1 -1"
+	active="false"
+	visibility="Admin"
+	width ="300"
+	height="300"
+	rectAlignment="MiddleCenter"
+	offsetXY="0 0"
+	>
+	<Text class="WindowHeader" alignment="UpperCenter" offsetXY="0 -10" fontSize="22" horizontalOverflow="Wrap" verticalOverflow="Overflow" >Space Diamonds Setup</Text>
+	<Text class="BasicText" alignment="UpperCenter" offsetXY="0 -65" fontSize="16" horizontalOverflow="Wrap" verticalOverflow="Overflow" >Host: Change hands to hidden.</Text>
+	<Text class="BasicText" alignment="UpperCenter" offsetXY="0 -125" fontSize="16" horizontalOverflow="Wrap" verticalOverflow="Overflow" >Options - Hands - Hiding: Change to Default.</Text>
+	<Button class="BtnClose" width="100" colors="Green|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" rectAlignment="LowerCenter" offsetXY="60 10" onClick="nextSetup2SD" tooltip="Shuffle and deal cards.">Deal</Button>
+	<Button class="BtnClose" width="100" colors="Red|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" rectAlignment="LowerCenter" offsetXY="-60 10" onClick="killSetup" tooltip="Shuffle and deal cards manually.">Close</Button>
+</Panel>
+
+
+<Panel id="WindowSetup1B"
+	class="WindowParent"
+	active="False"
+	visibility="Admin"
+	width ="500"
+	rectAlignment="MiddleCenter"
+	offsetXY="0 150"
+	>
+	<Button class="BtnMinMax" onClick="maxSetup" tooltip="Maximize Setup Window">+</Button>
+	<TableLayout id="SetupContent1B"
+		class="WindowTable"
+		width="500"
+		>
+		<Row class="TopRow">
+			<Text class="WindowHeader" fontSize="22" >SCRIPTED SETUP (2/6)</Text>
+			<Button class="BtnMinMax" onClick="minSetup" tooltip="Minimize">-</Button>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40">
+			<Text class="BasicText" fontStyle="Bold" fontSize="18">Setup C1: Seniority Disks</Text>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "60">
+			<Cell columnSpan="1">
+				<Text class="BasicText" alignment="MiddleLeft" >Game Length (12 Yr Disks)</Text>
+			</Cell>
+			<Cell columnSpan="1">
+				<Dropdown id="DropdownSeniority" onValueChanged="changeSeniority" dropdownHeight="220" tooltip="Set Seniority Disk Count for Game Length">
+					<Option>0 (Manual)</Option>
+					<Option>2 (Scenario - 24Yr)</Option>
+					<Option selected="true">4 (Short - 48Yr)</Option>
+					<Option>5 (Medium - 60Yr)</Option>
+					<Option >7 (Futures - 84Yr)</Option>
+				</Dropdown>
+			</Cell>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "80">
+			<Button class="BtnClose" onClick="nextSetup1B" width="150" ignoreLayout="true" colors="Green|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" rectAlignment="MiddleCenter" offsetXY="100 0" tooltip="Initiate scripted setup with current settings">Next</Button>
+			<Button class="BtnClose" onClick="killSetup" width="150" ignoreLayout="true" colors="Red|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" rectAlignment="MiddleCenter" offsetXY="-100 0" tooltip="Cancel scripted setup">Close</Button>
+		</Row>
+	</TableLayout>
+</Panel>
+
+
+<Panel id="WindowSetup2"
+	class="WindowParent"
+	active="False"
+	visibility="Admin"
+	width ="500"
+	rectAlignment="MiddleCenter"
+	offsetXY="0 150"
+	>
+	<Button class="BtnMinMax" onClick="maxSetup" tooltip="Maximize Setup Window">+</Button>
+	<TableLayout id="SetupContent2"
+		class="WindowTable"
+		width="500"
+		>
+		<Row class="TopRow">
+			<Text class="WindowHeader" fontSize="22">SCRIPTED SETUP (3/6)</Text>
+			
+			<Button class="BtnMinMax" onClick="minSetup" tooltip="Minimize">-</Button>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40">
+			<Text class="BasicText" fontStyle="Bold" fontSize="18">Setup C2: Assign Factions/Crew</Text>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40">
+			<Text class="BasicText" >Shuffle and deal Crew cards to each seat's Hand.</Text>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "80">
+			<Text class="BasicText" >Note: Dealing/moving a Crew card to a Hand will automatically change that Seats' color (once only).</Text>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40">
+			<Button id="BtnC2Deal" class="BtnClose" width="350" colors="Green|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" rectAlignment="MiddleCenter" offsetXY="0 0" onClick="shuffleDealCrew" tooltip="Automatically shuffle and deal Crew cards.">Scripted Deal</Button>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "80">
+			<Button id="BtnC2Next" class="BtnClose" width="150" colors="Orange|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" rectAlignment="MiddleCenter" offsetXY="100 0" onClick="nextSetup2" tooltip="Proceed ONLY after all seats have drawn/chosen faction colors.">Next</Button>
+			<Button class="BtnClose" width="150" colors="Red|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" rectAlignment="MiddleCenter" offsetXY="-100 0" onClick="killSetup" tooltip="Permanently close scripted setup.">Close</Button>
+		</Row>
+	</TableLayout>
+</Panel>
+
+<Panel id="WindowSetup2B"
+	class="WindowParent"
+	active="false"
+	visibility="Admin"
+	width ="500"
+	rectAlignment="MiddleCenter"
+	offsetXY="0 150"
+	>
+	<Button class="BtnMinMax" onClick="maxSetup" tooltip="Maximize Setup Window">+</Button>
+	<TableLayout id="SetupContent2B"
+		class="WindowTable"
+		width="500"
+		>
+		<Row class="TopRow">
+			<Text class="WindowHeader" fontSize="22" >SCRIPTED SETUP (4/6)</Text>
+			<Button class="BtnMinMax" onClick="minSetup" tooltip="Minimize">-</Button>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40">
+			<Text class="BasicText" fontStyle="Bold" fontSize="18" >Setup C3: Reserves Setup</Text>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "60">
+			<Text class="BasicText" >Script has placed faction components. Change states for changing between standard and custom models.</Text>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40">
+			<Text class="BasicText" fontStyle="Bold" fontSize="18" >Setup C4: Patent Deck Setup</Text>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "60">
+			<Text class="BasicText">Completed/shuffled by script.</Text>
+			<Button id ="btnSplitDecks" class="BtnClose" onClick="setupSplitDecks" colors="Orange|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" ignoreLayout="True" rectAlignment="MiddleRight" width="225" fontSize = "18" offsetXY ="-10 0" tooltip="Split Patents and Queue Decks (for living rules Altruism V4b or Sirens V9b). If Split Market variant is enabled then split stack will go to 2nd board.  If not, split stack will return to box (unseen per V4b for solo).">Option: Split Decks</Button>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40">
+			<Text class="BasicText" fontStyle="Bold" fontSize="18">Setup C5: Starting Aquas</Text>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40">
+			<Toggle active="True" class="ToggleConfig" onValueChanged="toggleC5FT" isOn="True" tooltip="Enable FT Tracker tool.  Can be turned on/off later in UI settings menu." >Enable FT Tracker Tool</Toggle>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "60">
+			<Text class="BasicText" >Give each player the starting Aqua as specified by chosen scenario. Default: 1 per patent deck</Text>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "80">
+			<Button class="BtnClose" width="150" colors="Green|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" rectAlignment="MiddleCenter" offsetXY="100 0" onClick="nextSetup2B" tooltip="Proceed to next step.">Next</Button>
+			<Button class="BtnClose" width="150" colors="Red|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" rectAlignment="MiddleCenter" offsetXY="-100 0" onClick="killSetup" tooltip="Permanently close scripted setup.">Close</Button>
+		</Row>
+	</TableLayout>
+</Panel>
+
+<Panel id="WindowSetup3"
+	class="WindowParent"
+	active="False"
+	visibility="Admin"
+	width ="500"
+	rectAlignment="MiddleCenter"
+	offsetXY="0 150"
+	>
+	<Button class="BtnMinMax" onClick="maxSetup" tooltip="Maximize Setup Window">+</Button>
+	<TableLayout id="SetupContent3"
+		class="WindowTable"
+		width="500"
+		>
+		<Row class="TopRow">
+			<Text class="WindowHeader" fontSize="22">SCRIPTED SETUP 5/6</Text>
+			<Button class="BtnMinMax" onClick="minSetup" tooltip="Minimize">-</Button>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40">
+			<Text class="BasicText" fontStyle="Bold" fontSize="18">Setup C6: Exploitation Track</Text>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40">
+			<Text class="BasicText" >Completed by script. Adjust as needed.</Text>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40">
+			<Text class="BasicText" fontStyle="Bold" fontSize="18">Setup C7: Glory/Heroism Chits</Text>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40">
+			<Text class="BasicText" >Completed by script. Adjust as needed.</Text>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40">
+			<Text class="BasicText" fontStyle="Bold" fontSize="18" >Setup C8: First Player and Sunspot Cube</Text>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "80">
+			<VerticalLayout childAlignment ="MiddleCenter" >
+				<Text class="BasicText" fontStyle="Bold" alignment="MiddleCenter" >Set First Player</Text>
+				<ToggleGroup>    
+					<HorizontalLayout childAlignment="MiddleCenter">
+						<Toggle id="Setup3FPOptYellow" active="False" class="ToggleConfig" onValueChanged="toggleFirstPlayer" tooltip="Set First Player as Color" >Yellow</Toggle>
+						<Toggle id="Setup3FPOptPurple" active="False" class="ToggleConfig" onValueChanged="toggleFirstPlayer" tooltip="Set First Player as Color" >Purple</Toggle>
+						<Toggle id="Setup3FPOptWhite" active="False" class="ToggleConfig" onValueChanged="toggleFirstPlayer" tooltip="Set First Player as Color" >White</Toggle>
+						<Toggle id="Setup3FPOptGreen" active="False" class="ToggleConfig" onValueChanged="toggleFirstPlayer" tooltip="Set First Player as Color" >Green</Toggle>
+						<Toggle id="Setup3FPOptBlue" active="False" class="ToggleConfig" onValueChanged="toggleFirstPlayer" tooltip="Set First Player as Color" >Blue</Toggle>
+						<Toggle id="Setup3FPOptRed" active="False" class="ToggleConfig" onValueChanged="toggleFirstPlayer" tooltip="Set First Player as Color" >Red</Toggle>
+					</HorizontalLayout>
+				</ToggleGroup>
+			</VerticalLayout>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "60">
+			<Text class="BasicText" >First player places a cube on start position on sunspot track.</Text>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "80">
+			<Button class="BtnClose" onClick="nextSetup3" width="150" ignoreLayout="true" colors="Green|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" rectAlignment="MiddleCenter" offsetXY="100 0" tooltip="Initiate scripted setup with current settings">Next</Button>
+			<Button class="BtnClose" onClick="killSetup" width="150" ignoreLayout="true" colors="Red|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" rectAlignment="MiddleCenter" offsetXY="-100 0" tooltip="Cancel scripted setup">Close</Button>
+		</Row>
+	</TableLayout>
+</Panel>
+
+<Panel id="WindowSetup4"
+	class="WindowParent"
+	active="False"
+	visibility="Admin"
+	width ="500"
+	rectAlignment="MiddleCenter"
+	offsetXY="0 150"
+	>
+	<Button class="BtnMinMax" onClick="maxSetup" tooltip="Maximize Setup Window">+</Button>
+	<TableLayout id="SetupContent4"
+		class="WindowTable"
+		width="500"
+		>
+		<Row class="TopRow">
+			<Text class="WindowHeader" fontSize="22">SCRIPTED SETUP 6/6</Text>
+			<Button class="BtnMinMax" onClick="minSetup" tooltip="Minimize">-</Button>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40">
+			<Text class="BasicText" fontStyle="Bold" fontSize="18">TTS: UI/General Config</Text>
+		</Row>
+		<Row class="BasicRow" preferredHeight="40">
+			<Text class="BasicText" fontSize="18" fontStyle="Bold" alignment="MiddleCenter" >Tools</Text>
+		</Row>
+		<Row class="BasicRow" preferredHeight="40">
+			<Cell>
+				<Toggle id="toggleUIToolSetupBidTool" class="toggleConfig" onValueChanged="toggleToolsSetup" isOn="true" >Bid Tool</Toggle>
+			</Cell>
+			<Cell>
+				<Toggle id="toggleUIToolSetupFTTracker" class="toggleConfig" onValueChanged="toggleToolsSetup" isOn="true" >FT Tracker</Toggle>
+			</Cell>
+			<Cell>
+				<Toggle id="toggleUIToolSetupTurnTracker" class="toggleConfig" onValueChanged="toggleToolsSetup" isOn="true" >Turn Tracker</Toggle>
+			</Cell>
+			<Cell>
+				<Toggle id="toggleUIToolSetupDiceRoller" class="toggleConfig" onValueChanged="toggleToolsSetup" isOn="true" >Dice Roller</Toggle>
+			</Cell>
+		</Row>
+		<Row class="BasicRow" preferredHeight="40">
+			<Cell>
+				<Toggle id="toggleUIToolSetupBurnTool" class="toggleConfig" onValueChanged="toggleToolsSetup" isOn="true" >Rocket Burn Tool</Toggle>
+			</Cell>
+			<Cell>
+				<Toggle id="toggleUIToolSetupBurnToolBernal" class="toggleConfig" onValueChanged="toggleToolsSetup" isOn="true" >Bernal Burn Tool</Toggle>
+			</Cell>
+			<Cell>
+			</Cell>
+			<Cell>
+			</Cell>
+		</Row>
+		<Row class="BasicRow" preferredHeight="40">
+			<Cell columnSpan="2">
+				<Text alignment="MiddleLeft" class="h2Text">UI Tool Scale (All)</Text>
+				<Text id="textScaleGlobal" alignment="MiddleCenter" class="h2Text">1.0</Text>
+			</Cell>
+			<Cell columnSpan="2">
+				<Slider id="SliderTurnTracker" minValue="0.5" maxValue="1.5" value="1.0" onValueChanged="changeScaleAll" />
+			</Cell>
+		</Row>
+		<Row class="BasicRow" preferredHeight="60">
+			<Cell columnSpan="2">
+				<Text class="BasicText" alignment="MiddleLeft" >Table Texture</Text>
+			</Cell>
+			<Cell columnSpan="2">
+				<Dropdown id="uiTableTexture" onValueChanged="changeTableTexture" dropdownHeight="220" tooltip="Set Table Texture">
+					<Option>Sol</Option>
+					<Option>Mercury</Option>
+					<Option>Venus Surface</Option>
+					<Option>Venus Atmosphere</Option>
+					<Option>Luna</Option>
+					<Option>Luna 2</Option>
+					<Option selected="true">Mars</Option>
+					<Option>Ceres</Option>
+					<Option>Eris</Option>
+					<Option>Makemake</Option>
+					<Option>Jupiter</Option>
+					<Option>Saturn</Option>
+					<Option>Uranus</Option>
+					<Option>Neptune</Option>
+					<Option>Stars</Option>
+				</Dropdown>
+			</Cell>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "80">
+			<Button class="BtnClose" onClick="nextSetup4" width="350" ignoreLayout="true" colors="Green|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" rectAlignment="MiddleCenter" offsetXY="0 0" tooltip="Initiate scripted setup with current settings">Complete Setup</Button>
+		</Row>
+	</TableLayout>
+</Panel>
+
+<!--========================================================= Dev tools=========================================================-->
+
+<Panel
+	id = "devSaveCoords"
+	active="False"
+	class="clearPanel"
+	width="50"
+	height="50"
+	rectAlignment="UpperCenter"
+	offsetXY="-75 -100"
+	>
+		<Button onClick="writeToNotebook" tooltip="TOOL: create placer table" color = "rgba(1,1,1,1)">
+		</Button>
+</Panel>
+
+<Panel
+	id = "devSaveRandCoords"
+	active="False"
+	class="clearPanel"
+	width="50"
+	height="50"
+	rectAlignment="UpperCenter"
+	offsetXY="0 -100"
+	>
+		<Button onClick="writeToNotebookRandomSpots" tooltip="TOOL: create randomplacer table" color = "rgba(1,0,1,1)">
+		</Button>
+</Panel>
+
+<Panel
+	id = "devSavePFigCoords"
+	active="False"
+	class="clearPanel"
+	width="50"
+	height="50"
+	rectAlignment="UpperCenter"
+	offsetXY="150 -100"
+	>
+		<Button onClick="writeToNotebookPFigures" tooltip="TOOL: create figureoffsetplacer table; use 0,0 origin" color = "rgba(1,0,1,1)">
+		</Button>
+</Panel>
+
+<Panel
+	id = "devInspirationTest"
+	active="False"
+	class="clearPanel"
+	width="50"
+	height="50"
+	rectAlignment="UpperCenter"
+	offsetXY="75 -100"
+	>
+		<Button onClick="runInspiration" tooltip="TOOL: trigger inspiration debug" color = "rgba(1,1,0,1)">
+		</Button>
+</Panel>

@@ -1,0 +1,16 @@
+<Defaults>
+	<Panel class="clearPanel" color="rgba(1,1,1,0)" allowDragging="false" />
+	
+</Defaults>
+
+<Panel
+	class="clearPanel"
+	width="20"
+	height="20"
+	rectAlignment="MiddleCenter"
+	offsetXY="0 0"
+	position="0 0 -40"
+	rotation="0 0 180"
+	>
+		<Button id="counterBtn" onClick="counter" width="20" height="20" verticalOverflow="Overflow" horizontalOverflow="Overflow" fontSize="60" textColor="black" color ="rgba(1,1,1,0)">0</Button>
+</Panel>

@@ -1,0 +1,44 @@
+
+MIN_VALUE = 0
+MAX_VALUE = 1000
+
+function updateSave()
+    local data_to_save = {value}
+    saved_data = JSON.encode(data_to_save)
+    self.script_state = saved_data
+end
+
+function onload(saved_data)
+    if saved_data ~= "" then
+        local loaded_data = JSON.decode(saved_data)
+        --Set up information off of loaded_data
+        value = loaded_data[1]
+    else
+        --Set up information for if there is no saved saved data
+        value = 0
+    end
+
+    updateDisplay()
+end
+
+function counter(_p, clickType, btnID)
+	local mod = 0
+	if clickType == "-1" then
+		mod=1
+	elseif clickType == "-2" then
+		mod=-1
+	elseif clickType == "-3" then
+		mod=7
+	end
+	local new_value = 0
+	new_value = math.min(math.max(value + mod, MIN_VALUE), MAX_VALUE)
+	if value ~= new_value then
+		value = new_value
+		updateDisplay()
+		updateSave()
+	end
+end
+
+function updateDisplay()
+  	self.UI.setAttribute("counterBtn", "text", value)
+end
