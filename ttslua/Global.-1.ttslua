@@ -91,9 +91,9 @@ configTable = {
 }
 
 toolConfig = {
-	turn = { scale = 1, mod1 = false, mobile = false, mod2 = false, colonist = false, profit = false, autoProfit = false, mod3 = false, soloMode = false, turnAutoSol = true, firstPlayer = "Yellow", ttsTurns = false, turnSound = true},
+	turn = { scale = 1, mod1 = false, mobile = false, mod2 = false, colonist = false, profit = false, autoProfit = false, mod3 = false, mod4 = true, soloMode = false, turnAutoSol = true, firstPlayer = "Yellow", ttsTurns = false, turnSound = true},
 	bid = {scale = 1, auto = true, marketeer = true},
-	ft = {scale = 1, mod1 = false, mod2 = false},
+	ft = {scale = 1, mod1 = false, mod2 = false, mod4 = false},
 	timer = {scale = 1, pause = false, pausebutton = false, doSave = false, countauctions = false}
 }
 
@@ -159,13 +159,6 @@ timerTable = {
 	Pause = {time = 0.0},
 	visibility = {White = true, Red = true, Yellow = true, Green = true, Blue = true, Purple = true}
 }
-
-exodusDeckTable = {{ name = "", guid = "", flip = false},
-				   { name = "", guid = "", flip = false},
-			   	   { name = "", guid = "", flip = false},
-			   	   { name = "", guid = "", flip = false},
-			   	   { name = "", guid = "", flip = false},
-			   	   { name = "", guid = "", flip = false}}
 
 updatetime = 0
 
@@ -663,41 +656,6 @@ function hardSaveTimer()
 	end
 	Notes.editNotebookTab({index = i, body = saved_data})
 end
-
-function hardSaveExodus()
-	local data_to_save = {
-		exodusDeckTable
-	}
-
-	saved_data = JSON.encode(data_to_save)
-	--to remove hard saved data, delete contents of notebook, "DataBid"
-	
-	local ind = {}
-	local bodyText = ""
-	local found = false
-	local notebooks = Notes.getNotebookTabs()
-	for k,v in pairs(notebooks) do
-		if v.title == "DataExodus" then
-			ind = v.index
-			bodyText = v.body
-			found = true
-		end
-	end
-	if found == false then
-		Notes.addNotebookTab({title = "DataExodus", body = "", color = "Black"})
-	else
-
-		local i = {}
-		local notebooks = Notes.getNotebookTabs()
-		for k,v in pairs(notebooks) do
-			if v.title == "DataExodus" then
-				i = v.index
-			end
-		end
-		Notes.editNotebookTab({index = i, body = saved_data})
-	end
-end
-
 
 --============================================================trigger events
 
@@ -1208,10 +1166,10 @@ function updateToolsEnabled()
 
 	UI.setAttribute("ContractBidToolParent", "active", configTable.toolContractBidTool )
 
-	updateTimerUI()
 	UI.setAttribute("TimerToolParent", "active", configTable.toolTimer )
 	UI.setAttribute("toggleTimerPause", "isOn", toolConfig.timer.pause )
 	UI.setAttribute("toggleTimerPauseButton", "isOn", toolConfig.timer.pausebutton )
+	updateTimerUI()
 
 end
 
@@ -1719,6 +1677,7 @@ function updateFTUI()
 	--match config
 	UI.setAttribute("toggleFTMod1", "isOn", toolConfig.ft.mod1)
 	UI.setAttribute("toggleFTMod2", "isOn", toolConfig.ft.mod2)
+	UI.setAttribute("toggleFTMod4", "isOn", toolConfig.ft.mod4)
 	
 	--update for players; values
 	UI.setAttribute("p1FTTrackerRow", "active", "False")
@@ -1749,7 +1708,7 @@ function updateFTUI()
 		
 		--update values in report rows
 		for j, l in pairs(ftTrackerTable[v]) do
-			if l ~= "true" or l~= "false" or l~= "LEO" or l~= "BK" or l~= "BS" then
+			if l ~= "true" or l~= "false" or l~= "LEO" or l~= "BK" or l~= "BS" or l~= "ISO" then
 				UI.setValue("p" .. k .. j .. "txt", l)
 				UI.setAttribute(v .. j, "text", l)
 				if string.match(j, "A") == "A" then
@@ -1848,6 +1807,20 @@ function updateFTUI()
 				--UI.setAttribute("p" .. k .. "B2Cell", "color", "Green")
 				--UI.setAttribute("p" .. k .. "B2Cell", "cellBackgroundColor", "White")
 				
+			elseif ftTrackerTable[v].bank == "ISO" then
+				UI.setAttribute(v .. "ISOA", "fontSize", "40")
+				UI.setAttribute(v .. "ISOA", "resizeTextMaxSize", "40")
+				UI.setAttribute(v .. "ISOA", "textColor", "White")
+				--UI.setAttribute(v .. "ISOA", "color", "Teal")
+				
+				UI.setAttribute("p" .. k .. "ISOAtxt", "resizeTextMaxSize", "30")
+				UI.setAttribute("p" .. k .. "ISOAtxt", "fontSize", "30")
+				UI.setAttribute("p" .. k .. "ISOAtxt", "fontStyle", "Bold")
+				UI.setAttribute("p" .. k .. "ISOAtxt", "color", "White")
+				--UI.setAttribute("p" .. k .. "ISOCell", "dontUseTableCellBackground", "True")
+				--UI.setAttribute("p" .. k .. "ISOCell", "color", "Green")
+				--UI.setAttribute("p" .. k .. "ISOCell", "cellBackgroundColor", "White")
+				
 			end
 		else
 			UI.setAttribute(v .. "LEOA", "fontSize", "40")
@@ -1867,12 +1840,13 @@ end
 function updateFTUIMods()
 	--update for mods
 	local p = {'p1', 'p2', 'p3', 'p4', 'p5', 'p6'}
-	local t = {'LEO', 'OP1', 'OP2', 'F', 'B1', 'B2'}
+	local t = {'LEO', 'OP1', 'OP2', 'F', 'B1', 'B2', 'ISO'}
+	local i = {'ISO'}
 	local b = {'B1', 'B2'}
 	local f = {'A', 'I'}
 	local c = {'White', 'Purple', 'Yellow', 'Red', 'Blue', 'Green'}
 	local hideID = ""
-	local colWidth = "550"
+	local colWidth = "580"
 	
 	--mod1
 	--show/hide isotopes values
@@ -1937,20 +1911,47 @@ function updateFTUIMods()
 			end
 		end
 	end
+
+	-- mod4
+	for k,v in pairs(c) do
+		for i, j in pairs(i) do
+			for q, s in pairs(f) do
+				hideID = v .. j .. s .. 'Cell'
+				if hideID ~= "" then
+					UI.setAttribute(hideID, "active", toolConfig.ft.mod4)
+					hideID = ""
+				end
+			end
+		end
+	end
+	--other rows
+	for k,v in pairs(p) do
+		for i, j in pairs(i) do
+			hideID = v .. j .. 'Cell'
+			if hideID ~= "" then
+				UI.setAttribute(hideID, "active", toolConfig.ft.mod4)
+				hideID = ""
+			end
+		end
+	end
+
 	--header
 	UI.setAttribute("headerB1Cell", "active", toolConfig.ft.mod2)
 	UI.setAttribute("headerB2Cell", "active", toolConfig.ft.mod2)
+	UI.setAttribute("headerISOCell", "active", toolConfig.ft.mod4)
 	UI.setAttribute("BtnBankLEO", "active", toolConfig.ft.mod2)
 	UI.setAttribute("BtnBankLEO", "textColor", "White")
 	
 
 
-	if toolConfig.ft.mod1 == false and toolConfig.ft.mod2 == false then
+	if toolConfig.ft.mod1 == false and toolConfig.ft.mod2 == false and toolConfig.ft.mod4 == false then
 		colWidth = "330"
+	elseif toolConfig.ft.mod1 == false and toolConfig.ft.mod2 == false then
+		colWidth = "367"
 	elseif toolConfig.ft.mod1 == false then
-		colWidth = "477"
+		colWidth = "440"
 	elseif toolConfig.ft.mod2 == false then
-		colWidth = "403"
+		colWidth = "440"
 	end
 	UI.setAttribute("FTTrackerChild3","width", colWidth)
 	UI.setAttribute("FTTrackerChild2","width", colWidth)
@@ -2699,7 +2700,9 @@ function turnToNextP(pPrevious)
 	end
 	
 	if toolConfig.turn.autoProfit == true and configTable.toolFTTracker == true then
-		if ftTrackerTable[pNextColor].bank ~= "LEO" then
+		-- Isobank cant technically be your bank yet but I think it's coming.  Ability to set isobank as the bank
+		-- implemented in the FT tracker.
+		if ftTrackerTable[pNextColor].bank ~= "LEO" and ftTrackerTable[pNextColor].bank ~= "ISO" then
 			local pName = ""
 			if Player[pNextColor].steam_name then
 				pName = Player[pNextColor].steam_name
@@ -3343,7 +3346,7 @@ function updateContractBidStatus()
 		contractBidTable.last.ties = {}
 		contractBidTable.last.tied = false
 		contractBidTable.ongoing = false
-		timerUnpause()
+		timerTable.active = timerTable.prevplayer
 
 		for k,v in pairs(contractBidTable.pass) do
 			contractBidTable.pass[k] = false
@@ -3391,6 +3394,7 @@ function contractBidStart(player, type, btnID)
 	contractBidTable.last.bidder = player.color
 	contractBidTable.last.initiator = player.color
 	contractBidTable.pass[player.color] = true
+	timerTable.prevplayer = timerTable.active
 	broadcastToAll(player.steam_name .. " starts an auction with a bid of 10", player.color)
 	timerAdd()
 	-- timerPauseForAuction()
@@ -3665,6 +3669,12 @@ end
 
 function setBankBS(player, _c, _i)
 	ftTrackerTable[player.color].bank = "BS"
+	updateFTUI()	
+	hardSaveFT()
+end
+
+function setBankISO(player, _c, _i)
+	ftTrackerTable[player.color].bank = "ISO"
 	updateFTUI()	
 	hardSaveFT()
 end

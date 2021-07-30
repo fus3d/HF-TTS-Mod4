@@ -1610,6 +1610,10 @@
 					<Text class="headerText">B-S</Text>
 					<Button id="BtnBankB2" class="swapButton" active = "True" tooltip = "Set Aqua Bank Location" width = "70" height = "38" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" textColor = "White" fontSize="22" fontStyle="Bold" onClick="setBankBS">B-S</Button>
 				</cell>
+				<cell id = "headerISOCell" class="trackerCellOther">
+					<Text class="headerText">ISO</Text>
+					<Button id="BtnBankISO" class="swapButton" active = "True" tooltip = "Set Aqua Bank Location" width = "70" height = "38" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" textColor = "White" fontSize="22" fontStyle="Bold" onClick="setBankISO">ISO</Button>
+				</cell>
 				<cell class="trackerCellOther">
 					<Text class="headerText">OP1</Text>
 				</cell>
@@ -1634,6 +1638,9 @@
 				</cell>
 				<cell id = "WhiteB2ACell" class="trackerCellOther">
 					<Button id="WhiteB2A" onClick="clickTracker" text="0" class="btnTrackerA" resizeTextForBestFit="true" resizeTextMaxSize="30"></Button>
+				</cell>
+				<cell id = "WhiteISOACell" class="trackerCellOther">
+					<Button id="WhiteISOA" onClick="clickTracker" text="0" class="btnTrackerA" resizeTextForBestFit="true" resizeTextMaxSize="30"></Button>
 				</cell>
 				<cell class="trackerCellOther">
 					<Button id="WhiteOP1A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
@@ -1662,6 +1669,9 @@
 				<cell id = "WhiteB2ICell" class="trackerCellOther">
 					<Button id="WhiteB2I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
 				</cell>
+				<cell id = "WhiteISOICell" class="trackerCellOther">
+					<Button id="WhiteISOI" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
 				<cell class="trackerCellOther">
 					<Button id="WhiteOP1I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
 				</cell>
@@ -1687,6 +1697,9 @@
 				</cell>
 				<cell id = "PurpleB2ACell" class="trackerCellOther">
 					<Button id="PurpleB2A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+				<cell id = "PurpleISOACell" class="trackerCellOther">
+					<Button id="PurpleISOA" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
 				</cell>
 				<cell class="trackerCellOther">
 					<Button id="PurpleOP1A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
@@ -1716,6 +1729,9 @@
 				<cell id = "PurpleB2ICell" class="trackerCellOther">
 					<Button id="PurpleB2I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
 				</cell>
+				<cell id = "PurpleISOICell" class="trackerCellOther">
+					<Button id="PurpleISOI" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
 				<cell class="trackerCellOther">
 					<Button id="PurpleOP1I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
 				</cell>
@@ -1741,6 +1757,9 @@
 				</cell>
 				<cell id = "YellowB2ACell" class="trackerCellOther">
 					<Button id="YellowB2A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+				<cell id = "YellowISOACell" class="trackerCellOther">
+					<Button id="YellowISOA" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
 				</cell>
 				<cell class="trackerCellOther">
 					<Button id="YellowOP1A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
@@ -1770,6 +1789,9 @@
 				<cell id = "YellowB2ICell" class="trackerCellOther">
 					<Button id="YellowB2I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
 				</cell>
+				<cell id = "YellowISOICell" class="trackerCellOther">
+					<Button id="YellowISOI" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
 				<cell class="trackerCellOther">
 					<Button id="YellowOP1I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
 				</cell>
@@ -1795,6 +1817,9 @@
 				</cell>
 				<cell id = "RedB2ACell" class="trackerCellOther">
 					<Button id="RedB2A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+				<cell id = "RedISOACell" class="trackerCellOther">
+					<Button id="RedISOA" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
 				</cell>
 				<cell class="trackerCellOther">
 					<Button id="RedOP1A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
@@ -1824,6 +1849,9 @@
 				<cell id = "RedB2ICell" class="trackerCellOther">
 					<Button id="RedB2I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
 				</cell>
+				<cell id = "RedISOICell" class="trackerCellOther">
+					<Button id="RedISOI" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
 				<cell class="trackerCellOther">
 					<Button id="RedOP1I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
 				</cell>
@@ -1849,6 +1877,9 @@
 				</cell>
 				<cell id = "GreenB2ACell" class="trackerCellOther">
 					<Button id="GreenB2A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+				<cell id = "GreenISOACell" class="trackerCellOther">
+					<Button id="GreenISOA" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
 				</cell>
 				<cell class="trackerCellOther">
 					<Button id="GreenOP1A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
@@ -1878,6 +1909,9 @@
 				<cell id = "GreenB2ICell" class="trackerCellOther">
 					<Button id="GreenB2I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
 				</cell>
+				<cell id = "GreenISOICell" class="trackerCellOther">
+					<Button id="GreenISOI" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
 				<cell class="trackerCellOther">
 					<Button id="GreenOP1I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
 				</cell>
@@ -1903,6 +1937,9 @@
 				</cell>
 				<cell id = "BlueB2ACell" class="trackerCellOther">
 					<Button id="BlueB2A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+				<cell id = "BlueISOACell" class="trackerCellOther">
+					<Button id="BlueISOA" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
 				</cell>
 				<cell class="trackerCellOther">
 					<Button id="BlueOP1A" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
@@ -1931,6 +1968,9 @@
 				</cell>
 				<cell id = "BlueB2ICell" class="trackerCellOther">
 					<Button id="BlueB2I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
+				</cell>
+				<cell id = "BlueISOICell" class="trackerCellOther">
+					<Button id="BlueISOI" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
 				</cell>
 				<cell class="trackerCellOther">
 					<Button id="BlueOP1I" onClick="clickTracker" text="0" class="btnTrackerI" ></Button>
@@ -1962,6 +2002,10 @@
 				<cell id = "p1B2Cell" class="trackerCellOther">
 					<Text id = "p1B2Atxt" class="trackerText" color="Blue">0</Text>
 					<Text id = "p1B2Itxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+				<cell id = "p1ISOCell" class="trackerCellOther">
+					<Text id = "p1ISOAtxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p1ISOItxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell class="trackerCellOther">
 					<Text id = "p1OP1Atxt" class="trackerText" color="Blue">0</Text>
@@ -1997,6 +2041,10 @@
 					<Text id = "p2B2Atxt" class="trackerText" color="Blue">0</Text>
 					<Text id = "p2B2Itxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
+				<cell id = "p2ISOCell" class="trackerCellOther">
+					<Text id = "p2ISOAtxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p2ISOItxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
 				<cell class="trackerCellOther">
 					<Text id = "p2OP1Atxt" class="trackerText" color="Blue">0</Text>
 					<Text id = "p2OP1Itxt" class="trackerText" color="Yellow">0</Text>
@@ -2030,6 +2078,10 @@
 				<cell id = "p3B2Cell" class="trackerCellOther">
 					<Text id = "p3B2Atxt" class="trackerText" color="Blue">0</Text>
 					<Text id = "p3B2Itxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+				<cell id = "p3ISOCell" class="trackerCellOther">
+					<Text id = "p3ISOAtxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p3ISOItxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell class="trackerCellOther">
 					<Text id = "p3OP1Atxt" class="trackerText" color="Blue">0</Text>
@@ -2065,6 +2117,10 @@
 					<Text id = "p4B2Atxt" class="trackerText" color="Blue">0</Text>
 					<Text id = "p4B2Itxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
+				<cell id = "p4ISOCell" class="trackerCellOther">
+					<Text id = "p4ISOAtxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p4ISOItxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
 				<cell class="trackerCellOther">
 					<Text id = "p4OP1Atxt" class="trackerText" color="Blue">0</Text>
 					<Text id = "p4OP1Itxt" class="trackerText" color="Yellow">0</Text>
@@ -2099,6 +2155,10 @@
 					<Text id = "p5B2Atxt" class="trackerText" color="Blue">0</Text>
 					<Text id = "p5B2Itxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
+				<cell id = "p5ISOCell" class="trackerCellOther">
+					<Text id = "p5ISOAtxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p5ISOItxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
 				<cell class="trackerCellOther">
 					<Text id = "p5OP1Atxt" class="trackerText" color="Blue">0</Text>
 					<Text id = "p5OP1Itxt" class="trackerText" color="Yellow">0</Text>
@@ -2132,6 +2192,10 @@
 				<cell id = "p6B2Cell" class="trackerCellOther">
 					<Text id = "p6B2Atxt" class="trackerText" color="Blue">0</Text>
 					<Text id = "p6B2Itxt" class="trackerText" color="Yellow">0</Text>
+				</cell>
+				<cell id = "p6ISOCell" class="trackerCellOther">
+					<Text id = "p6ISOAtxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p6ISOItxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell class="trackerCellOther">
 					<Text id = "p6OP1Atxt" class="trackerText" color="Blue">0</Text>
@@ -2182,8 +2246,11 @@
 		<Row class="BasicRow" preferredHeight = "40" >
 			<Toggle id="toggleFTMod1" width="250" textColor="white" onValueChanged="toggleFTMod1" isOn="False" >Module 1 Stacks/FTs</Toggle>
 		</Row>
-		<Row class="BasicRow" preferredHeight = "60" >
+		<Row class="BasicRow" preferredHeight = "40" >
 			<Toggle id="toggleFTMod2" width="250" textColor="white" onValueChanged="toggleFTMod2" isOn="False" >Module 2 Stacks</Toggle>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40" >
+			<Toggle id="toggleFTMod4" width="250" textColor="white" onValueChanged="toggleFTMod4" isOn="False" >Module 4 Stacks</Toggle>
 		</Row>
 	</TableLayout>
 </Panel>
