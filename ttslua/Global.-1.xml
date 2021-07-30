@@ -136,7 +136,7 @@
 						<Toggle id="toggleUIToolContractBidTool" class="toggleConfig" onValueChanged="toggleTools" isOn="true" >Contract Bid Tool</Toggle>
 					</Cell>
 					<Cell>
-						<Toggle id="toggleUIToolTimerTool" class="toggleConfig" onValueChanged="toggleTools" isOn="true" >Timer</Toggle>
+						<Toggle id="toggleUIToolTimer" class="toggleConfig" onValueChanged="toggleTools" isOn="true" >Timer</Toggle>
 					</Cell>
 					<!-- <Cell>
 						<Toggle id="toggleUIToolBidTool" class="toggleConfig" onValueChanged="toggleTools" isOn="true" >Bid Tool</Toggle>

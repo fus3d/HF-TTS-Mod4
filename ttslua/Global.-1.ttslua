@@ -1169,8 +1169,9 @@ function updateToolsEnabled()
 	UI.setAttribute("BurnParentBernalRed", "active", configTable.toolBurnToolBernal)
 	UI.setAttribute("toggleUIToolBurnToolBernal", "isOn", configTable.toolBurnToolBernal )
 
-	UI.setAttribute("TimerToolParent", "active", configTable.toolTimerTool )
-	UI.setAttribute("toggleTimer", "isOn", configTable.toolTimer )
+	UI.setAttribute("TimerToolParent", "active", configTable.toolTimer )
+	UI.setAttribute("toggleUIToolTimerTool", "isOn", configTable.toolTimer )
+
 	UI.setAttribute("toggleTimerPause", "isOn", toolConfig.timer.pause )
 	UI.setAttribute("toggleTimerPauseButton", "isOn", toolConfig.timer.pausebutton )
 	updateTimerUI()
@@ -2016,7 +2017,7 @@ function toggleTools(_p, bool, btnID)
 	local toolStr = "tool" .. tool
 	if bool == "False" then
 		configTable[toolStr] = false
-		printToAll("UI: Disabling tool: " .. tool, msgAction)
+		printToAll("UI: Disabling tool: " .. toolStr, msgAction)
 	elseif bool == "True" then
 		configTable[toolStr] = true
 		printToAll("UI: Enabling tool: " .. tool, msgAction)
@@ -4101,8 +4102,10 @@ function killSetup()
 	configTable.toolTimer = true
 	UI.setAttribute("DiceRollerParent", "active", true)
 	UI.setAttribute("TurnTrackerParent", "active", true)
+	UI.setAttribute("ContractBidToolParent", "active", true)
 	UI.setAttribute("BidToolParent", "active", true)
 	UI.setAttribute("FTTrackerParent", "active", true)
+	UI.setAttribute("TimerToolParent", "active", true)
 	UI.setAttribute("BurnParentWhite", "active", true)
 	UI.setAttribute("BurnParentBlue", "active", true)
 	UI.setAttribute("BurnParentYellow", "active", true)
@@ -4608,7 +4611,7 @@ function updateUIMods()
 	UI.setAttribute("toggleUIToolSetupBurnToolBernal", "isOn", configTable.toolBurnToolBernal)
 	
 	configTable.toolContractBidTool = setupConfig.mods.mod4
-	UI.setAttribute("toggleUIToolTimer", "isOn", configTable.toolContractBidTool)
+	UI.setAttribute("toggleUIToolTimer", "isOn", configTable.toolTimer)
 	
 	--turn tracker
 	if setupConfig.mods.mod1 == true then
