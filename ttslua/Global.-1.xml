@@ -131,6 +131,17 @@
 						<Toggle id="toggleUIToolBidTool" class="toggleConfig" onValueChanged="toggleTools" isOn="true" >Bid Tool</Toggle>
 					</Cell>
 				</Row>
+				<Row class="BasicRow" preferredHeight="60">
+					<Cell>
+						<Toggle id="toggleUIToolContractBidTool" class="toggleConfig" onValueChanged="toggleTools" isOn="true" >Contract Bid Tool</Toggle>
+					</Cell>
+					<Cell>
+						<Toggle id="toggleUIToolTimerTool" class="toggleConfig" onValueChanged="toggleTools" isOn="true" >Timer</Toggle>
+					</Cell>
+					<!-- <Cell>
+						<Toggle id="toggleUIToolBidTool" class="toggleConfig" onValueChanged="toggleTools" isOn="true" >Bid Tool</Toggle>
+					</Cell> -->
+				</Row>
 				<Row class="BasicRow" preferredHeight="80">
 					<Toggle id="toggleInteractable" class="toggleConfig" onValueChanged="toggleInteractable" isOn="False" tooltip="Make certain objects interactable -- boards,tables, etc" >Unlock Static Objects</Toggle>
 				</Row>

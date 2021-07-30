@@ -239,6 +239,8 @@ function onLoad(saved_data)
 end
 
 function onUpdate()
+	-- Just a reminder.  The timer will still count even when the timer UI is removed because of when we capture the
+	-- timestamps.  You can hide the timer from the screen but it will still be adding time to the counters.
 	if configTable.toolTimer then
 		if updatetime >= 60 then
 			timerAddShort()
@@ -1145,6 +1147,9 @@ function updateToolsEnabled()
 	UI.setAttribute("BidToolParent", "active", configTable.toolBidTool )
 	UI.setAttribute("toggleUIToolBidTool", "isOn", configTable.toolBidTool )
 
+	UI.setAttribute("ContractBidToolParent", "active", configTable.toolContractBidTool )
+	UI.setAttribute("toggleUIToolContractBidTool", "isOn", configTable.toolContractBidTool )
+
 	UI.setAttribute("TurnTrackerParent", "active", configTable.toolTurnTracker )
 	UI.setAttribute("toggleUIToolTurnTracker", "isOn", configTable.toolTurnTracker )
 	
@@ -1164,9 +1169,8 @@ function updateToolsEnabled()
 	UI.setAttribute("BurnParentBernalRed", "active", configTable.toolBurnToolBernal)
 	UI.setAttribute("toggleUIToolBurnToolBernal", "isOn", configTable.toolBurnToolBernal )
 
-	UI.setAttribute("ContractBidToolParent", "active", configTable.toolContractBidTool )
-
-	UI.setAttribute("TimerToolParent", "active", configTable.toolTimer )
+	UI.setAttribute("TimerToolParent", "active", configTable.toolTimerTool )
+	UI.setAttribute("toggleTimer", "isOn", configTable.toolTimer )
 	UI.setAttribute("toggleTimerPause", "isOn", toolConfig.timer.pause )
 	UI.setAttribute("toggleTimerPauseButton", "isOn", toolConfig.timer.pausebutton )
 	updateTimerUI()
@@ -1396,7 +1400,12 @@ function updateTurnUI()
 	if toolConfig.turn.mod3 == true then
 		boxes = boxes + 1
 	end
-	if boxes > 6 then
+	if toolConfig.turn.mod4 == true then
+		boxes = boxes + 1
+	end
+	if boxes > 8 then
+		UI.setAttribute("rowActionGrid", "preferredHeight","225")
+	elseif boxes > 6 then
 		UI.setAttribute("rowActionGrid", "preferredHeight","180")
 	elseif boxes > 4 then
 		UI.setAttribute("rowActionGrid", "preferredHeight","135")
