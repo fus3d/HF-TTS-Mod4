@@ -2,6 +2,7 @@
 
 --High Frontier 4
 --Eskander scripts
+-- LtFiend / Fus3d version - Less stable, includes Mod4 
 --Global
 
 --------TOC
@@ -83,7 +84,6 @@ configTable = {
 	toolDiceRoller = false,
 	toolTurnTracker = false,
 	toolFTTracker = false,
-	toolContractBidTool = false,
 	toolBidTool = false,
 	toolBurnTool = false,
 	toolBurnToolBernal = false,
@@ -111,13 +111,6 @@ turnTrackerTable = {
 
 bidTable = {
 		last = {amount = 0, bidder = {}, special = "", initiator = {}, tied = false, ties = {}},
-		pass = {White = false, Red = false, Yellow = false, Green = false, Blue = false, Purple = false},
-		ongoing = false,
-		visibility = {White = true, Red = true, Yellow = true, Green = true, Blue = true, Purple = true}
-}
-
-contractBidTable = {
-		last = {amount = 10, bidder = {}, special = "", initiator = {}, tied = false, ties = {}},
 		pass = {White = false, Red = false, Yellow = false, Green = false, Blue = false, Purple = false},
 		ongoing = false,
 		visibility = {White = true, Red = true, Yellow = true, Green = true, Blue = true, Purple = true}
@@ -161,6 +154,8 @@ timerTable = {
 }
 
 updatetime = 0
+bidType = "patent"
+bidValuesTable = {0, 1, 2, 3}
 
 --===================================================================================EVENT FCNS
 ------------------init on load
@@ -197,7 +192,6 @@ function onLoad(saved_data)
 		loadGlobalData()
 		loadTurnData()
 		loadBidData()
-		loadContractBidData()
 		loadFTData()
 		loadBurnData()
 		loadVPData()
@@ -340,30 +334,6 @@ function loadBidData()
 			--print("No previous hard save data.")
 		else
 			bidTable = data_to_load[1]
-		end
-	end
-end
-
-function loadContractBidData()
-	local ind = {}
-	local bodyText = ""
-	local found = false
-	local notebooks = Notes.getNotebookTabs()
-	for k,v in pairs(notebooks) do
-		if v.title == "DataContractBid" then
-			ind = v.index
-			bodyText = v.body
-			found = true
-		end
-	end
-	if found == false then
-		Notes.addNotebookTab({title = "DataContractBid", body = "", color = "Black"})
-	else
-		local data_to_load = JSON.decode(bodyText)
-		if data_to_load == nil then
-			--print("No previous hard save data.")
-		else
-			contractBidTable = data_to_load[1]
 		end
 	end
 end
@@ -560,24 +530,6 @@ function hardSaveBid()
 	local notebooks = Notes.getNotebookTabs()
 	for k,v in pairs(notebooks) do
 		if v.title == "DataBid" then
-			i = v.index
-		end
-	end
-	Notes.editNotebookTab({index = i, body = saved_data})
-end
-
-function hardSaveContractBid()
-	local data_to_save = {
-		contractBidTable
-	}
-
-	saved_data = JSON.encode(data_to_save)
-	--to remove hard saved data, delete contents of notebook, "DataBid"
-	
-	local i = {}
-	local notebooks = Notes.getNotebookTabs()
-	for k,v in pairs(notebooks) do
-		if v.title == "DataContractBid" then
 			i = v.index
 		end
 	end
@@ -1126,8 +1078,6 @@ function updateUI()
 	
 	updateBidUI()
 
-	updateContractBidUI()
-	
 	updateFTUI()
 	
 	updateFTUIMods()
@@ -1146,9 +1096,6 @@ function updateToolsEnabled()
 
 	UI.setAttribute("BidToolParent", "active", configTable.toolBidTool )
 	UI.setAttribute("toggleUIToolBidTool", "isOn", configTable.toolBidTool )
-
-	UI.setAttribute("ContractBidToolParent", "active", configTable.toolContractBidTool )
-	UI.setAttribute("toggleUIToolContractBidTool", "isOn", configTable.toolContractBidTool )
 
 	UI.setAttribute("TurnTrackerParent", "active", configTable.toolTurnTracker )
 	UI.setAttribute("toggleUIToolTurnTracker", "isOn", configTable.toolTurnTracker )
@@ -1206,15 +1153,6 @@ function updateMinMax()
 	end
 	UI.setAttribute("TimerToolChild", "visibility", colorsVis)
 	
-	--min/max of contract bid tool
-	colorsVis = "Black|Grey"
-	for k,v in pairs(contractBidTable.visibility) do
-		if v == true then
-			colorsVis = colorsVis .. "|" .. k
-		end
-	end
-	UI.setAttribute("ContractBidToolChild", "visibility", colorsVis)
-	
 	--min/max of turn tracker
 	colorsVis = "Black|Grey"
 	for k,v in pairs(turnTrackerTable) do
@@ -1261,8 +1199,6 @@ function updateToolScale()
 	UI.setValue("textScaleFT", toolConfig.ft.scale)
 	UI.setAttribute("BidToolParent","scale",toolConfig.bid.scale)
 	UI.setValue("textScaleBid", toolConfig.bid.scale)
-	UI.setAttribute("ContractBidToolParent","scale",toolConfig.bid.scale)
-	UI.setValue("textScaleContractBid", toolConfig.bid.scale)
 	UI.setAttribute("TurnTrackerParent","scale",toolConfig.turn.scale)
 	UI.setValue("textScaleTurn", toolConfig.turn.scale)
 	UI.setAttribute("TimerToolParent","scale",toolConfig.timer.scale)
@@ -1536,7 +1472,19 @@ function updateBidUI()
 	if bidTable.ongoing == true then
 		timerTable.active = {}
 		UI.setAttribute("bidStart", "active", "False")
+		UI.setAttribute("contractBidStart", "active", "False")
 
+	if bidType == "patent" then 
+		UI.setAttribute("bidRaise", "active", "True")
+		UI.setAttribute("bidLower", "active", "False")
+  		UI.setAttribute("bidRaise", "textColor", "White")
+  		UI.setAttribute("bidLower", "textColor", "White")
+	elseif bidType == "contract" then
+		UI.setAttribute("bidRaise", "active", "False")
+		UI.setAttribute("bidLower", "active", "True")
+  		UI.setAttribute("bidRaise", "textColor", "White")
+  		UI.setAttribute("bidLower", "textColor", "White")
+	end	
 		--edit with bid colors; show colors and turn order
 		str = "bidCellP"
 		local num = {}
@@ -1578,6 +1526,7 @@ function updateBidUI()
 			end
 			UI.setAttribute("bidText", "text", tostring(bidTable.last.amount))
 			UI.setAttribute("bidText", "color", "White")
+			updateBidOptions()
 		end
 	else
 		str="bidTextP"
@@ -1587,9 +1536,12 @@ function updateBidUI()
 		end
 		UI.setAttribute("bidText", "text", "")
 		UI.setAttribute("bidStart", "active", "True")
+		UI.setAttribute("contractBidStart", "active", "True")
 		UI.setAttribute("bidStart", "textColor", "White")
+		UI.setAttribute("contractBidStart", "textColor", "White")
+		bidValuesTable = {0, 1, 2, 3}
+		updateBidOptions()
 	end
-	
 	--update tooltips
 	str="bidTextP"
 	for k,v in pairs(seatTable) do
@@ -1601,84 +1553,11 @@ function updateBidUI()
 	end
 end
 
---update contract bid tool
-function updateContractBidUI()
-	--match config
-	UI.setAttribute("toggleBidAuto", "isOn", toolConfig.bid.auto)
-	UI.setAttribute("toggleBidMarketeer", "isOn", toolConfig.bid.marketeer)
-	
-	--only visible to active players
-	local colorsVis = "Black"
-	for k,v in pairs(contractBidTable.pass) do
-		colorsVis = colorsVis .. "|" .. k
-	end
-	UI.setAttribute("ContractBidToolParent", "visibility", colorsVis)
-	
-	--start bid button
-	local str = ""
-	if contractBidTable.ongoing == true then
-		timerTable.active = {}
-		UI.setAttribute("contractBidStart", "active", "False")
-
-		--edit with bid colors; show colors and turn order
-		str = "contractBidCellP"
-		local num = {}
-		for i=1, 6 do
-			UI.setAttribute(str .. i, "active", "False")
-		end
-		for k,v in pairs(seatTable) do
-			UI.setAttribute(str .. k, "active", "True")
-			UI.setAttribute(str .. k, "color", v)
-		end
-	
-		--update bid status in gumball chart
-		str="contractBidTextP"
-		if toolConfig.bid.auto == true then
-			for k,v in pairs(seatTable) do
-				--passed players
-				if contractBidTable.pass[v] == true then
-					UI.setAttribute(str .. k, "text", "X")
-				else
-					UI.setAttribute(str .. k, "text", "")
-					if toolConfig.timer.countauctions == true then table.insert(timerTable.active, v)
-					else timerTable.active = {"Pause"}
-					end
-				end
-				
-				--winning players
-				if contractBidTable.last.tied == true then
-					for j, l in pairs(contractBidTable.last.ties) do
-						if l == v then
-							UI.setValue(str .. k, tostring(contractBidTable.last.amount))
-						end
-					end
-				elseif contractBidTable.last.bidder ~= "" then
-					if contractBidTable.last.bidder == v then
-						UI.setValue(str .. k, tostring(contractBidTable.last.amount))
-					end					
-				end
-			end
-			UI.setAttribute("contractBidText", "text", tostring(contractBidTable.last.amount))
-			UI.setAttribute("contractBidText", "color", "White")
-		end
-	else
-		str="contractBidTextP"
-		for k,v in pairs(seatTable) do
-			UI.setAttribute(str .. k, "text", "")
-		end
-		UI.setAttribute("contractBidText", "text", "")
-		UI.setAttribute("contractBidStart", "active", "True")
-		UI.setAttribute("contractBidStart", "textColor", "White")
-	end
-	
-	--update tooltips
-	str="contractBidTextP"
-	for k,v in pairs(seatTable) do
-		if Player[v].seated == true then
-			UI.setAttribute(str .. k, "tooltip", Player[v].steam_name)
-		else
-			UI.setAttribute(str .. k, "tooltip", v)
-		end
+function updateBidOptions()
+	str="bid"
+	for i=1,4 do
+		UI.setAttribute(str .. i, "text", tostring(bidValuesTable[i]))
+		UI.setAttribute(str .. i, "textColor", "White")
 	end
 end
 
@@ -2000,7 +1879,6 @@ function updateVPUI()
 	end		
 end
 
-
 ----------------------------------------------UI config tool
 
 function uiConfigOpen()
@@ -2079,17 +1957,6 @@ end
 
 function maximizeTimerTool(player, btnID)
 	timerTable.visibility[player.color] = true
-	updateMinMax()
-end
-
------------ contract bid tool
-function minimizeContractBidTool(player, btnID)
-	contractBidTable.visibility[player.color] = false
-	updateMinMax()
-end
-
-function maximizeContractBidTool(player, btnID)
-	contractBidTable.visibility[player.color] = true
 	updateMinMax()
 end
 
@@ -2949,13 +2816,13 @@ function changeBidScale(_p, val, btnID)
 	toolConfig.bid.scale = val
 	updateToolScale()
 	hardSave()
-end;
+end
 
 function changeTimerScale(_p, val, btnID)
 	toolConfig.timer.scale = val
 	updateToolScale()
 	hardSave()
-end;
+end
 
 
 
@@ -3021,26 +2888,14 @@ function setPlayersBidTool()
 	hardSaveBid()
 end
 
-function setPlayersContractBidTool()
-	if contractBidTable.ongoing == true then
-		contractBidTable.last.amount = 10
-		contractBidTable.last.bidder = ""
-		contractBidTable.last.special = ""
-		contractBidTable.last.initiator = {}
-		contractBidTable.ongoing = false
-		printToAll("Current bidding process has been reset due to player count changing.",msgComplete)
-	end
-
-	contractBidTable.pass = {}
-	for k,v in pairs (seatTable) do
-		contractBidTable.pass[v] = false
-	end
-	updateContractBidUI()
-	hardSaveContractBid()
-end
-
 function updateBid(player, bid)
-	if bid > bidTable.last.amount then
+	local doUpdate = "false"
+    if bidType == "patent" then 
+		if bid > bidTable.last.amount then doUpdate = "true" end
+	elseif bidType == "contract" then
+		if bid < bidTable.last.amount then doUpdate = "true" end
+	end	
+	if doUpdate == "true" then
 		local specialStr = "  |."
 		if bidTable.last.tied == true then
 			for k,v in pairs(bidTable.last.ties) do
@@ -3065,7 +2920,11 @@ function updateBid(player, bid)
 		bidTable.pass[player.color] = true
 		bidTable.last.ties = {}
 		bidTable.last.tied = false
-		broadcastToAll(player.steam_name .. " raises bid to |  " .. bid .. specialStr,player.color)
+		if bidType == "patent" then 
+			broadcastToAll(player.steam_name .. " raises bid to |  " .. bid .. specialStr,player.color)
+		elseif bidType == "contract" then
+			broadcastToAll(player.steam_name .. " lowers bid to |  " .. bid .. specialStr,player.color)
+		end	
 	elseif bid == bidTable.last.amount and player.color == "Blue" and toolConfig.bid.marketeer == true then	
 		if bidTable.last.tied == true then
 			for k,v in pairs(bidTable.last.ties) do
@@ -3124,93 +2983,6 @@ function updateBid(player, bid)
 		broadcastToColor("Your bid was not accepted as it is lower than current bid.", player.color, msgError)
 	end
 	updateBidStatus()
-end
-
-function updateContractBid(player, bid)
-	if bid < contractBidTable.last.amount then
-		local specialStr = "  |."
-		if contractBidTable.last.tied == true then
-			for k,v in pairs(contractBidTable.last.ties) do
-				contractBidTable.pass[v] = false
-			end
-		else
-			if contractBidTable.last.bidder ~= "" then
-				contractBidTable.pass[contractBidTable.last.bidder] = false
-			end
-		end
-		contractBidTable.last.amount = bid
-		contractBidTable.last.bidder = player.color
-		if player.color == "Blue" and toolConfig.bid.marketeer == true then
-			contractBidTable.last.special = "marketeer"
-			specialStr = "  | as marketeer."
-		elseif player.color == contractBidTable.last.initiator then
-			contractBidTable.last.special = "initiator"
-			specialStr = "  | as initiator."
-		else
-			contractBidTable.last.special = ""
-		end
-		contractBidTable.pass[player.color] = true
-		contractBidTable.last.ties = {}
-		contractBidTable.last.tied = false
-		broadcastToAll(player.steam_name .. " can complete by turn  |  " .. bid .. specialStr,player.color)
-	elseif bid == contractBidTable.last.amount and player.color == "Blue" and toolConfig.bid.marketeer == true then	
-		if contractBidTable.last.tied == true then
-			for k,v in pairs(contractBidTable.last.ties) do
-				contractBidTable.pass[v] = false
-			end
-		else
-			if contractBidTable.last.bidder ~= "" then
-				contractBidTable.pass[contractBidTable.last.bidder] = false
-			end
-		end
-		contractBidTable.last.amount = bid
-		contractBidTable.last.bidder = player.color
-		contractBidTable.last.special = "marketeer"
-		contractBidTable.pass[player.color] = true
-		contractBidTable.last.ties = {}
-		contractBidTable.last.tied = false
-		broadcastToAll(player.steam_name .. " matches bid of |  " .. bid .. "  | as marketeer.",player.color)
-	elseif bid == contractBidTable.last.amount and player.color == contractBidTable.last.initiator and contractBidTable.last.special ~= "marketeer" then
-		if contractBidTable.last.tied == true then
-			for k,v in pairs(contractBidTable.last.ties) do
-				contractBidTable.pass[v] = false
-			end
-		else
-			if contractBidTable.last.bidder ~= "" then
-				contractBidTable.pass[contractBidTable.last.bidder] = false
-			end
-		end
-		contractBidTable.last.amount = bid
-		contractBidTable.last.bidder = player.color
-		contractBidTable.last.special = "initiator"
-		contractBidTable.pass[player.color] = true
-		contractBidTable.last.ties = {}
-		contractBidTable.last.tied = false
-		broadcastToAll(player.steam_name .. " matches bid of |  " .. bid .. "  | as initiator.",player.color)
-	elseif bid == contractBidTable.last.amount and contractBidTable.last.special ~= "marketeer" and contractBidTable.last.special ~= "initiator" then
-		if contractBidTable.last.tied == true then
-			for k,v in pairs(contractBidTable.last.ties) do
-				contractBidTable.pass[v] = false
-			end
-		else
-			if contractBidTable.last.bidder ~= "" then
-				contractBidTable.pass[contractBidTable.last.bidder] = false
-				table.insert(contractBidTable.last.ties, contractBidTable.last.bidder)
-			end
-		end
-		contractBidTable.last.amount = bid
-		contractBidTable.last.bidder = ""
-		contractBidTable.last.special = ""
-		local tempTable = contractBidTable.last.ties
-		table.insert(tempTable, player.color)
-		contractBidTable.last.ties = tempTable
-		contractBidTable.last.tied = true
-		contractBidTable.pass[player.color] = true
-		broadcastToAll(player.steam_name .. " matches bid of |  " .. bid .. "  | in a tie.",player.color)
-	else
-		broadcastToColor("Your bid was not accepted as it is longer than current time bid.", player.color, msgError)
-	end
-	updateContractBidStatus()
 end
 
 function updateBidStatus()
@@ -3291,93 +3063,19 @@ function updateBidStatus()
 	hardSaveBid()
 end
 
-function updateContractBidStatus()
-	local str = ""
-	local playerList = Player.getPlayers()
-	local player = {}
-	if toolConfig.turn.soloMode == false then
-		for k,v in pairs(contractBidTable.pass) do
-			if v == false then
-				for j,l in pairs(playerList) do
-					if l.seated == true and l.color == k then
-						player = l
-						str = player.steam_name .. " | " .. str
-					end
-				end
-			end
-			
-		end	
-	elseif toolConfig.turn.soloMode == true then
-		for k,v in pairs(contractBidTable.pass) do
-			if v == false then
-				str = k .. " | " .. str
-			end
-			
-		end	
-	end
-	if str == "" then
-		local bidderStr = ""
-		if contractBidTable.last.special ~= "initiator" then
-			bidderStr = "a bidder"
-		else
-			bidderStr = "an initiator"
-		end
-		if contractBidTable.last.tied == false then
-			if toolConfig.turn.soloMode == false then
-				broadcastToAll("Auction complete! " .. Player[contractBidTable.last.bidder].steam_name .. " won the contract auction with a bid of |    " .. tostring(contractBidTable.last.amount) .. "    | as " .. bidderStr .. ".",msgPrompt)
-			else
-				broadcastToAll("Auction complete! " .. contractBidTable.last.bidder .. " won the contract auction with a bid of |    " .. tostring(contractBidTable.last.amount) .. "    | as " .. bidderStr .. ".",msgPrompt)
-			end
-		else
-			local tieStr = ""
-			if toolConfig.turn.soloMode == false then
-				for k,v in pairs(contractBidTable.last.ties) do
-					if Player[v].seated == true then
-						tieStr = tieStr .. " , " .. Player[v].steam_name
-					else
-						tieStr = tieStr .. " , " .. v
-					end
-				end
-			else
-				for k,v in pairs(contractBidTable.last.ties) do
-					tieStr = tieStr .. " , " .. v
-				end
-			end
-			broadcastToAll("Auction ends in a tie! Auctioneer must choose winner: " .. tieStr .. " are tied with a bid of |    " .. tostring(contractBidTable.last.amount) .. "    |.",msgPrompt)
-		end
-		local soundAsset = getObjectFromGUID(objRefs.tools.sound)
-		if  soundAsset then
-			soundAsset.AssetBundle.playTriggerEffect(3)
-		end
-		contractBidTable.last.amount = 10
-		contractBidTable.last.bidder = ""
-		contractBidTable.last.special = ""
-		contractBidTable.last.initiator = {}
-		contractBidTable.last.ties = {}
-		contractBidTable.last.tied = false
-		contractBidTable.ongoing = false
-		timerTable.active = timerTable.prevplayer
-
-		for k,v in pairs(contractBidTable.pass) do
-			contractBidTable.pass[k] = false
-		end
-	else
-		printToAll("Pending bids or passes from players: " .. str,msgPrompt)
-	end
-	updateContractBidUI()
-	hardSaveContractBid()
-end
-
 ----------bid input
 function bidStart(player, type, btnID)
-	bidTable.ongoing = true
 	local bid = 0
+	bidTable.ongoing = true
+	if bidType == "contract" then
+		bid = 10
+	end	
 	bidTable.last.amount = bid
 	bidTable.last.bidder = player.color
 	bidTable.last.initiator = player.color
 	bidTable.pass[player.color] = true
 	timerTable.prevplayer = timerTable.active
-	broadcastToAll(player.steam_name .. " starts an auction with a bid of 0", player.color)
+	broadcastToAll(player.steam_name .. " starts an auction with a bid of " .. bid, player.color)
 	timerAdd()
 	-- timerPauseForAuction()
 	local soundAsset = getObjectFromGUID(objRefs.tools.sound)
@@ -3397,32 +3095,26 @@ function bidStart(player, type, btnID)
 	end
 end
 
+function patentBidStart(player, type, btnID)
+	bidType = "patent"
+	bidValuesTable = {0, 1, 2, 3}
+	bidStart(player, type, btnID)
+end
+
 function contractBidStart(player, type, btnID)
-	contractBidTable.ongoing = true
-	local bid = 10
-	contractBidTable.last.amount = bid
-	contractBidTable.last.bidder = player.color
-	contractBidTable.last.initiator = player.color
-	contractBidTable.pass[player.color] = true
-	timerTable.prevplayer = timerTable.active
-	broadcastToAll(player.steam_name .. " starts an auction with a bid of 10", player.color)
-	timerAdd()
-	-- timerPauseForAuction()
-	local soundAsset = getObjectFromGUID(objRefs.tools.sound)
-	if  soundAsset then
-		soundAsset.AssetBundle.playTriggerEffect(4)
-	end
-	if player == "Blue" and toolConfig.bid.marketeer == true then
-		contractBidTable.last.special = "marketeer"
-	else
-		contractBidTable.last.special = "initiator"
-	end
-	if toolConfig.bid.auto == true then
-		updateContractBidStatus()
-	else
-		updateContractBidUI()
-		hardSaveContractBid()
-	end
+	bidType = "contract"
+	bidValuesTable = {10, 9, 8, 7}
+	bidStart(player, type, btnID)
+end
+
+function updateBidValuesTable(bidType, currentBid)
+		if bidType == "patent" then 
+			bidValuesTable = {currentBid, currentBid+1, currentBid+2, currentBid+3}
+		elseif bidType == "contract" then
+			-- redo to be floor 0
+			bidValuesTable = {currentBid, math.max(0, currentBid-1), math.max(0, currentBid-2), math.max(0, currentBid-3)}
+		end
+		str = "bid"
 end
 
 function bid(player, type, btnID)
@@ -3430,19 +3122,23 @@ function bid(player, type, btnID)
 	if toolConfig.bid.auto == true and bidTable.ongoing == false then
 		printToColor("An auction has not yet started.",player.color,msgError)
 	else
-		if btnID ~= "bidMatch" and btnID ~= "bidRaise" then
+		if btnID ~= "bidMatch" and btnID ~= "bidRaise" and btnID ~= "bidLower" then
 			bid = string.sub(btnID,4)
-			bid = tonumber(bid)
+			bid = bidValuesTable[tonumber(bid)]
+			-- bid = tonumber(bid)
 		elseif btnID == "bidMatch" then
 			bid = bidTable.last.amount
 		elseif btnID == "bidRaise" then
 			bid = bidTable.last.amount + 1
+		elseif btnID == "bidLower" then
+			bid = math.max(0, bidTable.last.amount - 1)
 		end
 		local soundAsset = getObjectFromGUID(objRefs.tools.sound)
 		if  soundAsset then
 			soundAsset.AssetBundle.playTriggerEffect(4)
 		end
 		if toolConfig.bid.auto == true then
+			updateBidValuesTable(bidType, bid)
 			updateBid(player, bid)
 		else
 			local str="bidTextP"
@@ -3452,56 +3148,20 @@ function bid(player, type, btnID)
 				end
 			end
 			broadcastToAll(player.steam_name .. " bids " .. bid,player.color)
-
-			if bid > bidTable.last.amount then
-				bidTable.last.amount = bid
-				bidTable.last.bidder = player.color
-			end
-			updateBidUI()
-			hardSaveBid()
-		end
-	end
-end
-
-function contractBid(player, type, btnID)
-	local bid = {}
-	if toolConfig.bid.auto == true and contractBidTable.ongoing == false then
-		printToColor("An auction has not yet started.",player.color,msgError)
-	else
-		if btnID ~= "contractBidMatch" and btnID ~= "contractBidLower" then
-			bid = string.sub(btnID,4)
-			bid = tonumber(bid)
-		elseif btnID == "contractBidMatch" then
-			bid = contractBidTable.last.amount
-		elseif btnID == "contractBidLower" then
-			if contractBidTable.last.amount < 1 then
-				print("Cannot bid less than 0 turns")
-				bid = 0
-			else
-				bid = contractBidTable.last.amount - 1
-			end
-		end
-		local soundAsset = getObjectFromGUID(objRefs.tools.sound)
-		if  soundAsset then
-			soundAsset.AssetBundle.playTriggerEffect(4)
-		end
-		if toolConfig.bid.auto == true then
-			updateContractBid(player, bid)
-		else
-			local str="contractBidTextP"
-			for k,v in pairs(seatTable) do
-				if v == player.color then
-					UI.setAttribute(str .. k, "text", bid)
+			if bidType == "patent" then 
+				if bid > bidTable.last.amount then
+					bidTable.last.amount = bid
+					bidTable.last.bidder = player.color
+				end
+			elseif bidType == "contract" then
+				if bid < bidTable.last.amount then
+					bidTable.last.amount = bid
+					bidTable.last.bidder = player.color
 				end
 			end
-			broadcastToAll(player.steam_name .. " bids " .. bid,player.color)
-
-			if 0 <= bid < contractBidTable.last.amount  then
-				contractBidTable.last.amount = bid
-				contractBidTable.last.bidder = player.color
-			end
-			updateContractBidUI()
-			hardSaveContractBid()
+			updateBidUI()
+			updateBidValuesTable(bidType, bid)
+			hardSaveBid()
 		end
 	end
 end
@@ -3514,19 +3174,6 @@ function bidEnter(player, entry, btnID)
 			sendBid = entry
 			--print(sendBid)
 			bid(player, "manual", "bid" .. sendBid)
-		end
-	else
-	end
-end
-
-function contractBidEnter(player, entry, btnID)
-	local sendBid = {}
-	if entry ~= "" then
-		entry = tonumber(entry)
-		if 10 >= entry >= 0 then
-			sendBid = entry
-			--print(sendBid)
-			contractBid(player, "manual", "bid" .. sendBid)
 		end
 	else
 	end
@@ -3557,31 +3204,6 @@ function bidPass(player, entry, btnID)
 	end
 end
 
-function contractBidPass(player, entry, btnID)
-	if toolConfig.bid.auto == true and contractBidTable.ongoing == false then
-		printToColor("An auction has not yet started.",player.color,msgError)
-	else
-		broadcastToAll(player.steam_name .. " passes.",player.color)
-		local soundAsset = getObjectFromGUID(objRefs.tools.sound)
-		if  soundAsset then
-			soundAsset.AssetBundle.playTriggerEffect(4)
-		end
-		contractBidTable.pass[player.color] = true
-		if toolConfig.bid.auto == true then
-			updateContractBidStatus()
-		else
-			local str="contractBidTextP"
-			for k,v in pairs(seatTable) do
-				if v == player.color then
-					UI.setAttribute(str .. k, "text", "X")
-				end
-			end
-			updateContractBidUI()
-			hardSaveContractBid()
-		end
-	end
-end
-
 function bidReset(player, entry, btnID)
 	broadcastToAll(player.steam_name .. " closes/resets the Auction.",player.color)
 	bidTable.last.amount = 0
@@ -3597,23 +3219,6 @@ function bidReset(player, entry, btnID)
 	timerTable.active = timerTable.prevplayer
 	updateBidUI()
 	hardSaveBid()
-end
-
-function contractBidReset(player, entry, btnID)
-	broadcastToAll(player.steam_name .. " closes/resets the Auction.",player.color)
-	contractBidTable.last.amount = 10
-	contractBidTable.last.bidder = ""
-	contractBidTable.last.special = ""
-	contractBidTable.last.initiator = {}
-	contractBidTable.ongoing = false
-	timerAdd()
-	-- timerUnpause()
-	for k,v in pairs(contractBidTable.pass) do
-		contractBidTable.pass[k] = false
-	end
-	timerTable.active = timerTable.prevplayer
-	updateContractBidUI()
-	hardSaveContractBid()
 end
 
 --=======================================================================FT TRACKER
@@ -4092,7 +3697,6 @@ function killSetup()
 	
 	UI.setAttribute("VPMenu", "active", true)
 	UI.setAttribute("ConfigMenu", "active", true)
-	configTable.toolContractBidTool = true
 	configTable.toolBidTool = true
 	configTable.toolDiceRoller = true
 	configTable.toolTurnTracker = true
@@ -4102,7 +3706,6 @@ function killSetup()
 	configTable.toolTimer = true
 	UI.setAttribute("DiceRollerParent", "active", true)
 	UI.setAttribute("TurnTrackerParent", "active", true)
-	UI.setAttribute("ContractBidToolParent", "active", true)
 	UI.setAttribute("BidToolParent", "active", true)
 	UI.setAttribute("FTTrackerParent", "active", true)
 	UI.setAttribute("TimerToolParent", "active", true)
@@ -4610,7 +4213,6 @@ function updateUIMods()
 	configTable.toolBurnToolBernal = setupConfig.mods.mod2
 	UI.setAttribute("toggleUIToolSetupBurnToolBernal", "isOn", configTable.toolBurnToolBernal)
 	
-	configTable.toolContractBidTool = setupConfig.mods.mod4
 	UI.setAttribute("toggleUIToolTimer", "isOn", configTable.toolTimer)
 	
 	--turn tracker
@@ -5260,7 +4862,6 @@ function seatRearrange()
 	updateTTSTurns()
 	
 	setPlayersBidTool()
-	setPlayersContractBidTool()
 	updateFTUI()
 end
 

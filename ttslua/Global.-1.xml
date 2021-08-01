@@ -1,5 +1,6 @@
 <!-- High Frontier 4, Eskander scripts, UI Global-->
 
+<!-- LtFiend / Fus3d version - Less stable, includes Mod4 -->
 
 <!--=============TOC=============-->
 <!--Defaults-->
@@ -132,9 +133,6 @@
 					</Cell>
 				</Row>
 				<Row class="BasicRow" preferredHeight="60">
-					<Cell>
-						<Toggle id="toggleUIToolContractBidTool" class="toggleConfig" onValueChanged="toggleTools" isOn="true" >Contract Bid Tool</Toggle>
-					</Cell>
 					<Cell>
 						<Toggle id="toggleUIToolTimer" class="toggleConfig" onValueChanged="toggleTools" isOn="true" >Timer</Toggle>
 					</Cell>
@@ -933,6 +931,45 @@
 	</VerticalLayout>
 </Panel>
 
+<Panel
+	id="TimerToolConfig"
+	class="WindowParent"
+	visibility="Admin"
+	active="false"
+	width="500"
+	rectAlignment="MiddleCenter"
+	offsetXY="0 0"
+	>
+	<TableLayout id="TimerConfigChild" 
+	class="WindowTable"
+	rectAlignment="UpperCenter"
+	padding="20 20 0 20"
+	>
+		<Row class="TopRow" preferredHeight = "40" >
+			<Text class="headerText" >Timer Tool Config</Text>
+			<Button id="timerConfigClose" class="btnMinimize" rectAlignment="UpperRight" ignoreLayout="True" onClick="timerConfig" width="30" height="30" fontSize="22" tooltip="Close window" >X</Button>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40" >
+			<cell columnSpan="1">
+				<Text class="BasicText" >Timer Tool Scale</Text>
+			</cell>
+			<cell columnSpan="2">
+				<Text id="textScaleTimer" class="BasicText" alignment="MiddleCenter">1</Text> 
+				<Slider id="SliderTurnTracker" minValue="0.5" maxValue="1.5" value="1.0" onValueChanged="changeTimerScale" />
+			</cell>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40" >
+			<Toggle id="toggleTimerPause" width="250" textColor="white" onValueChanged="timerToggleShowPause" isOn="false" >Show the pause time status</Toggle>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40" >
+			<Toggle id="toggleTimerPauseButton" width="250" textColor="white" onValueChanged="timerToggleShowPauseButton" isOn="false" >Show the manual pause button</Toggle>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40" >
+			<Toggle id="toggleTimerCountAuctions" width="250" textColor="white" onValueChanged="timerToggleCountAuctions" isOn="false" >Count auction time against players timer</Toggle>
+		</Row>
+	</TableLayout>
+</Panel>
+
 <!--========================================================= Turn Tracker=========================================================-->
 <Panel
 	id="TurnTrackerParent"
@@ -1377,20 +1414,23 @@
 					</HorizontalLayout>
 				</cell>
 				<Button rectAlignment="MiddleRight" ignoreLayout="true" width="38" height="38" fontSize="25" textColor="White" onClick="bidReset" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" tooltip="Close/Reset Bid" visibility="Admin">X</Button>
-				<Button id ="bidStart" class="buttonStart" rectAlignment="MiddleLeft" width="280" height="38" fontSize="22" textColor="white" onClick="bidStart" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" tooltip="Start an Auction">Start Auction</Button>
+				<Button id ="bidStart" class="buttonStart" rectAlignment="MiddleLeft" width="142" height="38" fontSize="22" textColor="white" onClick="patentBidStart" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" tooltip="Start an Auction">Patent</Button>
+				<Button id ="contractBidStart" class="buttonStart" rectAlignment="MiddleLeft" offsetXY = "138 0" width="140" height="38" fontSize="22" textColor="white" onClick="contractBidStart" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" tooltip="Start a Contract Auction">Contract</Button>
 			</Row>
 			<Row class="headerRow">
 				<cell columnSpan="2">
-					<Button id="bid0" class="btnBids" onClick="bid">0</Button>
+					<!-- These were incremented by 1 because lua is 1 indexed and we want to use the number as an index
+					not as an absolute value as was done previously - Peter -->
+					<Button id="bid1" class="btnBids" textColor="White" text="0" onClick="bid"></Button>
 				</cell>
 				<cell columnSpan="2">
-					<Button id="bid1" class="btnBids" onClick="bid">1</Button>
+					<Button id="bid2" class="btnBids" textColor="White" text="1" onClick="bid"></Button>
 				</cell>
 				<cell columnSpan="2">
-					<Button id="bid2" class="btnBids" onClick="bid">2</Button>
+					<Button id="bid3" class="btnBids" textColor="white" text="2" onClick="bid"></Button>
 				</cell>
 				<cell columnSpan="2">
-					<Button id="bid3" class="btnBids" onClick="bid">3</Button>
+					<Button id="bid4" class="btnBids" textColor="white" text="3" onClick="bid"></Button>
 				</cell>
 			</Row>
 			<Row class="headerRow">
@@ -1399,6 +1439,7 @@
 				</cell>
 				<cell columnSpan="2">
 					<Button id="bidRaise" class="btnBids" onClick="bid">+1</Button>
+					<Button id="bidLower" active="false" class="btnBids" onClick="bid">-1</Button>
 				</cell>
 				<cell columnSpan="2">
 					<Button id="bidMatch" class="btnBids" onClick="bid">Match</Button>
@@ -1446,137 +1487,6 @@
 		</Row>
 	</TableLayout>z
 </Panel>
-
-<Panel
-	id="TimerToolConfig"
-	class="WindowParent"
-	visibility="Admin"
-	active="false"
-	width="500"
-	rectAlignment="MiddleCenter"
-	offsetXY="0 0"
-	>
-	<TableLayout id="TimerConfigChild" 
-	class="WindowTable"
-	rectAlignment="UpperCenter"
-	padding="20 20 0 20"
-	>
-		<Row class="TopRow" preferredHeight = "40" >
-			<Text class="headerText" >Timer Tool Config</Text>
-			<Button id="timerConfigClose" class="btnMinimize" rectAlignment="UpperRight" ignoreLayout="True" onClick="timerConfig" width="30" height="30" fontSize="22" tooltip="Close window" >X</Button>
-		</Row>
-		<Row class="BasicRow" preferredHeight = "40" >
-			<cell columnSpan="1">
-				<Text class="BasicText" >Timer Tool Scale</Text>
-			</cell>
-			<cell columnSpan="2">
-				<Text id="textScaleTimer" class="BasicText" alignment="MiddleCenter">1</Text> 
-				<Slider id="SliderTurnTracker" minValue="0.5" maxValue="1.5" value="1.0" onValueChanged="changeTimerScale" />
-			</cell>
-		</Row>
-		<Row class="BasicRow" preferredHeight = "40" >
-			<Toggle id="toggleTimerPause" width="250" textColor="white" onValueChanged="timerToggleShowPause" isOn="false" >Show the pause time status</Toggle>
-		</Row>
-		<Row class="BasicRow" preferredHeight = "40" >
-			<Toggle id="toggleTimerPauseButton" width="250" textColor="white" onValueChanged="timerToggleShowPauseButton" isOn="false" >Show the manual pause button</Toggle>
-		</Row>
-		<Row class="BasicRow" preferredHeight = "40" >
-			<Toggle id="toggleTimerCountAuctions" width="250" textColor="white" onValueChanged="timerToggleCountAuctions" isOn="false" >Count auction time against players timer</Toggle>
-		</Row>
-	</TableLayout>
-</Panel>
-
-<!--=================================================Contract Bid Tool=========================================================-->
-<Panel
-	id="ContractBidToolParent"
-	class="clearPanel"
-	active="False"
-	width="320"
-	height="80"
-	scale="1 1 1"
-	rectAlignment="MiddleLeft"
-	offsetXY="10 60"
-	textColor="white" 
-	>
-	<Button class="btnMaximize" rectAlignment="UpperLeft" onClick="maximizeContractBidTool" tooltip="Maximize Contract Bid Tool">+</Button>
-	<VerticalLayout id="ContractBidToolChild" class="verticalTable" height="40">
-		<Panel
-			id="ContractBidToolChild2"
-			class="panelHeader"
-			width="320">
-			<Text class="headerText">Contract Bid Tool</Text>
-			<Button class="btnMinimize" rectAlignment="MiddleLeft" onClick="minimizeContractBidTool" >-</Button>
-			<Button id="bidConfigOpen" class="btnMinimize" onClick="bidConfig" icon="Sprites/Icons/Cog" tooltip="Config" visibility="Admin" ></Button>
-		</Panel>
-		<TableLayout
-		id="ContractBidToolChild3"
-		class="blackTable"
-		>
-			<Row class="headerRow">
-				<cell columnSpan ="6">
-					<GridLayout childAlignment="MiddleCenter" cellSize="30 30" spacing="5 5" padding = "5 5 5 5" outline="Grey" outlineSize="1 -1" >
-						<cell id="contractBidCellP1" color="Yellow" dontUseTableCellBackground="True">
-							<Text id="contractBidTextP1" class="textMarker" ></Text>
-						</cell>
-						<cell id="contractBidCellP2" color="Purple" dontUseTableCellBackground="True">
-							<Text id="contractBidTextP2" class="textMarker" ></Text>
-						</cell>
-						<cell id="contractBidCellP3" color="White" dontUseTableCellBackground="True">
-							<Text id="contractBidTextP3" class="textMarker" ></Text>
-						</cell>
-						<cell id="contractBidCellP4" color="Green" dontUseTableCellBackground="True">
-							<Text id="contractBidTextP4" class="textMarker" ></Text>
-						</cell>
-						<cell id="contractBidCellP5" color="Blue" dontUseTableCellBackground="True">
-							<Text id="contractBidTextP5" class="textMarker" ></Text>
-						</cell>
-						<cell id="contractBidCellP6" color="Red" dontUseTableCellBackground="True">
-							<Text id="contractBidTextP6" class="textMarker" ></Text>
-						</cell>
-					</GridLayout>
-				</cell>
-				<cell columnSpan="2">
-					<HorizontalLayout>
-						<Text id="contractBidText" class="bidderText"></Text>
-						<Text class="bidderText"></Text>
-					</HorizontalLayout>
-				</cell>
-				<Button rectAlignment="MiddleRight" ignoreLayout="true" width="38" height="38" fontSize="25" textColor="White" onClick="contractBidReset" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" tooltip="Close/Reset Contract Bid" visibility="Admin">X</Button>
-				<Button id ="contractBidStart" class="buttonStart" rectAlignment="MiddleLeft" width="280" height="38" fontSize="22" textColor="white" onClick="contractBidStart" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" tooltip="Start a Contract Auction">Start Contract Auction</Button>
-			</Row>
-			<Row class="headerRow">
-				<cell columnSpan="2">
-					<Button id="bid9" class="btnBids" onClick="contractBid">9</Button>
-				</cell>
-				<cell columnSpan="2">
-					<Button id="bid7" class="btnBids" onClick="contractBid">7</Button>
-				</cell>
-				<cell columnSpan="2">
-					<Button id="bid5" class="btnBids" onClick="contractBid">5</Button>
-				</cell>
-				<cell columnSpan="2">
-					<Button id="bid3" class="btnBids" onClick="contractBid">3</Button>
-				</cell>
-			</Row>
-			<Row class="headerRow">
-				<cell columnSpan="2">
-					<InputField id="contractBidEnter" onEndEdit="contractBidEnter" textColor="Black" colors="Grey|#FFFFFF|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" characterValidation="Integer" textAlignment="MiddleCenter" fontSize="22" placeholder="0"></InputField>
-				</cell>
-				<cell columnSpan="2">
-					<Button id="contractBidLower" class="btnBids" onClick="contractBid">-1</Button>
-				</cell>
-				<cell columnSpan="2">
-					<Button id="contractBidMatch" class="btnBids" onClick="contractBid">Match</Button>
-				</cell>
-				<cell columnSpan="2">
-					<Button id="contractBidPass" class="btnBids" onClick="contractBidPass">Pass</Button>
-				</cell>
-			</Row>
-		</TableLayout>
-	</VerticalLayout>
-</Panel>
-
-<!--=================================================Contract Bid Tool=========================================================-->
 
 <!--========================================================= FT Tracker=========================================================-->
 <Panel
@@ -2225,7 +2135,6 @@
 		</TableLayout>
 	</VerticalLayout>
 </Panel>
-
 
 <Panel
 	id="ftToolConfig"
