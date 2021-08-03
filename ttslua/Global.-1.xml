@@ -1414,8 +1414,9 @@
 					</HorizontalLayout>
 				</cell>
 				<Button rectAlignment="MiddleRight" ignoreLayout="true" width="38" height="38" fontSize="25" textColor="White" onClick="bidReset" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" tooltip="Close/Reset Bid" visibility="Admin">X</Button>
-				<Button id ="bidStart" class="buttonStart" rectAlignment="MiddleLeft" width="142" height="38" fontSize="22" textColor="white" onClick="patentBidStart" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" tooltip="Start an Auction">Patent</Button>
-				<Button id ="contractBidStart" class="buttonStart" rectAlignment="MiddleLeft" offsetXY = "138 0" width="140" height="38" fontSize="22" textColor="white" onClick="contractBidStart" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" tooltip="Start a Contract Auction">Contract</Button>
+				<Button id ="fullBidStart" class="buttonStart" active="yes" rectAlignment="MiddleLeft" width="280" height="38" fontSize="22" textColor="white" onClick="patentBidStart" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" tooltip="Start an Auction">Patent</Button>
+				<Button id ="halfBidStart" class="buttonStart" active="no" rectAlignment="MiddleLeft" width="142" height="38" fontSize="22" textColor="white" onClick="patentBidStart" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" tooltip="Start an Auction">Patent</Button>
+				<Button id ="contractBidStart" class="buttonStart" active="no" rectAlignment="MiddleLeft" offsetXY = "138 0" width="140" height="38" fontSize="22" textColor="white" onClick="contractBidStart" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" tooltip="Start a Contract Auction">Contract</Button>
 			</Row>
 			<Row class="headerRow">
 				<cell columnSpan="2">
@@ -1482,10 +1483,13 @@
 		<Row class="BasicRow" preferredHeight = "40" >
 			<Toggle id="toggleBidAuto" width="250" textColor="white" onValueChanged="toggleAutoBid" isOn="true" >Enable Automated Bidding Process</Toggle>
 		</Row>
-		<Row class="BasicRow" preferredHeight = "60" >
+		<Row class="BasicRow" preferredHeight = "40" >
 			<Toggle id="toggleBidMarketeer" width="250" textColor="white" onValueChanged="toggleMarketeer" isOn="true" >Enable Marketeer for Blue Player</Toggle>
 		</Row>
-	</TableLayout>z
+		<Row class="BasicRow" preferredHeight = "40" >
+			<Toggle id="toggleContractBids" width="250" textColor="white" onValueChanged="toggleContractBids" isOn="false" >Enable Contract Bidding (Mod 4)</Toggle>
+		</Row>
+	</TableLayout>
 </Panel>
 
 <!--========================================================= FT Tracker=========================================================-->
@@ -2639,7 +2643,7 @@
 				</Row>
 				<Row class="BasicRow" preferredHeight="10">
 					<Cell>
-						<Toggle class="ToggleConfig" rectAlignment="UpperLeft" onValueChanged="toggleVSplitMarket" tooltip="Places a second market board for splitting patent decks for some scenarios (ex. V9. Sirens)">Variant: Split Market(V9b)</Toggle>
+						<Toggle id="ToggleVSplitMarket" class="ToggleConfig" rectAlignment="UpperLeft" onValueChanged="toggleVSplitMarket" tooltip="Places a second market board for splitting patent decks for some scenarios (ex. V9. Sirens)">Variant: Split Market(V9b)</Toggle>
 					</Cell>
 					<Cell>
 						<Toggle class="ToggleConfig" rectAlignment="UpperRight" onValueChanged="toggleMod0Solo" tooltip="Changes Mod0 political mat to Official Solo Variant (In Testing)">Variant: Solo Mod 0 Politics</Toggle>

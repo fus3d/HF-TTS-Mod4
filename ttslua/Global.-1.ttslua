@@ -92,7 +92,7 @@ configTable = {
 
 toolConfig = {
 	turn = { scale = 1, mod1 = false, mobile = false, mod2 = false, colonist = false, profit = false, autoProfit = false, mod3 = false, mod4 = true, soloMode = false, turnAutoSol = true, firstPlayer = "Yellow", ttsTurns = false, turnSound = true},
-	bid = {scale = 1, auto = true, marketeer = true},
+	bid = {scale = 1, auto = true, marketeer = true, contract = false},
 	ft = {scale = 1, mod1 = false, mod2 = false, mod4 = false},
 	timer = {scale = 1, pause = false, pausebutton = false, doSave = false, countauctions = false}
 }
@@ -113,7 +113,9 @@ bidTable = {
 		last = {amount = 0, bidder = {}, special = "", initiator = {}, tied = false, ties = {}},
 		pass = {White = false, Red = false, Yellow = false, Green = false, Blue = false, Purple = false},
 		ongoing = false,
-		visibility = {White = true, Red = true, Yellow = true, Green = true, Blue = true, Purple = true}
+		visibility = {White = true, Red = true, Yellow = true, Green = true, Blue = true, Purple = true},
+		bidType = "patent",
+		ValuesTable = {0, 1, 2, 3}
 }
 
 ftTrackerTable = {
@@ -150,12 +152,9 @@ timerTable = {
 	Blue = {time = 0.0},
 	Purple = {time = 0.0},
 	Pause = {time = 0.0},
-	visibility = {White = true, Red = true, Yellow = true, Green = true, Blue = true, Purple = true}
+	visibility = {White = true, Red = true, Yellow = true, Green = true, Blue = true, Purple = true},
+	updateTime = 0
 }
-
-updatetime = 0
-bidType = "patent"
-bidValuesTable = {0, 1, 2, 3}
 
 --===================================================================================EVENT FCNS
 ------------------init on load
@@ -236,11 +235,11 @@ function onUpdate()
 	-- Just a reminder.  The timer will still count even when the timer UI is removed because of when we capture the
 	-- timestamps.  You can hide the timer from the screen but it will still be adding time to the counters.
 	if configTable.toolTimer then
-		if updatetime >= 60 then
+		if timerTable.updateTime >= 60 then
 			timerAddShort()
-			updatetime = 0
+			timerTable.updateTime = 0
 		else
-			updatetime = updatetime + 1
+			timerTable.updateTime = timerTable.updateTime + 1
 		end
 	end
 end
@@ -1471,18 +1470,17 @@ function updateBidUI()
 	local str = ""
 	if bidTable.ongoing == true then
 		timerTable.active = {}
-		UI.setAttribute("bidStart", "active", "False")
+		UI.setAttribute("halfBidStart", "active", "False")
+		UI.setAttribute("fullBidStart", "active", "False")
 		UI.setAttribute("contractBidStart", "active", "False")
 
-	if bidType == "patent" then 
+	if bidTable.bidType == "patent" then 
 		UI.setAttribute("bidRaise", "active", "True")
-		UI.setAttribute("bidLower", "active", "False")
   		UI.setAttribute("bidRaise", "textColor", "White")
-  		UI.setAttribute("bidLower", "textColor", "White")
-	elseif bidType == "contract" then
+		UI.setAttribute("bidLower", "active", "False")
+	elseif bidTable.bidType == "contract" then
 		UI.setAttribute("bidRaise", "active", "False")
 		UI.setAttribute("bidLower", "active", "True")
-  		UI.setAttribute("bidRaise", "textColor", "White")
   		UI.setAttribute("bidLower", "textColor", "White")
 	end	
 		--edit with bid colors; show colors and turn order
@@ -1535,11 +1533,19 @@ function updateBidUI()
 			print("Color - " .. v)
 		end
 		UI.setAttribute("bidText", "text", "")
-		UI.setAttribute("bidStart", "active", "True")
-		UI.setAttribute("contractBidStart", "active", "True")
-		UI.setAttribute("bidStart", "textColor", "White")
-		UI.setAttribute("contractBidStart", "textColor", "White")
-		bidValuesTable = {0, 1, 2, 3}
+		if toolConfig.bid.contract == true then
+			UI.setAttribute("fullbidStart", "active", "False")
+			UI.setAttribute("halfbidStart", "active", "True")
+			UI.setAttribute("contractBidStart", "active", "True")
+			UI.setAttribute("halfbidStart", "textColor", "White")
+			UI.setAttribute("contractBidStart", "textColor", "White")
+		else
+			UI.setAttribute("halfbidStart", "active", "False")
+			UI.setAttribute("contractBidStart", "active", "False")
+			UI.setAttribute("fullbidStart", "active", "True")
+			UI.setAttribute("fullbidStart", "textColor", "White")
+		end
+		bidTable.ValuesTable = {0, 1, 2, 3}
 		updateBidOptions()
 	end
 	--update tooltips
@@ -1556,7 +1562,7 @@ end
 function updateBidOptions()
 	str="bid"
 	for i=1,4 do
-		UI.setAttribute(str .. i, "text", tostring(bidValuesTable[i]))
+		UI.setAttribute(str .. i, "text", tostring(bidTable.ValuesTable[i]))
 		UI.setAttribute(str .. i, "textColor", "White")
 	end
 end
@@ -1846,7 +1852,6 @@ function updateFTUIMods()
 	UI.setAttribute("FTTrackerChild2","width", colWidth)
 	UI.setAttribute("FTTrackerChild","width", colWidth)
 	UI.setAttribute("FTTrackerParent","width", colWidth)
-
 end	
 
 function updateVPUI()
@@ -2726,6 +2731,8 @@ function updateTimerUI()
 end
 
 function timerMath(timeint)
+	    -- turns shouldn't take days but in case they do this will prevent the time from overrunning.
+		local timeint = timeint%86400
 		local hours = math.floor(timeint/3600)
 		local temp = timeint%3600
 		local minutes = math.floor(temp/60)
@@ -2735,7 +2742,6 @@ function timerMath(timeint)
 end
 
 function updateTimerUIShort()
-	-- Just update the time.   Can be quicker if we send the active color over
 	if timerTable.active[1] == "Pause" then 
 		local timeint = math.floor(timerTable["Pause"].time)
 		local timestring = timerMath(timeint)
@@ -2755,8 +2761,10 @@ end
 
 function timerPauseForAuction()
 	-- during an auction stop the timer
-	-- timerTable.auction = true
-	timerTable.prevplayer = timerTable.active
+	-- This is used for more general pausing now.  At some point it should be renamed.
+	if bidTable.ongoing == false then 
+	    timerTable.prevplayer = timerTable.active
+	end
 	timerTable.active = {"Pause"}
 	timerAdd()
 	UI.setAttribute("PauseButton", "active", "False")
@@ -2824,6 +2832,15 @@ function changeTimerScale(_p, val, btnID)
 	hardSave()
 end
 
+function toggleContractBids(player, val, btnID)
+	if val == "True" then
+		toolConfig.bid.contract = true
+		updateBidUI()
+	elseif val == "False" then
+		toolConfig.bid.contract = false
+		updateBidUI()
+	end
+end
 
 
 function toggleMarketeer(player, val, btnID)
@@ -2890,9 +2907,9 @@ end
 
 function updateBid(player, bid)
 	local doUpdate = "false"
-    if bidType == "patent" then 
+    if bidTable.bidType == "patent" then 
 		if bid > bidTable.last.amount then doUpdate = "true" end
-	elseif bidType == "contract" then
+	elseif bidTable.bidType == "contract" then
 		if bid < bidTable.last.amount then doUpdate = "true" end
 	end	
 	if doUpdate == "true" then
@@ -2920,9 +2937,9 @@ function updateBid(player, bid)
 		bidTable.pass[player.color] = true
 		bidTable.last.ties = {}
 		bidTable.last.tied = false
-		if bidType == "patent" then 
+		if bidTable.bidType == "patent" then 
 			broadcastToAll(player.steam_name .. " raises bid to |  " .. bid .. specialStr,player.color)
-		elseif bidType == "contract" then
+		elseif bidTable.bidType == "contract" then
 			broadcastToAll(player.steam_name .. " lowers bid to |  " .. bid .. specialStr,player.color)
 		end	
 	elseif bid == bidTable.last.amount and player.color == "Blue" and toolConfig.bid.marketeer == true then	
@@ -3064,10 +3081,10 @@ function updateBidStatus()
 end
 
 ----------bid input
-function bidStart(player, type, btnID)
+function bidStart(player, bidType, btnID)
 	local bid = 0
 	bidTable.ongoing = true
-	if bidType == "contract" then
+	if bidTable.bidType == "contract" then
 		bid = 10
 	end	
 	bidTable.last.amount = bid
@@ -3096,23 +3113,23 @@ function bidStart(player, type, btnID)
 end
 
 function patentBidStart(player, type, btnID)
-	bidType = "patent"
-	bidValuesTable = {0, 1, 2, 3}
-	bidStart(player, type, btnID)
+	bidTable.bidType = "patent"
+	bidTable.ValuesTable = {0, 1, 2, 3}
+	bidStart(player, bidTable.bidType, btnID)
 end
 
 function contractBidStart(player, type, btnID)
-	bidType = "contract"
-	bidValuesTable = {10, 9, 8, 7}
-	bidStart(player, type, btnID)
+	bidTable.bidType = "contract"
+	bidTable.ValuesTable = {10, 9, 8, 7}
+	bidStart(player, bidTable.bidType, btnID)
 end
 
-function updateBidValuesTable(bidType, currentBid)
-		if bidType == "patent" then 
-			bidValuesTable = {currentBid, currentBid+1, currentBid+2, currentBid+3}
-		elseif bidType == "contract" then
+function updateBidValuesTable(bt, currentBid)
+		if bt == "patent" then 
+			bidTable.ValuesTable = {currentBid, currentBid+1, currentBid+2, currentBid+3}
+		elseif bt == "contract" then
 			-- redo to be floor 0
-			bidValuesTable = {currentBid, math.max(0, currentBid-1), math.max(0, currentBid-2), math.max(0, currentBid-3)}
+			bidTable.ValuesTable = {currentBid, math.max(0, currentBid-1), math.max(0, currentBid-2), math.max(0, currentBid-3)}
 		end
 		str = "bid"
 end
@@ -3124,7 +3141,7 @@ function bid(player, type, btnID)
 	else
 		if btnID ~= "bidMatch" and btnID ~= "bidRaise" and btnID ~= "bidLower" then
 			bid = string.sub(btnID,4)
-			bid = bidValuesTable[tonumber(bid)]
+			bid = bidTable.ValuesTable[tonumber(bid)]
 			-- bid = tonumber(bid)
 		elseif btnID == "bidMatch" then
 			bid = bidTable.last.amount
@@ -3138,7 +3155,7 @@ function bid(player, type, btnID)
 			soundAsset.AssetBundle.playTriggerEffect(4)
 		end
 		if toolConfig.bid.auto == true then
-			updateBidValuesTable(bidType, bid)
+			updateBidValuesTable(bidTable.bidType, bid)
 			updateBid(player, bid)
 		else
 			local str="bidTextP"
@@ -3148,19 +3165,19 @@ function bid(player, type, btnID)
 				end
 			end
 			broadcastToAll(player.steam_name .. " bids " .. bid,player.color)
-			if bidType == "patent" then 
+			if bidTable.bidType == "patent" then 
 				if bid > bidTable.last.amount then
 					bidTable.last.amount = bid
 					bidTable.last.bidder = player.color
 				end
-			elseif bidType == "contract" then
+			elseif bidTable.bidType == "contract" then
 				if bid < bidTable.last.amount then
 					bidTable.last.amount = bid
 					bidTable.last.bidder = player.color
 				end
 			end
 			updateBidUI()
-			updateBidValuesTable(bidType, bid)
+			updateBidValuesTable(bidTable.bidType, bid)
 			hardSaveBid()
 		end
 	end
@@ -3548,7 +3565,13 @@ end
 
 function toggleMod4(_p, bool)
 	if bool == "True" then
-		setupConfig.mods.mod4=true
+		if setupConfig.other.vSplitMarket == true then
+			broadcastToAll("Split market is not compatible with Mod4.  It is designed for use with the Sirens Variant", "Red")
+			UI.SetAttribute("ToggleMod4", "isOn", "False")
+			setupConfig.mods.mod4=false
+		else
+			setupConfig.mods.mod4=true
+		end
 	elseif bool == "False" then
 		setupConfig.mods.mod4=false
 	end
@@ -3605,10 +3628,17 @@ function toggleVGeoffIntro(_p, bool)
 end
 
 function toggleVSplitMarket(_p, bool)
+	-- add error checking hereprint
 	if bool == "True" then
-		setupConfig.other.vSplitMarket = true
-	else
-		setupConfig.other.vSplitMarket = false
+		if setupConfig.mods.mod4 == true then
+			broadcastToAll("Split market is not compatible with Mod4.  It is designed for use with the Sirens Variant", "Red")
+			setupConfig.other.vSplitMarket = false
+			UI.SetAttribute("toggleVSplitMarket", "isOn", "False")
+		else
+			setupConfig.other.vSplitMarket = true
+		end
+	elseif bool == "False" then
+	   setupConfig.other.vSplitMarket = false
 	end
 end
 
@@ -4144,7 +4174,6 @@ function setupMods()
 		end
 	end
 	
-	
 	--Mod2
 	if setupConfig.mods.mod2 == true then
 		printToAll("Modules: Placing Module 2 components.",msgAction)
@@ -4155,9 +4184,9 @@ function setupMods()
 		else
 			printToAll('Error: Mod2 box cannot be found. Unable to setup Module 2 components.',msgError)
 		end
+		-- with bernals, marketeer is not active at the start of the game
+		toggleMarketeer("Black", "False")
 	end
-	
-	
 	
 	--Mod3
 	if setupConfig.mods.mod3 == true then
@@ -4234,6 +4263,7 @@ function updateUIMods()
 		toggleTurnProfit("Black", "True", "toggleTurnProfit")
 		UI.setAttribute("toggleFTMod2", "isOn", "True")
 		toggleFTMod2("Black", "True", "toggleFTMod2")
+		UI.setAttribute("toggleBidMarketeer", "isOn", "false")
 	end
 	
 	if setupConfig.mods.mod3 == true then
@@ -4244,6 +4274,8 @@ function updateUIMods()
 	if setupConfig.mods.mod4 == true then
 		UI.setAttribute("toggleTurnMod4", "isOn", "True")
 		toggleTurnMods("Black", "True", "toggleTurnMod4")
+		toolConfig.bid.contract = true
+		UI.setAttribute("toggleContractBids", "isOn", "True")
 	end
 end
 
