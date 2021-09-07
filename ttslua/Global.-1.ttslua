@@ -219,12 +219,12 @@ function onLoad(saved_data)
 	
 	
 	--welcome messages
-	printToAll('====================================================',"White")
-	printToAll('High Frontier 4 All by Phil Eklund',"Yellow")
-	printToAll('Game published by Sierra Madre Games/Ion Game Design',"Yellow")
+	printToAll('====================================================',"Grey")
+	printToAll('HIGH FRONTIER: 4 ALL by Phil Eklund',"White")
+	printToAll('Game published by Sierra Madre Games/Ion Game Design',"Orange")
 	printToAll('Unofficial TTS Mod Version with Scripted UI by Eskander',"Blue")
-	printToAll("Forked from 'High Frontier 4 All Official' TTS mod by visceralamoeba and Samuelw","White")
-	printToAll('====================================================',"White")
+	printToAll("Forked from official TTS mod by visceralamoeba and Samuelw","Blue")
+	printToAll('====================================================',"Grey")
 	printToAll('>>README: This version includes many scripts and tools.  View readme in notebook for instructions.',msgInfo)
 	printToAll(">>Music: Holst's 'the Planets' is loaded.  Use play/pause buttons at top left.",msgInfo)
 	printToAll('>>Splay: Right click context menu on decks to splay cards to right.',msgInfo)
@@ -931,7 +931,7 @@ function checkGUIDs()
 					refFound[k][j] = false
 				end
 				if j == "polBoard" or j =="standard" and setupConfig.general.step == "done" then
-				elseif j == "polBoard3" or j == "isotopeFTs" or j == "bribeDisks" or j == "spaceElevators" or j =="setupSaver" then
+				elseif j == "polBoard3" or j == "isotopeFTs" or j == "bribeDisks" or j == "spaceElevators" or j =="setupSaver" or j  == "contractBoard" then
 				else
 					printToAll("Object reference to " .. tostring(j) .. " not found. This may impact scripted actions.",msgError)
 				end
@@ -1530,7 +1530,7 @@ function updateBidUI()
 		str="bidTextP"
 		for k,v in pairs(seatTable) do
 			UI.setAttribute(str .. k, "text", "")
-			print("Color - " .. v)
+			-- print("Color - " .. v)
 		end
 		UI.setAttribute("bidText", "text", "")
 		if toolConfig.bid.contract == true then
@@ -4992,9 +4992,16 @@ function coroutineSetupShuffleDealCrew()
 				end
 			end
 
-			for i=1, 30 do
+			local t_s = os.time() + 1 --seconds to wait
+			repeat
+				coroutine.yield(0)
+			until os.time() > t_s
+
+			--[[ --old method to wait by frames
+			for i=1, 90 do
 				coroutine.yield(0)
 			end
+			--]]
 		end
 
 	end
@@ -5281,16 +5288,15 @@ function setupExodusDeck()
  	end
  	if frontDeckGUID and backDeckGUID then
 		local card
- 		local fx = 6
- 		local bx = 6
+ 		local fx = 5
+ 		local bx = 5
  		local exodusPos = ({x = 37.00, y =  1.15, z = 19})
 		local exodusRot = ({x = 0, y = 270, z = 0})
  		-- local exodusPos = ({x = 39.25, y =  1.15, z =  -4.34})
 		-- local exodusRot = ({x = 0, y = 270, z = 0})
-		print("POS - " .. exodusPos["z"])
  		local fronts = frontDeck.getObjects()
  		local backs = backDeck.getObjects()
- 		for i=1,6 do
+ 		for i=1,5 do
 			exodusPos["z"] = exodusPos["z"] + 2.5
  			desc = "Card" .. i
  			rand = math.random(1,2)
@@ -5311,7 +5317,7 @@ function setupExodusDeck()
  							})
 						end
 						fx = fx - 1
- 						  print("Front Side - " .. card.getName())
+ 						  -- print("Front Side - " .. card.getName())
  					end
  				end
  			else
@@ -5330,7 +5336,7 @@ function setupExodusDeck()
  							})
 						end
 						bx = bx - 1
- 						  print("Back Side  - " .. card.getName())
+ 						  -- print("Back Side  - " .. card.getName())
  					end
  				end
  			end
@@ -5341,10 +5347,10 @@ function setupExodusDeck()
 		elseif bx == 0 then
 			mod4box.putObject(frontDeck)
 		elseif fx == 1 then
-			mod4box.putObject(getObjectFromGUID(fronts[6].guid))
+			mod4box.putObject(getObjectFromGUID(fronts[5].guid))
 			mod4box.putObject(backDeck)
 		elseif bx == 1 then
-			mod4box.putObject(getObjectFromGUID(backs[6].guid))
+			mod4box.putObject(getObjectFromGUID(backs[5].guid))
 			mod4box.putObject(frontDeck)
 		else
 			mod4box.putObject(backDeck)
@@ -5354,10 +5360,10 @@ function setupExodusDeck()
  		print("Couldn't find both decks, setup Exodus Manually")
  	end
 	for k,v in ipairs(cardList) do
-	  print("cardlist - " .. v.getGUID() .. v.getName() .. " - " .. type(v))
+	  -- print("cardlist - " .. v.getGUID() .. v.getName() .. " - " .. type(v))
 	end
 	newDeck = group(cardList)
-	print("NewDeck GUID - " .. newDeck[1].getGUID())
+	-- print("NewDeck GUID - " .. newDeck[1].getGUID())
 	newDeck[1].setName("Exodus Contract Deck")
     newDeck[1].SetDescription("Exodus Description")	
 	newDeck[1].setPosition({x = 39.25, y =  1.15, z =  -4.34})
