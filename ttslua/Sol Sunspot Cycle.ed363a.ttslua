@@ -33,6 +33,7 @@ function initVars()
 	local table = Global.getTable("toolConfig")
 	if table then
 		autoSol = table.turn.turnAutoSol
+		timerMode = table.timer.mode
 	end
 	
 	--sounds
@@ -143,6 +144,8 @@ function advanceTrack()
 		season = "red"
 		doEvent(season)
 	elseif spot == 1 then
+		-- Countdown Timer Check
+	    if timerMode == 1 then resetTimers() end
 		broadcastToAll("A full solar cycle has passed. Remove a seniority disk.",msgPrompt)
 		local soundAsset = getObjectFromGUID(soundGUID)
 		if  soundAsset then
@@ -188,6 +191,17 @@ function doEvent(season)
 	else
 	end
 end	
+
+function resetTimers()
+	Global.setVar("timerTable.White.time", Global.getVar("toolConfig.timer.rlength"))
+	Global.setVar("timerTable.Red.time", Global.getVar("toolConfig.timer.rlength"))
+	Global.setVar("timerTable.Yellow.time", Global.getVar("toolConfig.timer.rlength"))
+	Global.setVar("timerTable.Green.time", Global.getVar("toolConfig.timer.rlength"))
+	Global.setVar("timerTable.Blue.time", Global.getVar("toolConfig.timer.rlength"))
+	Global.setVar("timerTable.Purple.time", Global.getVar("toolConfig.timer.rlength"))
+	Global.call("updateTimerUI")
+	-- Global.call("resetTimers")
+end
 
 function runInspiration()
 	Global.call("runInspiration")

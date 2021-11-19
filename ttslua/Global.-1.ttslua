@@ -40,7 +40,6 @@ mapRefs = {
 	big = {guid = objRefs.maps.big, pos = {x=-9, y=0.96, z=0}, rot= {x=0,y=180,z=0}}
 }
 
-
 --broadcast colors
 msgError = {1,0,0}
 msgAction = {1, 1, 1}
@@ -60,7 +59,7 @@ spreadDistance = 0.9
 setupConfig = {
 	general = {max=true, step="0", colorSwap = false},
 	pConfig= {seats=6},
-	map={ver="normal", lutetia=false, pangea=false, ishtar=false},
+	map={ver="normal", lutetia=false, pangea=false, ishtar=false, errata=false},
 	mods={base="core", mod0=false, mod1=false, mod2=false, mod3=false, mod4=false, sdSail=true, sdRocket=false},
 	other={rocketMats=false, tutorial = false, mod0Solo = false, vGeoffIntro = false, vSplitMarket = false, timer=false},
 	values = {seniority = 4}
@@ -90,11 +89,13 @@ configTable = {
 	toolTimer = false,
 }
 
+-- toolConfig.timer.mode values; 0 = count up, 1 = count down
 toolConfig = {
 	turn = { scale = 1, mod1 = false, mobile = false, mod2 = false, colonist = false, profit = false, autoProfit = false, mod3 = false, mod4 = true, soloMode = false, turnAutoSol = true, firstPlayer = "Yellow", ttsTurns = false, turnSound = true},
 	bid = {scale = 1, auto = true, marketeer = true, contract = false},
 	ft = {scale = 1, mod1 = false, mod2 = false, mod4 = false},
-	timer = {scale = 1, pause = false, pausebutton = false, doSave = false, countauctions = false}
+	timer = {scale = 1, pause = false, pausebutton = true, doSave = false, countauctions = true, mode = 0, rlength=1200},
+	tournament = { BlindfoldOnPause = false }
 }
 
 ------------------------------------------------------hard save tool values
@@ -236,7 +237,7 @@ function onUpdate()
 	-- timestamps.  You can hide the timer from the screen but it will still be adding time to the counters.
 	if configTable.toolTimer then
 		if timerTable.updateTime >= 60 then
-			timerAddShort()
+			timerAdjustShort(toolConfig.timer.mode)
 			timerTable.updateTime = 0
 		else
 			timerTable.updateTime = timerTable.updateTime + 1
@@ -774,9 +775,6 @@ function onObjectEnterScriptingZone(zone,  enter_object)
 							else
 								Wait.frames(function() delayedSeatSwap("Black", "Grey") end, 3)
 							end
-							
-							
-							
 
 							done = true
 							
@@ -1120,8 +1118,8 @@ function updateToolsEnabled()
 
 	UI.setAttribute("toggleTimerPause", "isOn", toolConfig.timer.pause )
 	UI.setAttribute("toggleTimerPauseButton", "isOn", toolConfig.timer.pausebutton )
+	UI.setAttribute("toggleTimerCountAuctions", "isOn", toolConfig.timer.countauctions )
 	updateTimerUI()
-
 end
 
 function updateMinMax()
@@ -1974,6 +1972,7 @@ function bidConfig(player, val, btnID)
 end
 
 function timerConfig(player, val, btnID)
+	updateTimerConfigUI()
 	if btnID == "timerConfigClose" then
 		UI.setAttribute("TimerToolConfig", "active", "false")
 	elseif btnID == "timerConfigOpen" then
@@ -2251,7 +2250,7 @@ function toggleTurnFirstPlayer(_p, bool, BtnID)
 		local col = string.sub(BtnID, #str + 1)
 		if seatTable[tonumber(1)] ~= col then
 			toolConfig.turn.firstPlayer = col
-			timerTable.active = {col}
+			timerTable.active = col 
 			timerTable.last = Time.time
 			if configTable.toolTimer then timerAdd() end
 			reorderPlayerSeats()
@@ -2375,11 +2374,7 @@ function onPlayerTurn(person)
     -- TIMER CHECK	
 end
 
-
-
 ------------------------------------------
-
-
 
 function clearTurnTracker(col)
 	for k,v in pairs(turnTrackerTable) do
@@ -2675,6 +2670,40 @@ function timerAdd()
 	toolConfig["timer"].doSave = true
 end
 
+function timerAdjust(mode)
+	-- local c = timerTable.active
+	local last = timerTable.last
+	local now = Time.time
+	local a = now-last
+	-- Avoid problems when loading a save from a previous day
+	if a > 600 then 
+		a = 1
+	end
+	if timerTable.last == 0 then
+		xyz=0
+	-- elseif timerTable.auction == true then
+	--	timerTable["Pause"].time = timerTable["Pause"].time + a
+    elseif timerTable.active[1] == "Pause" then 
+		    if timerTable[v] then timerTable[v].time = timerTable[v].time + a end
+    else
+		for k,v in ipairs(timerTable.active) do
+		  if mode == 0 then
+		    if timerTable[v] then timerTable[v].time = timerTable[v].time + a end
+		  elseif mode == 1 then 
+		    if timerTable[v].time == 0 then
+				broadcastToAll("Player " .. v .. " is out of time!", v)
+			elseif timerTable[v] > 0 then 
+				timerTable[v].time = timerTable[v].time - a 
+			end
+		  end
+		end
+	end
+	timerTable.last = Time.time
+	updateTimerUI()
+	hardSaveTimer() 
+	toolConfig["timer"].doSave = true
+end
+
 function timerAddShort()
 	-- when running in onUpdate we need to optimize for speed.  This reduces some of the actions and only focuses on the current row
 	-- local c = timerTable.active
@@ -2691,6 +2720,37 @@ function timerAddShort()
 		  if timerTable[v] then timerTable[v].time = timerTable[v].time + a end
 		end
 		-- timerTable[c].time = timerTable[c].time + a
+	end
+	timerTable.last = Time.time
+	updateTimerUIShort()
+end
+
+function timerAdjustShort(mode)
+	-- when running in onUpdate we need to optimize for speed.  This reduces some of the actions and only focuses on the current row
+	-- local c = timerTable.active
+	local last = timerTable.last
+	local now = Time.time
+	local a = now-last
+	-- If the time is greater than 10 min assume it is from loading a save and dump the time
+	if a > 600 then a = 1 end
+	if timerTable.last == 0 then
+	-- elseif timerTable.auction == true then
+ 	--	timerTable["Pause"].time = timerTable["Pause"].time + a
+    elseif timerTable.active[1] == "Pause" then 
+		timerTable["Pause"].time = timerTable["Pause"].time + a
+    else
+		for k,v in ipairs(timerTable.active) do
+		  if mode == 0 then
+		    if timerTable[v] then timerTable[v].time = timerTable[v].time + a end
+		  elseif mode == 1 then 
+		    if timerTable[v].time <= 0 then
+				timerTable[v].time = 0
+				broadcastToAll("Player " .. v .. " is out of time!", v)
+			elseif timerTable[v].time > 0 then 
+				timerTable[v].time = timerTable[v].time - a 
+			end
+		  end
+		end
 	end
 	timerTable.last = Time.time
 	updateTimerUIShort()
@@ -2730,15 +2790,62 @@ function updateTimerUI()
 		UI.setValue("PauseTimerText", timestring)
 end
 
+function setTimerValue(_p, value)
+	toolConfig.timer.rlength = tonumber(value)
+end
+
+function updateTimerConfigUI()
+	UI.setAttribute("addTimeCellP1", "active", "False")
+	UI.setAttribute("addTimeButtonP1", "active", "False")
+	UI.setAttribute("addTimeCellP2", "active", "False")
+	UI.setAttribute("addTimeButtonP2", "active", "False")
+	UI.setAttribute("addTimeCellP3", "active", "False")
+	UI.setAttribute("addTimeButtonP3", "active", "False")
+	UI.setAttribute("addTimeCellP4", "active", "False")
+	UI.setAttribute("addTimeButtonP4", "active", "False")
+	UI.setAttribute("addTimeCellP5", "active", "False")
+	UI.setAttribute("addTimeButtonP5", "active", "False")
+	UI.setAttribute("addTimeCellP6", "active", "False")
+	UI.setAttribute("addTimeButtonP6", "active", "False")
+	
+	for k,v in pairs(seatTable) do
+		--active colors
+		UI.setAttribute("addTimeCellP" .. k, "active", "True")
+		UI.setAttribute("addTimeCellP" .. k, "color", v)
+		UI.setAttribute("addTimeButtonP" .. k, "active", "True")
+	end
+end
+
+function addTimeToColor(_p, click, btnID)
+	local str = "addTimeButtonP"
+	local num = string.sub(btnID, string.len(str) + 1)
+	num = tonumber(num)
+	local col = seatTable[num]
+	timerTable[col].time = timerTable[col].time + 60
+	updateTimerUI()
+end
+
+function resetTimers()
+	-- For use with the countdown timer where you need to set the value each round
+	timerTable.White.time =  toolConfig.timer.rlength
+	timerTable.Red.time =  toolConfig.timer.rlength
+	timerTable.Yellow.time =  toolConfig.timer.rlength
+	timerTable.Green.time =  toolConfig.timer.rlength
+	timerTable.Blue.time =  toolConfig.timer.rlength
+	timerTable.Purple.time =  toolConfig.timer.rlength
+	updateTimerUI()
+end
+	
+
 function timerMath(timeint)
-	    -- turns shouldn't take days but in case they do this will prevent the time from overrunning.
-		local timeint = timeint%86400
-		local hours = math.floor(timeint/3600)
-		local temp = timeint%3600
-		local minutes = math.floor(temp/60)
-		local seconds = math.floor(temp%60)
-		local timestring = string.format("%02d:%02d:%02d", hours, minutes, seconds)
-		return timestring
+    -- turns shouldn't take days but in case they do this will prevent the time from overrunning.
+	local timeint = timeint%86400
+	local hours = math.floor(timeint/3600)
+	local temp = timeint%3600
+	local minutes = math.floor(temp/60)
+	local seconds = math.floor(temp%60)
+	local timestring = string.format("%02d:%02d:%02d", hours, minutes, seconds)
+	return timestring
 end
 
 function updateTimerUIShort()
@@ -2762,6 +2869,10 @@ end
 function timerPauseForAuction()
 	-- during an auction stop the timer
 	-- This is used for more general pausing now.  At some point it should be renamed.
+	if toolConfig.tournament.BlindfoldOnPause == true then 
+		broadcastToAll("Blindfolding all users during pause (tournament mode)")
+	    blindfoldAll() 
+	end
 	if bidTable.ongoing == false then 
 	    timerTable.prevplayer = timerTable.active
 	end
@@ -2774,6 +2885,9 @@ end
 
 function timerUnpause()
 	-- during an auction stop the timer
+	if toolConfig.tournament.BlindfoldOnPause == true then 
+		unBlindfoldAll() 
+	end
 	timerAdd()
 	timerTable.last = Time.time
 	timerTable.active = timerTable.prevplayer
@@ -2783,7 +2897,7 @@ function timerUnpause()
 	updateTimerUI()
 end 
 
-function timerToggleShowPause(player, val, btnID);
+function timerToggleShowPause(player, val, btnID)
 	if val == "True" then 
 		toolConfig.timer.pause = "true"
 		UI.setAttribute("PauseTimerRow", "active", "true")
@@ -2793,7 +2907,7 @@ function timerToggleShowPause(player, val, btnID);
 	end
 end
 
-function timerToggleShowPauseButton(player, val, btnID);
+function timerToggleShowPauseButton(player, val, btnID)
 	if val == "True" then 
 		toolConfig.timer.pausebutton = "true"
 		UI.setAttribute("PauseButtonRow", "active", "true")
@@ -2810,12 +2924,34 @@ function timerToggleShowPauseButton(player, val, btnID);
 	end
 end
 
-function timerToggleCountAuctions(player, val, btnID);
+function timerToggleCountAuctions(player, val, btnID)
 	if val == "True" then 
 		toolConfig.timer.countauctions = true
 	elseif val == "False" then 
 		toolConfig.timer.countauctions = false
 	end
+end
+--====================================================================== Tournament Mode Tools
+function setBOPValue(_p, bool)
+	if bool == "True" then
+		toolConfig.tournament.BlindfoldOnPause = true
+	elseif bool == "False" then
+		toolConfig.tournament.BlindfoldOnPause = false
+	end
+end
+
+function blindfoldAll()
+	local playerList = Player.getPlayers()
+	for k,v in pairs(playerList) do
+	   v.blindfolded = true
+    end
+end
+
+function unBlindfoldAll()
+	local playerList = Player.getPlayers()
+	for k,v in pairs(playerList) do
+       v.blindfolded = false
+    end
 end
 --=======================================================================BID TOOLS
 
@@ -3477,6 +3613,14 @@ function toggleLutetia(_p, bool)
 	end
 end
 
+function toggleErrata(_p, bool)
+	if bool == "True" then
+		setupConfig.map.errata=true
+	elseif bool == "False" then
+		setupConfig.map.errata=false
+	end
+end
+
 function toggleEarth(_p, bool)
 	if bool == "True" then
 		setupConfig.map.pangea=true
@@ -3608,6 +3752,16 @@ function toggleTimer(_p, bool)
 		configTable.toolTimer = true
 	else
 		configTable.toolTimer = false
+	end
+end
+
+function toggleTimerMode(_p, bool)
+	if bool == "True" then
+		configTable.toolTimer = true
+		toolConfig.timer.mode = 1
+	else
+		configTable.toolTimer = false
+		toolConfig.timer.mode = 0
 	end
 end
 
@@ -3773,6 +3927,10 @@ end
 
 -------after config of layout, branches to core or SD; prompts for players to either hide hands or assign crew to each seat
 function nextSetup1()
+	if toolConfig.tournament.BlindfoldOnPause == true then 
+		broadcastToAll("Blindfolding all users (tournament mode)")
+	    blindfoldAll() 
+	end
 	UI.setAttribute("WindowSetup1", "active", false)
 	setupMap()
 	setupMods()
@@ -3940,18 +4098,17 @@ function nextSetup3()
 	hardSave()
 end
 
-
 function nextSetup4()
 	UI.setAttribute("WindowSetup4", "active", false)
 	setupConfig.general.step = "done"
+	timerTable.prevplayer = { toolConfig.turn.firstPlayer }
 	printToAll("============SCRIPTED SETUP COMPLETE============",msgComplete)
 	UI.setAttribute("ConfigMenu", "active", true)
 	UI.setAttribute("VPMenu", "active", true)
+	resetTimers()
 	hardSave()
 	-- toggleTurnFirstPlayer()
 end
-
-
 
 ----------------------------------------------------------------------SETUP PROCESS FCNS
 
@@ -4009,6 +4166,14 @@ function setupMap()
 				setupPlacer(source, destination)
 			end
 			
+			--place errata chits
+			if setupConfig.map.errata == true then
+				local objGUID1 = ""
+				destination = "mapErrata" .. mapStr
+				objGUID1 = setupPlacer(source, destination)
+				Wait.frames(function() lockMe(objGUID1) end, 60)
+			end
+			
 			--place lutetia
 			if setupConfig.map.lutetia == true then
 				local objGUID1 = ""
@@ -4054,7 +4219,6 @@ function setupMods()
 	checkGUIDs()
 	local source = {}
 	local destination = {}
-	
 	
 	--base mode
 	if setupConfig.mods.base == "core" then
@@ -5288,15 +5452,15 @@ function setupExodusDeck()
  	end
  	if frontDeckGUID and backDeckGUID then
 		local card
- 		local fx = 5
- 		local bx = 5
+ 		local fx = 6
+ 		local bx = 6
  		local exodusPos = ({x = 37.00, y =  1.15, z = 19})
 		local exodusRot = ({x = 0, y = 270, z = 0})
  		-- local exodusPos = ({x = 39.25, y =  1.15, z =  -4.34})
 		-- local exodusRot = ({x = 0, y = 270, z = 0})
  		local fronts = frontDeck.getObjects()
  		local backs = backDeck.getObjects()
- 		for i=1,5 do
+ 		for i=1,6 do
 			exodusPos["z"] = exodusPos["z"] + 2.5
  			desc = "Card" .. i
  			rand = math.random(1,2)
@@ -5366,8 +5530,9 @@ function setupExodusDeck()
 	-- print("NewDeck GUID - " .. newDeck[1].getGUID())
 	newDeck[1].setName("Exodus Contract Deck")
     newDeck[1].SetDescription("Exodus Description")	
-	newDeck[1].setPosition({x = 39.25, y =  1.15, z =  -4.34})
+	newDeck[1].setPosition({x = 39.31, y =  1.15, z =  -4.46})
 	newDeck[1].setRotation({x = 0, y = 270, z = 0})
+				local objGUID1 = ""
 end  
 
 function setNewExodusDeck(cardList)

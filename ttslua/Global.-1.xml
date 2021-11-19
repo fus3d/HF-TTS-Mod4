@@ -30,6 +30,7 @@
 	<Toggle class="ToggleConfig" textColor="white" fontSize="14" />
 	<Text class="textMarker" color="black" fontSize="30" fontStyle="Bold" alignment = "MiddleCenter" horizontalOverflow="Overflow" verticalOverflow="Overflow" />
 	<Button class="swapButton" active="False" tooltip="Swap to Color" rectAlignment="MiddleCenter" ignoreLayout="true" width="30" height="30" fontSize="10" textColor="White" colors="rgba(0,0,0,0)|rgba(0,0,0,0)|rgba(0,0,0,0)|rgba(0,0,0,0)" />
+	<Button class="addTimeButton" active="False" tooltip="Add Time to Color" rectAlignment="MiddleCenter" ignoreLayout="true" width="30" height="30" fontSize="10" textColor="White" colors="rgba(0,0,0,0)|rgba(0,0,0,0)|rgba(0,0,0,0)|rgba(0,0,0,0)" />
 	<Button class="btnScore" color="Black" textColor="White" fontSize="30" fontStyle="Normal" tooltip = "LMB:+1/RMB:-1/MMB:+5" allowDragging="false"/>
 	
 	
@@ -920,11 +921,11 @@
 		<Row
 			id="PauseButtonRow"
 			class="TimerRow"
-			active="false"
+			active="true"
 			>
 			<cell class="timerCellLabel" columnSpan="2">
 				<Button id="PauseButton" active="false" onClick="timerPauseForAuction" tooltip="Config" visibility="Admin" color="black"><Text class="timerText" resizeTextForBestFit="true" resizeTextMaxSize="22" fontStyle="Bold" color="red">Pause Timer</Text></Button>
-				<Button id="UnpauseButton" active="false" onClick="timerUnpause" tooltip="Config" visibility="Admin" color="black"><Text class="timerText" resizeTextForBestFit="true" resizeTextMaxSize="22" fontStyle="Bold" color="green">Unpause Timer</Text></Button>
+				<Button id="UnpauseButton" active="true" onClick="timerUnpause" tooltip="Config" visibility="Admin" color="black"><Text class="timerText" resizeTextForBestFit="true" resizeTextMaxSize="22" fontStyle="Bold" color="green">Unpause Timer</Text></Button>
 	  		</cell>
 		</Row>
 		</TableLayout>
@@ -936,7 +937,7 @@
 	class="WindowParent"
 	visibility="Admin"
 	active="false"
-	width="500"
+	width="700"
 	rectAlignment="MiddleCenter"
 	offsetXY="0 0"
 	>
@@ -966,6 +967,59 @@
 		</Row>
 		<Row class="BasicRow" preferredHeight = "40" >
 			<Toggle id="toggleTimerCountAuctions" width="250" textColor="white" onValueChanged="timerToggleCountAuctions" isOn="false" >Count auction time against players timer</Toggle>
+		</Row>
+		<Row class="BasicRow" preferredHeight="40">
+			<Cell>
+				<Text id="textTimerValue" class="BasicText" alignment="MiddleCenter">Reset Timers</Text> 
+			</Cell>
+			<Cell>
+				<Text id="textTimerValue" class="BasicText" alignment="MiddleCenter">+1 min to color</Text> 
+			</Cell>
+			<Cell>
+				<Text id="textTimerValue" class="BasicText" alignment="MiddleCenter">Time Per Round</Text> 
+			</Cell>
+		</Row>
+		<Row class="BasicRow" preferredHeight="40">
+			<Cell>
+				<Button class="cmdMenu" colors="#990000|Red|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" onClick="resetTimers" text="Reset" tooltip = "Add time back in Tournament Mode."></Button>
+			</Cell>
+			<cell childForceExpandWidth = "True">
+				<GridLayout childAlignment="MiddleCenter" cellSize="30 30" spacing="5 5" padding = "0 0 0 0" outline="Grey" outlineSize="1 -1" >
+					<cell id="addTimeCellP1" color="Yellow" dontUseTableCellBackground="True">
+						<Text id="addTimeP1" class="textMarker" ></Text>
+						<Button id="addTimeButtonP1" class="addTimeButton" onClick="addTimeToColor"></Button>
+					</cell>
+					<cell id="addTimeCellP2" color="Purple" dontUseTableCellBackground="True">
+						<Text id="addTimeP2" class="textMarker" ></Text>
+						<Button id="addTimeButtonP2" class="addTimeButton" onClick="addTimeToColor"></Button>
+					</cell>
+					<cell id="addTimeCellP3" color="White" dontUseTableCellBackground="True">
+						<Text id="addTimeP3" class="textMarker" ></Text>
+						<Button id="addTimeButtonP3" class="addTimeButton" onClick="addTimeToColor"></Button>
+					</cell>
+					<cell id="addTimeCellP4" color="Green" dontUseTableCellBackground="True">
+						<Text id="addTimeP4" class="textMarker" ></Text>
+						<Button id="addTimeButtonP4" class="addTimeButton" onClick="addTimeToColor"></Button>
+					</cell>
+					<cell id="addTimeCellP5" color="Blue" dontUseTableCellBackground="True">
+						<Text id="addTimeP5" class="textMarker" ></Text>
+						<Button id="addTimeButtonP5" class="addTimeButton" onClick="addTimeToColor"></Button>
+					</cell>
+					<cell id="addTimeCellP6" color="Red" dontUseTableCellBackground="True">
+						<Text id="addTimeP6" class="textMarker" ></Text>
+						<Button id="addTimeButtonP6" class="addTimeButton" onClick="addTimeToColor"></Button>
+					</cell>
+				</GridLayout>
+			</cell>
+			<!--
+			<Cell>
+				<Button class="cmdMenu" colors="#999900|Yellow|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" onClick="resetTimers" text="+1 min Current Player" tooltip = "Add time back in Tournament Mode."></Button>
+			</Cell>
+			-->
+			<Cell>
+				<InputField id="TimerValue" onValueChanged="setTimerValue" textColor="White" colors="#153b7d|#153b7d|#153b7d|#153b7d" characterValidation="Integer" textAlignment="MiddleCenter" fontSize="22" placeholder="1200"></InputField>
+				<!-- "Grey|#FFFFFF|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" -->
+			</Cell>
 		</Row>
 	</TableLayout>
 </Panel>
@@ -2602,6 +2656,7 @@
 					</Cell>
 					<Cell>  
 						<VerticalLayout childAlignment="UpperCenter">
+							<Toggle class="ToggleConfig" onValueChanged="toggleErrata" tooltip="Adds Comet Tempel I, Renames Dimorphos, and adds Titan aerobrake">Map Errata</Toggle>
 							<Toggle class="ToggleConfig" onValueChanged="toggleLutetia" tooltip="Adds map update that modifies hydration and size of lutetia">Lutetia Update</Toggle>
 							<Toggle class="ToggleConfig" onValueChanged="toggleEarth" tooltip="Overlays Earth with pangea site for Bios:Venus or Bios:Mars variants">Pangea Earth Overlay</Toggle>
 							<Toggle class="ToggleConfig" onValueChanged="toggleVenus" tooltip="Overlays Venus with Ishtar site for Bios:Earth/Bios:Venus/Bios:Mars variants">Habitable Venus Overlay</Toggle>
@@ -2641,7 +2696,7 @@
 				<Row class="BasicRow" preferredHeight="20">
 					<Text class="WindowHeader" fontSize="18" >Other</Text>
 				</Row>
-				<Row class="BasicRow" preferredHeight="10">
+				<Row class="BasicRow" preferredHeight="0">
 					<Cell>
 						<Toggle id="ToggleVSplitMarket" class="ToggleConfig" rectAlignment="UpperLeft" onValueChanged="toggleVSplitMarket" tooltip="Places a second market board for splitting patent decks for some scenarios (ex. V9. Sirens)">Variant: Split Market(V9b)</Toggle>
 					</Cell>
@@ -2649,7 +2704,7 @@
 						<Toggle class="ToggleConfig" rectAlignment="UpperRight" onValueChanged="toggleMod0Solo" tooltip="Changes Mod0 political mat to Official Solo Variant (In Testing)">Variant: Solo Mod 0 Politics</Toggle>
 					</Cell>
 				</Row>
-				<Row class="BasicRow" preferredHeight="10">
+				<Row class="BasicRow" preferredHeight="0">
 					<Cell>
 						<Toggle class="ToggleConfig" rectAlignment="UpperLeft" onValueChanged="toggleVGeoffIntro" tooltip="Patents are setup into pre-built rocket stacks for Custom Intro Variant by Geoff">Custom: Geoff's Intro Variant</Toggle>
 					</Cell>
@@ -2657,9 +2712,23 @@
 						<Toggle class="ToggleConfig" rectAlignment="UpperLeft" onValueChanged="toggleStackMat" tooltip="Adds fan made Rocket Stack mats">Custom: Rocket Stack Mats</Toggle>
 					</Cell>
 				</Row>
-				<Row class="BasicRow" preferredHeight="20">
+				<Row class="BasicRow" preferredHeight="0">
 					<Cell>
 						<Toggle class="ToggleConfig" rectAlignment="UpperLeft" onValueChanged="toggleTimer" tooltip="Enables Turn Timers">Enable Turn Timer</Toggle>
+					</Cell>
+					<Cell>
+						<Toggle class="ToggleConfig" rectAlignment="UpperLeft" onValueChanged="toggleTimerMode" tooltip="Countdown Timer Mode">Enable Countdown Timer</Toggle>
+					</Cell>
+				</Row>
+				<Row class="BasicRow" preferredHeight="20">
+					<Cell>
+						<Toggle class="ToggleConfig" rectAlignment="UpperLeft" onValueChanged="setBOPValue" tooltip="Blindfold on Pause">Enable Blindfold On Pause</Toggle>
+					</Cell>
+					<Cell>
+						<!--
+						<Toggle class="ToggleConfig" rectAlignment="UpperRight" onValueChanged="toggleTimerMode" tooltip="Countdown Timer Mode">Enable Countdown Timer</Toggle>
+					    <InputField id="TimerValue" onValueChanged="setTimerValue" textColor="Black" colors="Grey|#FFFFFF|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" characterValidation="Integer" textAlignment="MiddleCenter" fontSize="22" placeholder="0"></InputField>
+						-->
 					</Cell>
 				</Row>
 				<Row class="BasicRow" preferredHeight="40">
