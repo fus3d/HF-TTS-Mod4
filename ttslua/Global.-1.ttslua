@@ -24,16 +24,14 @@
 --persistent guid refs
 objRefs = {
 	tables = {sideTable='a40b61', flexTableControl = 'bd69bd'},
-	boxes = {core = '7ded2c', rfg = '71aa5d', sdBox = '4558b9', sdBag = '922341', mod1 = 'ef6087', mod2 = '6ad6a4', mod3 = 'eeb5e7', mod4 = 'd33379', seniorityDisks = '606c5f', bribeDisks = '992aba', isotopeFTs = 'c2de0b', spaceElevators='73679a', stackMats ='2933bc', pYellow = '2eb409', pPurple ='19fb5d', pRed = '2db96c', pGreen = 'c188da', pWhite = 'c379a6', pBlue = '7a17fd', vGeoffIntro = '271795'},
+	boxes = {core = '7ded2c', rfg = '71aa5d', sdBox = '4558b9', sdBag = '922341', mod1 = 'ef6087', mod2 = '6ad6a4', mod3 = 'eeb5e7', mod4 = '94c3d5', seniorityDisks = '606c5f', bribeDisks = '992aba', isotopeFTs = 'c2de0b', spaceElevators='73679a', stackMats ='2933bc', pYellow = '2eb409', pPurple ='19fb5d', pRed = '2db96c', pGreen = 'c188da', pWhite = 'c379a6', pBlue = '7a17fd', vGeoffIntro = '271795'},
 	maps = {standard = '01fd8b', big = '248bc4'},
-	mats = {sunspotBoard = 'ed363a', marketBoard = '9eaea1', polBoard = '749864', polBoard3 = '8bb142', contractBoard = '247743'},
+	mats = {sunspotBoard = 'ed363a', marketBoard = '9eaea1', polBoard = '749864', polBoard3 = '8bb142', contractBoard = '247743', mod4Board = '9e9074'},
 	tools = {setupSaver = 'cef825', sound = 'be6906'},
 	zones = {zoneSeniority = 'fa294b'}
 }
 
-staticObjsRef = {'9eaea1','01fd8b','a40b61','248bc4','218e4a','247743'}
--- staticObjsRef = {'9eaea1','01fd8b','a40b61','248bc4','218e4a'}
--- staticObjsRef = {}
+staticObjsRef = {'9eaea1','01fd8b','a40b61','248bc4','218e4a','247743','9e9074'}
 
 mapRefs = {
 	standard = {guid = objRefs.maps.standard, pos = {x=0, y=0.96, z=0}, rot= {x=0,y=180,z=0}}, 
@@ -93,7 +91,7 @@ configTable = {
 toolConfig = {
 	turn = { scale = 1, mod1 = false, mobile = false, mod2 = false, colonist = false, profit = false, autoProfit = false, mod3 = false, mod4 = true, soloMode = false, turnAutoSol = true, firstPlayer = "Yellow", ttsTurns = false, turnSound = true},
 	bid = {scale = 1, auto = true, marketeer = true, contract = false},
-	ft = {scale = 1, mod1 = false, mod2 = false, mod4 = false},
+	ft = {scale = 1, mod1 = false, mod2 = false, mod4 = false, dirt = false},
 	timer = {scale = 1, pause = false, pausebutton = true, doSave = false, countauctions = true, mode = 0, rlength=1200},
 	tournament = { BlindfoldOnPause = false }
 }
@@ -120,12 +118,12 @@ bidTable = {
 }
 
 ftTrackerTable = {
-		White = {LEOA = 0,OP1A = 0, OP2A = 0, FA = 0, B1A = 0, B2A = 0, ISOA = 0,LEOI = 0,OP1I = 0, OP2I = 0, FI = 0, B1I = 0, B2I = 0, ISOI = 0, max=true, bank = 'LEO'},
-		Red = {LEOA = 0,OP1A = 0, OP2A = 0, FA = 0, B1A = 0, B2A = 0, ISOA = 0,LEOI = 0,OP1I = 0, OP2I = 0, FI = 0, B1I = 0, B2I = 0, ISOI = 0, max=true, bank = 'LEO'},
-		Yellow = {LEOA = 0,OP1A = 0, OP2A = 0, FA = 0, B1A = 0, B2A = 0, ISOA = 0,LEOI = 0,OP1I = 0, OP2I = 0, FI = 0, B1I = 0, B2I = 0, ISOI = 0, max=true, bank = 'LEO'},
-		Green = {LEOA = 0,OP1A = 0, OP2A = 0, FA = 0, B1A = 0, B2A = 0, ISOA = 0,LEOI = 0,OP1I = 0, OP2I = 0, FI = 0, B1I = 0, B2I = 0, ISOI = 0, max=true, bank = 'LEO'},
-		Blue = {LEOA = 0,OP1A = 0, OP2A = 0, FA = 0, B1A = 0, B2A = 0, ISOA = 0,LEOI = 0,OP1I = 0, OP2I = 0, FI = 0, B1I = 0, B2I = 0, ISOI = 0, max=true, bank = 'LEO'},
-		Purple = {LEOA = 0,OP1A = 0, OP2A = 0, FA = 0, B1A = 0, B2A = 0, ISOA = 0,LEOI = 0,OP1I = 0, OP2I = 0, FI = 0, B1I = 0, B2I = 0, ISOI = 0, max=true, bank = 'LEO'},
+		White = {LEOA = 0,OP1A = 0, OP2A = 0, FA = 0, B1A = 0, B2A = 0, ISOA = 0,LEOD = 0,OP1D = 0, OP2D = 0, FD = 0, B1D = 0, B2D = 0, ISOD = 0,LEOI = 0,OP1I = 0, OP2I = 0, FI = 0, B1I = 0, B2I = 0, ISOI = 0, max=true, bank = 'LEO'},
+		Red = {LEOA = 0,OP1A = 0, OP2A = 0, FA = 0, B1A = 0, B2A = 0, ISOA = 0,LEOD = 0,OP1D = 0, OP2D = 0, FD = 0, B1D = 0, B2D = 0, ISOD = 0,LEOI = 0,OP1I = 0, OP2I = 0, FI = 0, B1I = 0, B2I = 0, ISOI = 0, max=true, bank = 'LEO'},
+		Yellow = {LEOA = 0,OP1A = 0, OP2A = 0, FA = 0, B1A = 0, B2A = 0, ISOA = 0,LEOD = 0,OP1D = 0, OP2D = 0, FD = 0, B1D = 0, B2D = 0, ISOD = 0,LEOI = 0,OP1I = 0, OP2I = 0, FI = 0, B1I = 0, B2I = 0, ISOI = 0, max=true, bank = 'LEO'},
+		Green = {LEOA = 0,OP1A = 0, OP2A = 0, FA = 0, B1A = 0, B2A = 0, ISOA = 0,LEOD = 0,OP1D = 0, OP2D = 0, FD = 0, B1D = 0, B2D = 0, ISOD = 0,LEOI = 0,OP1I = 0, OP2I = 0, FI = 0, B1I = 0, B2I = 0, ISOI = 0, max=true, bank = 'LEO'},
+		Blue = {LEOA = 0,OP1A = 0, OP2A = 0, FA = 0, B1A = 0, B2A = 0, ISOA = 0,LEOD = 0,OP1D = 0, OP2D = 0, FD = 0, B1D = 0, B2D = 0, ISOD = 0,LEOI = 0,OP1I = 0, OP2I = 0, FI = 0, B1I = 0, B2I = 0, ISOI = 0, max=true, bank = 'LEO'},
+		Purple = {LEOA = 0,OP1A = 0, OP2A = 0, FA = 0, B1A = 0, B2A = 0, ISOA = 0,LEOD = 0,OP1D = 0, OP2D = 0, FD = 0, B1D = 0, B2D = 0, ISOD = 0,LEOI = 0,OP1I = 0, OP2I = 0, FI = 0, B1I = 0, B2I = 0, ISOI = 0, max=true, bank = 'LEO'},
 }
 
 burnTable = {White = true, Red = true, Yellow = true, Green = true, Blue = true, Purple = true}
@@ -336,6 +334,7 @@ function loadBidData()
 			bidTable = data_to_load[1]
 		end
 	end
+	updateBidUI() -- fix bug where Patent auction button would be missing
 end
 
 function loadFTData()
@@ -1571,6 +1570,7 @@ function updateFTUI()
 	UI.setAttribute("toggleFTMod1", "isOn", toolConfig.ft.mod1)
 	UI.setAttribute("toggleFTMod2", "isOn", toolConfig.ft.mod2)
 	UI.setAttribute("toggleFTMod4", "isOn", toolConfig.ft.mod4)
+	UI.setAttribute("toggleFTDirt", "isOn", toolConfig.ft.dirt)
 	
 	--update for players; values
 	UI.setAttribute("p1FTTrackerRow", "active", "False")
@@ -1606,6 +1606,8 @@ function updateFTUI()
 				UI.setAttribute(v .. j, "text", l)
 				if string.match(j, "A") == "A" then
 					UI.setAttribute("p" .. k .. j .. "txt", "color", "Blue")
+				elseif string.match(j, "D") == "D" then
+					UI.setAttribute("p" .. k .. j .. "txt", "color", "Grey")
 				else
 					UI.setAttribute("p" .. k .. j .. "txt", "color", "Yellow")
 				end
@@ -1736,10 +1738,30 @@ function updateFTUIMods()
 	local t = {'LEO', 'OP1', 'OP2', 'F', 'B1', 'B2', 'ISO'}
 	local i = {'ISO'}
 	local b = {'B1', 'B2'}
-	local f = {'A', 'I'}
+	local f = {'A', 'D', 'I'}
 	local c = {'White', 'Purple', 'Yellow', 'Red', 'Blue', 'Green'}
 	local hideID = ""
 	local colWidth = "580"
+
+	--dirt
+	--show/hide dirt values
+	for k,v in pairs(p) do
+		for i, j in pairs(t) do
+			hideID = v ..  j .. 'Dtxt'
+			if hideID ~= "" then
+				UI.setAttribute(hideID, "active", toolConfig.ft.dirt)
+				hideID = ""
+			end
+		end
+	end
+	--show/hide dirt row
+	for k,v in pairs(c) do
+		hideID = v .. "DRow"
+		if hideID ~= "" then
+			UI.setAttribute(hideID, "active", toolConfig.ft.dirt)
+			hideID = ""
+		end
+	end
 	
 	--mod1
 	--show/hide isotopes values
@@ -1764,6 +1786,13 @@ function updateFTUIMods()
 	--color row
 	for k,v in pairs(c) do
 		hideID = v .. "FACell"
+		if hideID ~= "" then
+			UI.setAttribute(hideID, "active", toolConfig.ft.mod1)
+			hideID = ""
+		end
+	end
+	for k,v in pairs(c) do
+		hideID = v .. "FDCell"
 		if hideID ~= "" then
 			UI.setAttribute(hideID, "active", toolConfig.ft.mod1)
 			hideID = ""
@@ -2250,7 +2279,7 @@ function toggleTurnFirstPlayer(_p, bool, BtnID)
 		local col = string.sub(BtnID, #str + 1)
 		if seatTable[tonumber(1)] ~= col then
 			toolConfig.turn.firstPlayer = col
-			timerTable.active = col 
+			timerTable.active = {col} 
 			timerTable.last = Time.time
 			if configTable.toolTimer then timerAdd() end
 			reorderPlayerSeats()
@@ -2790,9 +2819,9 @@ function updateTimerUI()
 		UI.setValue("PauseTimerText", timestring)
 end
 
-function setTimerValue(_p, value)
-	toolConfig.timer.rlength = tonumber(value)
-end
+-- function setTimerValue(_p, value)
+-- 	toolConfig.timer.rlength = tonumber(value)
+-- end
 
 function updateTimerConfigUI()
 	UI.setAttribute("addTimeCellP1", "active", "False")
@@ -3384,6 +3413,17 @@ function changeFTScale(_p, val, btnID)
 	hardSave()
 end
 
+function toggleFTDirt(_p, bool, btnID)
+	if bool == "True" then
+		toolConfig.ft.dirt = true
+	elseif bool == "False" then
+		toolConfig.ft.dirt = false
+	end
+	updateFTUI()
+	updateFTUIMods()
+	hardSave()
+end
+
 function toggleFTMod1(_p, bool, btnID)
 	if bool == "True" then
 		toolConfig.ft.mod1 = true
@@ -3906,7 +3946,6 @@ function killSetup()
 	UI.setAttribute("BurnParentBernalRed", "active", true)
 	UI.setAttribute("BurnParentBernalPurple", "active", true)
 	
-	
 	updateSetupUI()
 	--set turn order
 	reorderPlayerSeats()
@@ -4105,7 +4144,9 @@ function nextSetup4()
 	printToAll("============SCRIPTED SETUP COMPLETE============",msgComplete)
 	UI.setAttribute("ConfigMenu", "active", true)
 	UI.setAttribute("VPMenu", "active", true)
-	resetTimers()
+	if toolConfig.timer.mode == 1 then
+   	  resetTimers() -- Only do this if running countdown timers
+	end 
 	hardSave()
 	-- toggleTurnFirstPlayer()
 end
@@ -4376,7 +4417,7 @@ function setupMods()
 			source = objRefs.boxes.mod4
 			destination = "decksMod4"
 			setupPlacer(source, destination)
-			local objsToLock = {objRefs.mats.contractBoard}
+			local objsToLock = {objRefs.mats.contractBoard, objRefs.mats.mod4Board}
 			Wait.frames(function() lockMe(objsToLock) end, 60)
 		else
 			printToAll('Error: Mod4 box cannot be found. Unable to setup Module 4 components.',msgError)
@@ -4390,9 +4431,7 @@ function setupMods()
 			source = objRefs.boxes.mod4
 			destination = "decksMod42"
 			setupPlacer(source, destination)
-			local objsToLock = {objRefs.mats.contractBoard}
-			Wait.frames(function() lockMe(objsToLock) end, 60)
-			setupMeatheads()
+			setupSpaceborns()
 			setupExodusDeck()
 		else
 			printToAll('Error: Mod4 box cannot be found. Unable to setup Module 4 components.',msgError)
@@ -4407,6 +4446,12 @@ function updateUIMods()
 	UI.setAttribute("toggleUIToolSetupBurnToolBernal", "isOn", configTable.toolBurnToolBernal)
 	
 	UI.setAttribute("toggleUIToolTimer", "isOn", configTable.toolTimer)
+	UI.setAttribute("toggleFTDirt", "isOn", "False")
+	toggleFTMod1("Black", "False", "toggleFTDirt")
+	--- this isn't right
+	updateFTUI()
+	updateFTUIMods()
+	hardSave()
 	
 	--turn tracker
 	if setupConfig.mods.mod1 == true then
@@ -4414,17 +4459,17 @@ function updateUIMods()
 		UI.setAttribute("toggleTurnMobile", "isOn", "True")
 		toggleTurnMods("Black", "True", "toggleTurnMod1")
 		toggleTurnMobile("Black", "True", "toggleTurnMobile")
-		UI.setAttribute("toggleFTMod2", "isOn", "True")
+		UI.setAttribute("toggleFTMod1", "isOn", "True")
 		toggleFTMod1("Black", "True", "toggleFTMod1")
 	end
 	
 	if setupConfig.mods.mod2 == true then
 		UI.setAttribute("toggleTurnMod2", "isOn", "True")
 		UI.setAttribute("toggleTurnColonist", "isOn", "True")
-		UI.setAttribute("toggleTurnProfit", "isOn", "True")
+		UI.setAttribute("toggleTurnAutoProfit", "isOn", "True")
 		toggleTurnMods("Black", "True", "toggleTurnMod2")
 		toggleTurnColonist("Black", "True", "toggleTurnColonist")
-		toggleTurnProfit("Black", "True", "toggleTurnProfit")
+		toggleTurnAutoProfit("Black", "True", "toggleTurnAutoProfit")
 		UI.setAttribute("toggleFTMod2", "isOn", "True")
 		toggleFTMod2("Black", "True", "toggleFTMod2")
 		UI.setAttribute("toggleBidMarketeer", "isOn", "false")
@@ -4438,8 +4483,10 @@ function updateUIMods()
 	if setupConfig.mods.mod4 == true then
 		UI.setAttribute("toggleTurnMod4", "isOn", "True")
 		toggleTurnMods("Black", "True", "toggleTurnMod4")
-		toolConfig.bid.contract = true
 		UI.setAttribute("toggleContractBids", "isOn", "True")
+		toggleContractBids("Black", "True", "toggleContractBids")
+		UI.setAttribute("toggleFTMod4", "isOn", "True")
+		toggleFTMod4("Black", "True", "toggleFTMod4")
 	end
 end
 
@@ -5249,6 +5296,18 @@ function spawnPlayerTokens()
 				printToAll("Script cannot find " .. col .. "for figurine deployment.  Obtain manually from player bag.", msgError)
 			end
 		end
+
+		if setupConfig.mods.mod2 == true and setupConfig.mods.mod4 == true then
+		    -- source = objRefs.boxes["p" .. col]
+		    source = objRefs.boxes.mod4
+			destination = "figuresM42"
+			if mat ~= "" then
+				setupPlacerPlayerTokens(source, destination, col)
+			else
+				printToAll("Script cannot find " .. col .. "for figurine deployment.  Obtain manually from player bag.", msgError)
+			end
+		end
+
 	end
 end
 
@@ -5391,21 +5450,21 @@ function setupSplitDecks2(deckResults, matResults)
 	end
 end
 
---- build meathead decks using colonist robots
-function setupMeatheads()
-	print("Meathead Deck Setup (moving 4 Robots from Colonist Deck)")
+--- build spaceborn decks using colonist robots
+function setupSpaceborns()
+	print("Spaceborn Deck Setup (moving 4 Robots from Colonist Deck)")
 	local objs = getObjects()
 	for k,v in ipairs(objs) do
 		if v.getName() and v.getName() == "Colonist Deck" then
 			colonistGUID = v.guid
 			colonistDeck = getObjectFromGUID(colonistGUID)
 		end
-		if v.getName() and v.getName() == "Meathead Deck" then
-			meatheadGUID = v.guid
-			meatheadDeck = getObjectFromGUID(meatheadGUID)
+		if v.getName() and v.getName() == "Spaceborn Deck" then
+			spacebornGUID = v.guid
+			spacebornDeck = getObjectFromGUID(spacebornGUID)
 		end
 	end
-	if meatheadGUID and colonistGUID then
+	if spacebornGUID and colonistGUID then
 		local objs2 = colonistDeck.getObjects()
 		for k2,v2 in ipairs(objs2) do
 			if string.match(v2.description,"Robot") then
@@ -5415,14 +5474,14 @@ function setupMeatheads()
 					  guid = v2.guid
 				  })
 			  olddesc = cardobj.getDescription()
-			  cardobj.setDescription(olddesc .. ", Meathead")
-			  meatheadDeck.putObject(cardobj)
+			  cardobj.setDescription(olddesc .. ", Spaceborn")
+			  spacebornDeck.putObject(cardobj)
 			end
 		end
 	else
-		print "Error Setting up Meathead deck.   Please check that all Robot have been moved to the Meathead Deck"
+		print "Error Setting up Spaceborn deck.   Please check that all Robot have been moved to the Spaceborn Deck"
 	end
-	meatheadDeck.shuffle()
+	spacebornDeck.shuffle()
 	colonistDeck.shuffle()
 end
 
@@ -5530,7 +5589,7 @@ function setupExodusDeck()
 	-- print("NewDeck GUID - " .. newDeck[1].getGUID())
 	newDeck[1].setName("Exodus Contract Deck")
     newDeck[1].SetDescription("Exodus Description")	
-	newDeck[1].setPosition({x = 39.31, y =  1.15, z =  -4.46})
+	newDeck[1].setPosition({x = 39.27, y =  1.15, z =  -4.19})
 	newDeck[1].setRotation({x = 0, y = 270, z = 0})
 				local objGUID1 = ""
 end  

@@ -22,13 +22,13 @@
 	matRad = 2
 	--cardOffsetC1 = {x = 0.45, y = 0.5, z = -4}
 	cardOffsetC1 = {x = 0.1, y = -0.1, z = 3}
-	cardOffsetMeat = {x = 0.1, y = -0.1, z = -3}
+	cardOffsetSpace = {x = 0.1, y = -0.1, z = -3}
 	cardOffsetExodus = {x = 0.1, y = -0.1, z = -3}
 	frames = 45
 	inspirationGate = false
 	
 	cardsRef = {
-		meathead = {str = "meathead", label = "Meathead Queue", offset = cardOffsetMeat, deck = ""},
+		spaceborn = {str = "spaceborn", label = "Spaceborn Queue", offset = cardOffsetSpace, deck = ""},
 		exodus = {str = "exodus", label = "Exodus Contract Deck", offset = cardOffsetExodus, deck = ""},
 		freedom = {str = "freedom", label = "Freedom / Individuality Contract Deck", offset = cardOffsetC1, deck = ""},
 		equality = {str = "equality", label = "Equality / Authority Contract Deck", offset = cardOffsetC1, deck = ""},

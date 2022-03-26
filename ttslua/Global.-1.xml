@@ -53,6 +53,7 @@
 	<Button class="btnMaximize" rectAlignment="UpperRight" ignoreLayout="true" width="40" height="40" fontSize="25" textColor="White" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" />
 	<Button class="cmdMenu" textColor="white" fontSize="22" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" />
 	<Button class="btnTrackerA" color="blue" textColor="black" fontSize="30" fontStyle="Bold" tooltip = "LMB:+1/RMB:-1/MMB:+7" allowDragging="false"/>
+	<Button class="btnTrackerD" color="grey" textColor="black" fontSize="30" fontStyle="Bold" tooltip = "LMB:+1/RMB:-1/MMB:+7" allowDragging="false"/>
 	<Button class="btnTrackerI" color="yellow" textColor="black" fontSize="30" fontStyle="Bold" tooltip = "LMB:+1/RMB:-1/MMB:+7" allowDragging="false"/>
 	<Button class="btnBids" colors="Black|Grey|#C8C8C8|rgba(0.78,0.78,0.78,0.5)" textColor="white" width="80" fontSize="22" height="40" allowDragging="false" />
 	<Button class="buttonStart" textColor="white" />
@@ -970,13 +971,13 @@
 		</Row>
 		<Row class="BasicRow" preferredHeight="40">
 			<Cell>
-				<Text id="textTimerValue" class="BasicText" alignment="MiddleCenter">Reset Timers</Text> 
+				<Text id="textTimerReset" class="BasicText" alignment="MiddleCenter">Reset Timers</Text> 
 			</Cell>
 			<Cell>
-				<Text id="textTimerValue" class="BasicText" alignment="MiddleCenter">+1 min to color</Text> 
+				<Text id="textTimerAdd" class="BasicText" alignment="MiddleCenter">+1 min to color</Text> 
 			</Cell>
 			<Cell>
-				<Text id="textTimerValue" class="BasicText" alignment="MiddleCenter">Time Per Round</Text> 
+				<Text id="textTimerRound" class="BasicText" alignment="MiddleCenter">Time Per Round</Text> 
 			</Cell>
 		</Row>
 		<Row class="BasicRow" preferredHeight="40">
@@ -1208,7 +1209,7 @@
 					</Cell>
 					<Cell columnSpan="2">
 						<Text id="textScaleTurn" alignment="MiddleCenter" class="h2Text">1.0</Text>
-						<Slider id="SliderTurnTracker" minValue="0.5" maxValue="1.5" value="1.0" onValueChanged="changeScaleTurn" tooltip="Change scale of Turn Tool only"/>
+						<Slider id="SliderTurnTrackerChild" minValue="0.5" maxValue="1.5" value="1.0" onValueChanged="changeScaleTurn" tooltip="Change scale of Turn Tool only"/>
 					</Cell>
 				</Row>
 				<Row class="BasicRow">
@@ -1531,7 +1532,7 @@
 			</cell>
 			<cell columnSpan="2">
 				<Text id="textScaleBid" class="BasicText" alignment="MiddleCenter">1</Text> 
-				<Slider id="SliderTurnTracker" minValue="0.5" maxValue="1.5" value="1.0" onValueChanged="changeBidScale" />
+				<Slider id="SliderBidTracker" minValue="0.5" maxValue="1.5" value="1.0" onValueChanged="changeBidScale" />
 			</cell>
 		</Row>
 		<Row class="BasicRow" preferredHeight = "40" >
@@ -1632,6 +1633,37 @@
 				</cell>
 			</Row>
 			<Row
+			id = "WhiteDRow"
+			class="trackerRowSelf"
+			visibility="White"
+			>
+				<cell class="trackerCellLabel">
+					<Text class="trackerText" color ="White">Self</Text>
+				</cell>
+				<cell class="trackerCellLEO">
+					<Button id="WhiteLEOD" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell id = "WhiteB1DCell" class="trackerCellOther">
+					<Button id="WhiteB1D" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell id = "WhiteB2DCell" class="trackerCellOther">
+					<Button id="WhiteB2D" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell id = "WhiteISODCell" class="trackerCellOther">
+					<Button id="WhiteISOD" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="WhiteOP1D" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="WhiteOP2D" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell id = "WhiteFDCell" class="trackerCellOther">
+					<Button id="WhiteFD" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+
+			</Row>
+			<Row
 			id = "WhiteIRow"
 			class="trackerRowSelf"
 			visibility="White"
@@ -1688,6 +1720,37 @@
 				</cell>
 				<cell id = "PurpleFACell" class="trackerCellOther">
 					<Button id="PurpleFA" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+
+			</Row>
+			<Row
+			id = "PurpleDRow"
+			class="trackerRowSelf"
+			visibility="Purple"
+			>
+				<cell class="trackerCellLabel">
+					<Text class="trackerText" color ="Purple">Self</Text>
+				</cell>
+				<cell class="trackerCellLEO">
+					<Button id="PurpleLEOD" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell id = "PurpleB1DCell" class="trackerCellOther">
+					<Button id="PurpleB1D" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell id = "PurpleB2DCell" class="trackerCellOther">
+					<Button id="PurpleB2D" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell id = "PurpleISODCell" class="trackerCellOther">
+					<Button id="PurpleISOD" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="PurpleOP1D" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="PurpleOP2D" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell id = "PurpleFDCell" class="trackerCellOther">
+					<Button id="PurpleFD" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
 				</cell>
 
 			</Row>
@@ -1752,6 +1815,37 @@
 
 			</Row>
 			<Row
+			id = "YellowDRow"
+			class="trackerRowSelf"
+			visibility="Yellow"
+			>
+				<cell class="trackerCellLabel">
+					<Text class="trackerText" color ="Yellow">Self</Text>
+				</cell>
+				<cell class="trackerCellLEO">
+					<Button id="YellowLEOD" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell id = "YellowB1DCell" class="trackerCellOther">
+					<Button id="YellowB1D" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell id = "YellowB2DCell" class="trackerCellOther">
+					<Button id="YellowB2D" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell id = "YellowISODCell" class="trackerCellOther">
+					<Button id="YellowISOD" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="YellowOP1D" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="YellowOP2D" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell id = "YellowFDCell" class="trackerCellOther">
+					<Button id="YellowFD" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+
+			</Row>
+			<Row
 			id = "YellowIRow"
 			class="trackerRowSelf"
 			visibility="Yellow"
@@ -1808,6 +1902,37 @@
 				</cell>
 				<cell id = "RedFACell" class="trackerCellOther">
 					<Button id="RedFA" onClick="clickTracker" text="0" class="btnTrackerA" ></Button>
+				</cell>
+
+			</Row>
+			<Row
+			id = "RedDRow"
+			class="trackerRowSelf"
+			visibility="Red"
+			>
+				<cell class="trackerCellLabel">
+					<Text class="trackerText" color ="Red">Self</Text>
+				</cell>
+				<cell class="trackerCellLEO">
+					<Button id="RedLEOD" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell id = "RedB1DCell" class="trackerCellOther">
+					<Button id="RedB1D" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell id = "RedB2DCell" class="trackerCellOther">
+					<Button id="RedB2D" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell id = "RedISODCell" class="trackerCellOther">
+					<Button id="RedISOD" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="RedOP1D" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="RedOP2D" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell id = "RedFDCell" class="trackerCellOther">
+					<Button id="RedFD" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
 				</cell>
 
 			</Row>
@@ -1872,6 +1997,37 @@
 
 			</Row>
 			<Row
+			id = "GreenDRow"
+			class="trackerRowSelf"
+			visibility="Green"
+			>
+				<cell class="trackerCellLabel">
+					<Text class="trackerText" color ="Green">Self</Text>
+				</cell>
+				<cell class="trackerCellLEO">
+					<Button id="GreenLEOD" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell id = "GreenB1DCell" class="trackerCellOther">
+					<Button id="GreenB1D" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell id = "GreenB2DCell" class="trackerCellOther">
+					<Button id="GreenB2D" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell id = "GreenISODCell" class="trackerCellOther">
+					<Button id="GreenISOD" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="GreenOP1D" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="GreenOP2D" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell id = "GreenFDCell" class="trackerCellOther">
+					<Button id="GreenFD" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+
+			</Row>
+			<Row
 			id = "GreenIRow"
 			class="trackerRowSelf"
 			visibility="Green"
@@ -1932,6 +2088,37 @@
 
 			</Row>
 			<Row
+			id = "BlueDRow"
+			class="trackerRowSelf"
+			visibility="Blue"
+			>
+				<cell class="trackerCellLabel">
+					<Text class="trackerText" color ="Blue">Self</Text>
+				</cell>
+				<cell class="trackerCellLEO">
+					<Button id="BlueLEOD" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell id = "BlueB1DCell" class="trackerCellOther">
+					<Button id="BlueB1D" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell id = "BlueB2DCell" class="trackerCellOther">
+					<Button id="BlueB2D" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell id = "BlueISODCell" class="trackerCellOther">
+					<Button id="BlueISOD" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="BlueOP1D" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell class="trackerCellOther">
+					<Button id="BlueOP2D" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+				<cell id = "BlueFDCell" class="trackerCellOther">
+					<Button id="BlueFD" onClick="clickTracker" text="0" class="btnTrackerD" ></Button>
+				</cell>
+
+			</Row>
+			<Row
 			id = "BlueIRow"
 			class="trackerRowSelf"
 			visibility="Blue"
@@ -1963,39 +2150,46 @@
 
 			</Row>
 			<Row
-			id="p1FTTrackerRow"
-			class="trackerRowOther"
-			active = "true"
-			>
+				id="p1FTTrackerRow"
+				class="trackerRowOther"
+				active = "true"
+				>
 				<cell class="trackerCellLabel">
 					<Text id = "p1FTTrackerLabel" class="trackerText" resizeTextForBestFit="true" resizeTextMaxSize="22" color="White">P1</Text>
 				</cell>
 				<cell id = "p1LEOCell" class="trackerCellLEO">
 					<Text id = "p1LEOAtxt" class="trackerText" fontStyle="Bold" fontSize="30" resizeTextForBestFit="true" resizeTextMaxSize="30" color="Blue">0</Text>
+					<Text id = "p1LEODtxt" class="trackerText" fontStyle="Bold" color="Grey">0</Text>
 					<Text id = "p1LEOItxt" class="trackerText" fontStyle="Bold" color="Yellow">0</Text>
 				</cell>
 				<cell id = "p1B1Cell" class="trackerCellOther">
 					<Text id = "p1B1Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p1B1Dtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p1B1Itxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell id = "p1B2Cell" class="trackerCellOther">
 					<Text id = "p1B2Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p1B2Dtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p1B2Itxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell id = "p1ISOCell" class="trackerCellOther">
 					<Text id = "p1ISOAtxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p1ISODtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p1ISOItxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell class="trackerCellOther">
 					<Text id = "p1OP1Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p1OP1Dtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p1OP1Itxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell class="trackerCellOther">
 					<Text id = "p1OP2Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p1OP2Dtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p1OP2Itxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell id = "p1FCell" class="trackerCellOther">
 					<Text id = "p1FAtxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p1FDtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p1FItxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 
@@ -2010,30 +2204,37 @@
 				</cell>
 				<cell id = "p2LEOCell" class="trackerCellLEO">
 					<Text id = "p2LEOAtxt" class="trackerText" fontStyle="Bold" fontSize="30" resizeTextForBestFit="true" resizeTextMaxSize="30" color="Blue">0</Text>
+					<Text id = "p2LEODtxt" class="trackerText" fontStyle="Bold" color="Grey">0</Text>
 					<Text id = "p2LEOItxt" class="trackerText" fontStyle="Bold" color="Yellow">0</Text>
 				</cell>
 				<cell id = "p2B1Cell" class="trackerCellOther">
 					<Text id = "p2B1Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p2B1Dtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p2B1Itxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell id = "p2B2Cell" class="trackerCellOther">
 					<Text id = "p2B2Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p2B2Dtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p2B2Itxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell id = "p2ISOCell" class="trackerCellOther">
 					<Text id = "p2ISOAtxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p2ISODtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p2ISOItxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell class="trackerCellOther">
 					<Text id = "p2OP1Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p2OP1Dtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p2OP1Itxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell class="trackerCellOther">
 					<Text id = "p2OP2Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p2OP2Dtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p2OP2Itxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell id = "p2FCell" class="trackerCellOther">
 					<Text id = "p2FAtxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p2FDtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p2FItxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 
@@ -2048,30 +2249,37 @@
 				</cell>
 				<cell id = "p3LEOCell" class="trackerCellLEO">
 					<Text id = "p3LEOAtxt" class="trackerText" fontStyle="Bold" fontSize="30" resizeTextForBestFit="true" resizeTextMaxSize="30" color="Blue">0</Text>
+					<Text id = "p3LEODtxt" class="trackerText" fontStyle="Bold" color="Grey">0</Text>
 					<Text id = "p3LEOItxt" class="trackerText" fontStyle="Bold" color="Yellow">0</Text>
 				</cell>
 				<cell id = "p3B1Cell" class="trackerCellOther">
 					<Text id = "p3B1Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p3B1Dtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p3B1Itxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell id = "p3B2Cell" class="trackerCellOther">
 					<Text id = "p3B2Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p3B2Dtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p3B2Itxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell id = "p3ISOCell" class="trackerCellOther">
 					<Text id = "p3ISOAtxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p3ISODtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p3ISOItxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell class="trackerCellOther">
 					<Text id = "p3OP1Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p3OP1Dtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p3OP1Itxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell class="trackerCellOther">
 					<Text id = "p3OP2Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p3OP2Dtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p3OP2Itxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell id = "p3FCell" class="trackerCellOther">
 					<Text id = "p3FAtxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p3FDtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p3FItxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 
@@ -2086,30 +2294,37 @@
 				</cell>
 				<cell id = "p4LEOCell" class="trackerCellLEO">
 					<Text id = "p4LEOAtxt" class="trackerText" fontStyle="Bold" fontSize="30" resizeTextForBestFit="true" resizeTextMaxSize="30" color="Blue">0</Text>
+					<Text id = "p4LEODtxt" class="trackerText" fontStyle="Bold" color="Grey">0</Text>
 					<Text id = "p4LEOItxt" class="trackerText" fontStyle="Bold" color="Yellow">0</Text>
 				</cell>
 				<cell id = "p4B1Cell" class="trackerCellOther">
 					<Text id = "p4B1Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p4B1Dtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p4B1Itxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell id = "p4B2Cell" class="trackerCellOther">
 					<Text id = "p4B2Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p4B2Dtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p4B2Itxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell id = "p4ISOCell" class="trackerCellOther">
 					<Text id = "p4ISOAtxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p4ISODtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p4ISOItxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell class="trackerCellOther">
 					<Text id = "p4OP1Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p4OP1Dtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p4OP1Itxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell class="trackerCellOther">
 					<Text id = "p4OP2Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p4OP2Dtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p4OP2Itxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell id = "p4FCell" class="trackerCellOther">
 					<Text id = "p4FAtxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p4FDtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p4FItxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 
@@ -2124,30 +2339,37 @@
 				</cell>
 				<cell id = "p5LEOCell" class="trackerCellLEO">
 					<Text id = "p5LEOAtxt" class="trackerText" fontStyle="Bold" fontSize="30" resizeTextForBestFit="true" resizeTextMaxSize="30" color="Blue">0</Text>
+					<Text id = "p5LEODtxt" class="trackerText" fontStyle="Bold" color="Grey">0</Text>
 					<Text id = "p5LEOItxt" class="trackerText" fontStyle="Bold" color="Yellow">0</Text>
 				</cell>
 				<cell id = "p5B1Cell" class="trackerCellOther">
 					<Text id = "p5B1Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p5B1Dtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p5B1Itxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell id = "p5B2Cell" class="trackerCellOther">
 					<Text id = "p5B2Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p5B2Dtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p5B2Itxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell id = "p5ISOCell" class="trackerCellOther">
 					<Text id = "p5ISOAtxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p5ISODtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p5ISOItxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell class="trackerCellOther">
 					<Text id = "p5OP1Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p5OP1Dtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p5OP1Itxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell class="trackerCellOther">
 					<Text id = "p5OP2Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p5OP2Dtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p5OP2Itxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell id = "p5FCell" class="trackerCellOther">
 					<Text id = "p5FAtxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p5FDtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p5FItxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 
@@ -2162,30 +2384,37 @@
 				</cell>
 				<cell id = "p6LEOCell" class="trackerCellLEO">
 					<Text id = "p6LEOAtxt" class="trackerText" fontStyle="Bold" fontSize="30" resizeTextForBestFit="true" resizeTextMaxSize="30" color="Blue">0</Text>
+					<Text id = "p6LEODtxt" class="trackerText" fontStyle="Bold" color="Grey">0</Text>
 					<Text id = "p6LEOItxt" class="trackerText" fontStyle="Bold" color="Yellow">0</Text>
 				</cell>
 				<cell id = "p6B1Cell" class="trackerCellOther">
 					<Text id = "p6B1Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p6B1Dtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p6B1Itxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell id = "p6B2Cell" class="trackerCellOther">
 					<Text id = "p6B2Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p6B2Dtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p6B2Itxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell id = "p6ISOCell" class="trackerCellOther">
 					<Text id = "p6ISOAtxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p6ISODtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p6ISOItxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell class="trackerCellOther">
 					<Text id = "p6OP1Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p6OP1Dtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p6OP1Itxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell class="trackerCellOther">
 					<Text id = "p6OP2Atxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p6OP2Dtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p6OP2Itxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 				<cell id = "p6FCell" class="trackerCellOther">
 					<Text id = "p6FAtxt" class="trackerText" color="Blue">0</Text>
+					<Text id = "p6FDtxt" class="trackerText" color="Grey">0</Text>
 					<Text id = "p6FItxt" class="trackerText" color="Yellow">0</Text>
 				</cell>
 
@@ -2229,6 +2458,9 @@
 		</Row>
 		<Row class="BasicRow" preferredHeight = "40" >
 			<Toggle id="toggleFTMod4" width="250" textColor="white" onValueChanged="toggleFTMod4" isOn="False" >Module 4 Stacks</Toggle>
+		</Row>
+		<Row class="BasicRow" preferredHeight = "40" >
+			<Toggle id="toggleFTDirt" width="250" textColor="white" onValueChanged="toggleFTDirt" isOn="False" >Dirt Stacks (House Rule)</Toggle>
 		</Row>
 	</TableLayout>
 </Panel>
@@ -2997,7 +3229,7 @@
 				<Text id="textScaleGlobal" alignment="MiddleCenter" class="h2Text">1.0</Text>
 			</Cell>
 			<Cell columnSpan="2">
-				<Slider id="SliderTurnTracker" minValue="0.5" maxValue="1.5" value="1.0" onValueChanged="changeScaleAll" />
+				<Slider id="SliderTextScale" minValue="0.5" maxValue="1.5" value="1.0" onValueChanged="changeScaleAll" />
 			</Cell>
 		</Row>
 		<Row class="BasicRow" preferredHeight="60">

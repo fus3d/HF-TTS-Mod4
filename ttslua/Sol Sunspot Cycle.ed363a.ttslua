@@ -172,7 +172,7 @@ function doEvent(season)
 				printToAll("Each player places a glitch on their stack with the most cards that lacks a glitch or colocated human.", msgPrompt)
 		elseif roll == 4 then
 				broadcastToAll(str .. roll .. "   | Pad Explosion/Space Debris!", msgEvent)
-				printToAll("Each player decommissions the card in LEO with the highest mass. Crew, Purple sided, Colonists, and Bernals are immune.", msgPrompt)
+				printToAll("Each player decommissions the card in LEO with the highest mass. Crew, Black/Purple sided, Colonists, Bernals, and Contracts are immune.", msgPrompt)
 		elseif roll == 5 or roll == 6 then
 			if season == 'blue' then
 				broadcastToAll(str .. roll .. "   | Anarchy!", msgEvent)
